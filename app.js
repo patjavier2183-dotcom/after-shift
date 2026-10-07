@@ -86,3 +86,79 @@ supabaseClient.auth.onAuthStateChange(async(event,session)=>{
 });
 render();
 loadAccount();
+
+// Auth UI V0: visible form instead of browser prompts.
+(function(){
+  const modal=document.getElementById("authModal");
+  const form=document.getElementById("authForm");
+  const title=document.getElementById("authTitle");
+  const hint=document.getElementById("authHint");
+  const userLabel=document.getElementById("authUserLabel");
+  const username=document.getElementById("authUsername");
+  const email=document.getElementById("authEmail");
+  const password=document.getElementById("authPassword");
+  const msg=document.getElementById("authMsg");
+  const submit=document.getElementById("authSubmit");
+  const close=document.getElementById("authClose");
+  const sw=document.getElementById("authSwitch");
+  if(!modal||!form)return;
+  let mode="signup";
+  function open(modeName){
+    mode=modeName;
+    title.textContent=mode==="signup"?"Crear cuenta":"Ingresar";
+    hint.textContent=mode==="signup"?"Crea tu cuenta para continuar.":"Ingresa con tu cuenta de AFTER SHIFT.";
+    userLabel.style.display=mode==="signup"?"block":"none";
+    username.required=mode==="signup";
+    password.autocomplete=mode==="signup"?"new-password":"current-password";
+    submit.textContent=mode==="signup"?"CREAR CUENTA":"INGRESAR";
+    sw.textContent=mode==="signup"?"Ya tengo una cuenta → Ingresar":"No tengo cuenta → Crear cuenta";
+    msg.textContent="";
+    modal.style.display="flex";
+    setTimeout(()=>email.focus(),50);
+  }
+  function closeModal(){modal.style.display="none";form.reset();msg.textContent="";}
+  close.onclick=closeModal;
+  sw.onclick=()=>open(mode==="signup"?"login":"signup");
+  modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});
+  document.getElementById("signupBtn").onclick=()=>open("signup");
+  document.getElementById("loginBtn").onclick=async()=>{
+    const existing=await currentUser();
+    if(existing){await finishLogin(existing);return;}
+    open("login");
+  };
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    msg.textContent="Procesando...";
+    submit.disabled=true;
+    try{
+      if(mode==="signup"){
+        const clean=username.value.trim().replace(/\s+/g,"").replace(/^@/,"").toLowerCase();
+        if(!/^[a-z0-9_.-]{3,24}$/.test(clean)){
+          msg.textContent="El usuario debe tener 3 a 24 caracteres: letras, números, punto, guion o guion bajo.";
+          return;
+        }
+        const {data,error}=await supabaseClient.auth.signUp({
+          email:email.value.trim(),
+          password:password.value,
+          options:{data:{username:clean,display_name:username.value.trim()}}
+        });
+        if(error){msg.textContent="No se pudo crear la cuenta: "+error.message;return;}
+        if(data.session&&data.user){
+          closeModal();
+          await finishLogin(data.user);
+        }else{
+          msg.textContent="Cuenta creada. Revisa tu correo para confirmar la cuenta y luego ingresa.";
+        }
+      }else{
+        const {data,error}=await supabaseClient.auth.signInWithPassword({email:email.value.trim(),password:password.value});
+        if(error){msg.textContent=error.message.toLowerCase().includes("email not confirmed")?"Falta confirmar el correo. Revisa tu bandeja de entrada.":"No pudimos iniciar sesión: "+error.message;return;}
+        closeModal();
+        await finishLogin(data.user);
+      }
+    }catch(err){
+      msg.textContent="Ocurrió un error al procesar la cuenta. Inténtalo nuevamente.";
+    }finally{
+      submit.disabled=false;
+    }
+  };
+})();
