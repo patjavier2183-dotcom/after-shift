@@ -12,6 +12,22 @@ const grid=document.getElementById("creatorGrid");
 
 async function currentUser(){const {data}=await supabaseClient.auth.getUser();return data.user;}
 
+async function loadAccount(){
+  const user=await currentUser();
+  if(!user)return;
+  const {data:p}=await supabaseClient.from("profiles").select("username,display_name,role").eq("id",user.id).maybeSingle();
+  const {count:fc}=await supabaseClient.from("follows").select("*",{count:"exact",head:true}).eq("follower_id",user.id);
+  const {count:sc}=await supabaseClient.from("subscriptions").select("*",{count:"exact",head:true}).eq("subscriber_id",user.id).eq("status","active");
+  document.getElementById("accountSection").style.display="block";
+  document.getElementById("accountTitle").textContent="Hola, "+(p?.display_name||user.email);
+  document.getElementById("accountEmail").textContent=user.email;
+  document.getElementById("accountRole").textContent="Rol: "+(p?.role||"user")+" · @"+(p?.username||"usuario");
+  document.getElementById("followCount").textContent=fc||0;
+  document.getElementById("subCount").textContent=sc||0;
+  document.getElementById("loginBtn").textContent="Mi cuenta";
+  document.getElementById("loginBtn").onclick=()=>document.getElementById("accountSection").scrollIntoView({behavior:"smooth"});
+}
+
 async function render(){
   grid.innerHTML=creators.map((c,i)=>`<article class="card" data-index="${i}">
     <div class="cover"></div><div class="info"><div class="name">${c.name}</div>
@@ -31,19 +47,22 @@ async function openProfile(i){
   if(!action)return;
   const a=action.toUpperCase();
   if(a==="SEGUIR"){
-    if(!follow){const {error}=await supabaseClient.from("follows").insert({follower_id:user.id,creator_id:creator.id});if(error)alert(error.message);else alert("Ahora sigues a "+creator.display_name+".");}
+    if(!follow){const {error}=await supabaseClient.from("follows").insert({follower_id:user.id,creator_id:creator.id});if(error)alert(error.message);else{alert("Ahora sigues a "+creator.display_name+".");await loadAccount();}}
   }else if(a==="DEJAR DE SEGUIR"){
-    if(follow){const {error}=await supabaseClient.from("follows").delete().eq("follower_id",user.id).eq("creator_id",creator.id);if(error)alert(error.message);else alert("Dejaste de seguir a "+creator.display_name+".");}
+    if(follow){const {error}=await supabaseClient.from("follows").delete().eq("follower_id",user.id).eq("creator_id",creator.id);if(error)alert(error.message);else{alert("Dejaste de seguir a "+creator.display_name+".");await loadAccount();}}
   }else if(a==="SUSCRIBIR"){
-    if(!sub){const {error}=await supabaseClient.from("subscriptions").insert({subscriber_id:user.id,creator_id:creator.id,status:"active"});if(error)alert(error.message);else alert("Suscripción V0 activada. Todavía no hay cobro real.");}
+    if(!sub){const {error}=await supabaseClient.from("subscriptions").insert({subscriber_id:user.id,creator_id:creator.id,status:"active"});if(error)alert(error.message);else{alert("Suscripción V0 activada. Todavía no hay cobro real.");await loadAccount();}}
     else alert("Ya tienes una suscripción V0 activa.");
   }
 }
 
 document.getElementById("exploreBtn").onclick=()=>document.getElementById("creators").scrollIntoView({behavior:"smooth"});
 document.getElementById("allBtn").onclick=()=>alert("Exploración completa: siguiente módulo.");
+document.getElementById("logoutBtn").onclick=async()=>{await supabaseClient.auth.signOut();location.reload();};
 
 document.getElementById("loginBtn").onclick=async()=>{
+  const existing=await currentUser();
+  if(existing){document.getElementById("accountSection").scrollIntoView({behavior:"smooth"});return;}
   const email=prompt("Correo electrónico:");
   if(!email)return;
   const password=prompt("Contraseña (mínimo 6 caracteres):");
@@ -58,8 +77,12 @@ document.getElementById("loginBtn").onclick=async()=>{
       if(signupError)alert(signupError.message);
       else alert("Cuenta creada. Si Supabase solicita confirmación por correo, confírmala y vuelve a ingresar.");
     }else alert(error.message);
-  }else alert("Bienvenido a AFTER SHIFT, "+(data.user.email||"usuario")+".");
+  }else{
+    await loadAccount();
+    document.getElementById("accountSection").scrollIntoView({behavior:"smooth"});
+  }
 };
 
-supabaseClient.auth.onAuthStateChange((_event)=>{});
+supabaseClient.auth.onAuthStateChange(()=>loadAccount());
 render();
+loadAccount();
