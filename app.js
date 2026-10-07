@@ -80,6 +80,19 @@ document.getElementById("loginBtn").onclick=async()=>{
   await finishLogin(data.user);
 };
 
+function handleVerificationReturn(){
+  const params=new URLSearchParams(window.location.search);
+  if(params.get("verified")==="1"){
+    window.history.replaceState({},document.title,window.location.pathname);
+    setTimeout(async()=>{
+      const user=await currentUser();
+      if(user) await finishLogin(user);
+      else alert("Correo confirmado. Ahora pulsa «Ingresar» para entrar a AFTER SHIFT.");
+    },400);
+  }
+}
+handleVerificationReturn();
+
 supabaseClient.auth.onAuthStateChange(async(event,session)=>{
   if(session?.user) await ensureProfile(session.user);
   await loadAccount();
@@ -140,7 +153,7 @@ loadAccount();
         const {data,error}=await supabaseClient.auth.signUp({
           email:email.value.trim(),
           password:password.value,
-          options:{data:{username:clean,display_name:username.value.trim()}}
+          options:{data:{username:clean,display_name:username.value.trim()},emailRedirectTo:window.location.origin+"/?verified=1"}
         });
         if(error){msg.textContent="No se pudo crear la cuenta: "+error.message;return;}
         if(data.session&&data.user){
