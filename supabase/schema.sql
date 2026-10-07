@@ -27,3 +27,14 @@ create policy "post content creator delete" on public.post_content for delete us
 create or replace function public.handle_new_user() returns trigger language plpgsql security definer set search_path = public as $$ begin insert into public.profiles (id, username, display_name) values (new.id, coalesce(new.raw_user_meta_data->>'username', split_part(new.email, '@', 1)), coalesce(new.raw_user_meta_data->>'display_name', split_part(new.email, '@', 1))) on conflict (id) do nothing; return new; end; $$;
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created after insert on auth.users for each row execute procedure public.handle_new_user();\n-- Media storage for V0 testing\ninsert into storage.buckets (id,name,public) values ('post-media','post-media',true) on conflict (id) do update set public=true;\ndrop policy if exists "post media public read" on storage.objects; create policy "post media public read" on storage.objects for select using (bucket_id='post-media');\ndrop policy if exists "post media creator upload" on storage.objects; create policy "post media creator upload" on storage.objects for insert to authenticated with check (bucket_id='post-media' and (storage.foldername(name))[1] = auth.uid()::text);\ndrop policy if exists "post media creator delete" on storage.objects; create policy "post media creator delete" on storage.objects for delete to authenticated using (bucket_id='post-media' and (storage.foldername(name))[1] = auth.uid()::text);\n
+
+-- Creator profile images
+alter table public.profiles add column if not exists avatar_url text default '';
+alter table public.profiles add column if not exists cover_url text default '';
+insert into storage.buckets (id,name,public) values ('creator-media','creator-media',true) on conflict (id) do update set public=true;
+drop policy if exists "creator media public read" on storage.objects;
+create policy "creator media public read" on storage.objects for select using (bucket_id='creator-media');
+drop policy if exists "creator media upload" on storage.objects;
+create policy "creator media upload" on storage.objects for insert to authenticated with check (bucket_id='creator-media' and (storage.foldername(name))[1] = auth.uid()::text);
+drop policy if exists "creator media update" on storage.objects;
+create policy "creator media update" on storage.objects for update to authenticated using (bucket_id='creator-media' and (storage.foldername(name))[1] = auth.uid()::text);
