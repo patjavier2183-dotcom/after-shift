@@ -26,9 +26,18 @@ create table if not exists public.subscriptions (
   check (subscriber_id <> creator_id)
 );
 
+create table if not exists public.posts (
+  id uuid primary key default gen_random_uuid(),
+  creator_id uuid not null,
+  body text not null default '',
+  access text not null default 'public' check (access in ('public','subscriber')),
+  created_at timestamptz not null default now()
+);
+
 alter table public.profiles enable row level security;
 alter table public.follows enable row level security;
 alter table public.subscriptions enable row level security;
+alter table public.posts enable row level security;
 
 create policy "profiles readable" on public.profiles for select using (true);
 create policy "own profile insert" on public.profiles for insert with check (auth.uid() = id);
@@ -41,6 +50,22 @@ create policy "unfollow own" on public.follows for delete using (auth.uid() = fo
 create policy "subscriptions own read" on public.subscriptions for select using (auth.uid() = subscriber_id);
 create policy "subscription own insert" on public.subscriptions for insert with check (auth.uid() = subscriber_id);
 create policy "subscription own update" on public.subscriptions for update using (auth.uid() = subscriber_id);
+
+create policy "posts visible" on public.posts
+for select using (
+  access = 'public'
+  or exists (
+    select 1 from public.subscriptions s
+    where s.subscriber_id = auth.uid()
+      and s.creator_id = public.posts.creator_id
+      and s.status = 'active'
+  )
+);
+
+create policy "posts creator insert" on public.posts
+for insert with check (
+  auth.uid() = creator_id
+);
 
 create or replace function public.handle_new_user()
 returns trigger
