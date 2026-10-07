@@ -29,15 +29,22 @@ create table if not exists public.subscriptions (
 create table if not exists public.posts (
   id uuid primary key default gen_random_uuid(),
   creator_id uuid not null,
-  body text not null default '',
+  title text not null default '',
+  preview text not null default '',
   access text not null default 'public' check (access in ('public','subscriber')),
   created_at timestamptz not null default now()
+);
+
+create table if not exists public.post_content (
+  post_id uuid primary key references public.posts(id) on delete cascade,
+  body text not null default ''
 );
 
 alter table public.profiles enable row level security;
 alter table public.follows enable row level security;
 alter table public.subscriptions enable row level security;
 alter table public.posts enable row level security;
+alter table public.post_content enable row level security;
 
 create policy "profiles readable" on public.profiles for select using (true);
 create policy "own profile insert" on public.profiles for insert with check (auth.uid() = id);
@@ -51,20 +58,33 @@ create policy "subscriptions own read" on public.subscriptions for select using 
 create policy "subscription own insert" on public.subscriptions for insert with check (auth.uid() = subscriber_id);
 create policy "subscription own update" on public.subscriptions for update using (auth.uid() = subscriber_id);
 
-create policy "posts visible" on public.posts
+create policy "posts readable" on public.posts for select using (true);
+create policy "posts creator insert" on public.posts for insert with check (auth.uid() = creator_id);
+
+create policy "post content visible" on public.post_content
 for select using (
-  access = 'public'
-  or exists (
-    select 1 from public.subscriptions s
-    where s.subscriber_id = auth.uid()
-      and s.creator_id = public.posts.creator_id
-      and s.status = 'active'
+  exists (
+    select 1 from public.posts p
+    where p.id = public.post_content.post_id
+      and (
+        p.access = 'public'
+        or exists (
+          select 1 from public.subscriptions s
+          where s.subscriber_id = auth.uid()
+            and s.creator_id = p.creator_id
+            and s.status = 'active'
+        )
+      )
   )
 );
 
-create policy "posts creator insert" on public.posts
+create policy "post content creator insert" on public.post_content
 for insert with check (
-  auth.uid() = creator_id
+  exists (
+    select 1 from public.posts p
+    where p.id = public.post_content.post_id
+      and p.creator_id = auth.uid()
+  )
 );
 
 create or replace function public.handle_new_user()
