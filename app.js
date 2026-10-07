@@ -35,6 +35,39 @@ async function render(){
   document.querySelectorAll(".card").forEach(card=>card.onclick=()=>openProfile(+card.dataset.index));
 }
 
+function escapeHtml(value){
+  return String(value||"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));
+}
+
+async function loadCreatorPosts(creatorId, isSubscribed){
+  const {data:posts,error}=await supabaseClient.from("posts")
+    .select("id,title,preview,access,created_at")
+    .eq("creator_id",creatorId)
+    .order("created_at",{ascending:false});
+  if(error)return {html:`<p style="opacity:.65">No pudimos cargar las publicaciones.</p>`,count:0};
+
+  if(!posts?.length){
+    return {html:`<div style="padding:16px;border:1px solid #333;border-radius:12px;opacity:.7">Todavía no hay publicaciones.</div>`,count:0};
+  }
+
+  let html="";
+  for(const post of posts){
+    const locked=post.access==="subscriber" && !isSubscribed;
+    let body="";
+    if(!locked){
+      const {data:content}=await supabaseClient.from("post_content").select("body").eq("post_id",post.id).maybeSingle();
+      body=content?.body||post.preview||"";
+    }
+    html+=`<article style="border:1px solid #333;border-radius:14px;padding:15px;margin-top:10px">
+      <div style="font-size:12px;opacity:.6;margin-bottom:6px">${post.access==="public"?"PÚBLICO":"SOLO SUSCRIPTORES"}</div>
+      <h3 style="margin:0 0 7px">${escapeHtml(post.title)}</h3>
+      <p style="line-height:1.5;margin:0">${locked?escapeHtml(post.preview||"Contenido exclusivo"):escapeHtml(body)}</p>
+      ${locked?'<div style="margin-top:12px;padding:10px;border-radius:10px;background:#222;text-align:center">🔒 Suscríbete para desbloquear este contenido</div>':""}
+    </article>`;
+  }
+  return {html,count:posts.length};
+}
+
 async function openProfile(i){
   const c=creators[i];
   const user=await currentUser();
@@ -43,17 +76,19 @@ async function openProfile(i){
   if(!creator){alert("Este creador todavía no está registrado en la base de datos V0.");return;}
   const {data:follow}=await supabaseClient.from("follows").select("creator_id").eq("follower_id",user.id).eq("creator_id",creator.id).maybeSingle();
   const {data:sub}=await supabaseClient.from("subscriptions").select("creator_id,status").eq("subscriber_id",user.id).eq("creator_id",creator.id).maybeSingle();
+  const isSubscribed=sub?.status==="active";
 
   const overlay=document.createElement("div");
-  overlay.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999";
-  overlay.innerHTML=`<div style="width:min(420px,100%);background:#171717;color:#fff;border:1px solid #333;border-radius:18px;padding:24px">
-    <h2 style="margin:0 0 6px">${creator.display_name}</h2>
-    <div style="opacity:.7;margin-bottom:14px">@${creator.username}</div>
-    <p style="line-height:1.5;margin:0 0 8px">${creator.bio||c.bio}</p>
-    <p style="margin:0 0 20px">Suscripción: <strong>US$${Number(creator.subscription_price||0).toFixed(2)}/mes</strong></p>
+  overlay.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999;overflow:auto";
+  overlay.innerHTML=`<div style="width:min(520px,100%);background:#171717;color:#fff;border:1px solid #333;border-radius:18px;padding:24px;margin:20px 0">
+    <h2 style="margin:0 0 6px">${escapeHtml(creator.display_name)}</h2>
+    <div style="opacity:.7;margin-bottom:14px">@${escapeHtml(creator.username)}</div>
+    <p style="line-height:1.5;margin:0 0 8px">${escapeHtml(creator.bio||c.bio)}</p>
+    <p style="margin:0 0 16px">Suscripción: <strong>US$${Number(creator.subscription_price||0).toFixed(2)}/mes</strong></p>
+    <div id="postList" style="margin:0 0 18px"><div style="padding:12px;border:1px solid #333;border-radius:12px;opacity:.65">Cargando publicaciones...</div></div>
     <div style="display:grid;gap:10px">
       <button id="followAction" style="padding:13px;border:0;border-radius:10px;cursor:pointer">${follow?"SIGUIENDO":"SEGUIR"}</button>
-      <button id="subAction" style="padding:13px;border:0;border-radius:10px;cursor:pointer">${sub&&sub.status==="active"?"SUSCRITO":"SUSCRIBIRSE"}</button>
+      <button id="subAction" style="padding:13px;border:0;border-radius:10px;cursor:pointer">${isSubscribed?"SUSCRITO":"SUSCRIBIRSE"}</button>
       <button id="closeAction" style="padding:11px;background:transparent;color:#aaa;border:1px solid #444;border-radius:10px;cursor:pointer">CERRAR</button>
     </div>
   </div>`;
@@ -62,18 +97,22 @@ async function openProfile(i){
   const close=()=>overlay.remove();
   overlay.querySelector("#closeAction").onclick=close;
 
+  const posts=await loadCreatorPosts(creator.id,isSubscribed);
+  const postList=overlay.querySelector("#postList");
+  if(document.body.contains(overlay))postList.innerHTML=posts.html;
+
   overlay.querySelector("#followAction").onclick=async()=>{
     if(follow){
       const {error}=await supabaseClient.from("follows").delete().eq("follower_id",user.id).eq("creator_id",creator.id);
-      if(error)alert(error.message); else {alert("Dejaste de seguir a "+creator.display_name+".");close();await loadAccount();}
+      if(error)alert(error.message);else{close();await loadAccount();}
     }else{
       const {error}=await supabaseClient.from("follows").insert({follower_id:user.id,creator_id:creator.id});
-      if(error)alert(error.message); else {alert("Ahora sigues a "+creator.display_name+".");close();await loadAccount();}
+      if(error)alert(error.message);else{close();await loadAccount();}
     }
   };
 
   overlay.querySelector("#subAction").onclick=async()=>{
-    if(sub&&sub.status==="active"){alert("Ya estás suscrito a "+creator.display_name+".");return;}
+    if(isSubscribed){alert("Ya estás suscrito a "+creator.display_name+".");return;}
     const {error}=await supabaseClient.from("subscriptions").insert({subscriber_id:user.id,creator_id:creator.id,status:"active"});
     if(error){alert(error.message);return;}
     alert("Suscripción V0 activada. Todavía no hay cobro real.");
@@ -93,7 +132,7 @@ document.getElementById("loginBtn").onclick=async()=>{
   if(!email)return;
   const password=prompt("Contraseña (mínimo 6 caracteres):");
   if(!password)return;
-  const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+  const {error}=await supabaseClient.auth.signInWithPassword({email,password});
   if(error){
     const create=confirm("No pudimos ingresar. ¿Quieres crear esta cuenta?");
     if(create){
