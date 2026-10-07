@@ -43,17 +43,43 @@ async function openProfile(i){
   if(!creator){alert("Este creador todavía no está registrado en la base de datos V0.");return;}
   const {data:follow}=await supabaseClient.from("follows").select("creator_id").eq("follower_id",user.id).eq("creator_id",creator.id).maybeSingle();
   const {data:sub}=await supabaseClient.from("subscriptions").select("creator_id,status").eq("subscriber_id",user.id).eq("creator_id",creator.id).maybeSingle();
-  const action=prompt(`${creator.display_name} · @${creator.username}\n\n${creator.bio||c.bio}\nSuscripción: US$${Number(creator.subscription_price||0).toFixed(2)}/mes\n\nEscribe: SEGUIR, DEJAR DE SEGUIR, SUSCRIBIR, CERRAR`,follow?"DEJAR DE SEGUIR":"SEGUIR");
-  if(!action)return;
-  const a=action.toUpperCase();
-  if(a==="SEGUIR"){
-    if(!follow){const {error}=await supabaseClient.from("follows").insert({follower_id:user.id,creator_id:creator.id});if(error)alert(error.message);else{alert("Ahora sigues a "+creator.display_name+".");await loadAccount();}}
-  }else if(a==="DEJAR DE SEGUIR"){
-    if(follow){const {error}=await supabaseClient.from("follows").delete().eq("follower_id",user.id).eq("creator_id",creator.id);if(error)alert(error.message);else{alert("Dejaste de seguir a "+creator.display_name+".");await loadAccount();}}
-  }else if(a==="SUSCRIBIR"){
-    if(!sub){const {error}=await supabaseClient.from("subscriptions").insert({subscriber_id:user.id,creator_id:creator.id,status:"active"});if(error)alert(error.message);else{alert("Suscripción V0 activada. Todavía no hay cobro real.");await loadAccount();}}
-    else alert("Ya tienes una suscripción V0 activa.");
-  }
+
+  const overlay=document.createElement("div");
+  overlay.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999";
+  overlay.innerHTML=`<div style="width:min(420px,100%);background:#171717;color:#fff;border:1px solid #333;border-radius:18px;padding:24px">
+    <h2 style="margin:0 0 6px">${creator.display_name}</h2>
+    <div style="opacity:.7;margin-bottom:14px">@${creator.username}</div>
+    <p style="line-height:1.5;margin:0 0 8px">${creator.bio||c.bio}</p>
+    <p style="margin:0 0 20px">Suscripción: <strong>US$${Number(creator.subscription_price||0).toFixed(2)}/mes</strong></p>
+    <div style="display:grid;gap:10px">
+      <button id="followAction" style="padding:13px;border:0;border-radius:10px;cursor:pointer">${follow?"SIGUIENDO":"SEGUIR"}</button>
+      <button id="subAction" style="padding:13px;border:0;border-radius:10px;cursor:pointer">${sub&&sub.status==="active"?"SUSCRITO":"SUSCRIBIRSE"}</button>
+      <button id="closeAction" style="padding:11px;background:transparent;color:#aaa;border:1px solid #444;border-radius:10px;cursor:pointer">CERRAR</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+
+  const close=()=>overlay.remove();
+  overlay.querySelector("#closeAction").onclick=close;
+
+  overlay.querySelector("#followAction").onclick=async()=>{
+    if(follow){
+      const {error}=await supabaseClient.from("follows").delete().eq("follower_id",user.id).eq("creator_id",creator.id);
+      if(error)alert(error.message); else {alert("Dejaste de seguir a "+creator.display_name+".");close();await loadAccount();}
+    }else{
+      const {error}=await supabaseClient.from("follows").insert({follower_id:user.id,creator_id:creator.id});
+      if(error)alert(error.message); else {alert("Ahora sigues a "+creator.display_name+".");close();await loadAccount();}
+    }
+  };
+
+  overlay.querySelector("#subAction").onclick=async()=>{
+    if(sub&&sub.status==="active"){alert("Ya estás suscrito a "+creator.display_name+".");return;}
+    const {error}=await supabaseClient.from("subscriptions").insert({subscriber_id:user.id,creator_id:creator.id,status:"active"});
+    if(error){alert(error.message);return;}
+    alert("Suscripción V0 activada. Todavía no hay cobro real.");
+    close();
+    await loadAccount();
+  };
 }
 
 document.getElementById("exploreBtn").onclick=()=>document.getElementById("creators").scrollIntoView({behavior:"smooth"});
