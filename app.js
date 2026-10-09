@@ -12,11 +12,98 @@ async function loadAccount(userOverride){
     const panel=document.getElementById("accountSection");
     panel.dataset.open="false";
     panel.style.display="none";
+    closeMySubscriptions();
+    document.getElementById("mySubscriptionsList").textContent="";
     const loginButton=document.getElementById("loginBtn");
     loginButton.textContent="Iniciar sesión";
     document.getElementById("signupBtn").style.display="inline-block";
     return;
-  }const p=await getMyProfile();const{count:fc}=await supabaseClient.from("follows").select("*",{count:"exact",head:true}).eq("follower_id",user.id);const{count:sc}=await supabaseClient.from("subscriptions").select("*",{count:"exact",head:true}).eq("subscriber_id",user.id).eq("status","active");const accountBox=document.getElementById("accountSection");accountBox.style.display=accountBox.dataset.open==="true"?"block":"none";document.getElementById("accountTitle").textContent="Hola, "+(p?.display_name||user.email);document.getElementById("accountEmail").textContent=user.email;document.getElementById("accountRole").textContent="Rol: "+(p?.role||"user")+" · @"+(p?.username||"usuario");document.getElementById("followCount").textContent=fc||0;document.getElementById("subCount").textContent=sc||0;document.getElementById("loginBtn").textContent="Mi cuenta";document.getElementById("signupBtn").style.display="none";const cb=document.getElementById("creatorBtn");cb.style.display="inline-block";cb.textContent=p?.role==="creator"?"Creator Studio":"Convertirme en creador";cb.onclick=()=>p?.role==="creator"?openCreatorStudio():becomeCreator();}
+  }const p=await getMyProfile();const{count:fc}=await supabaseClient.from("follows").select("*",{count:"exact",head:true}).eq("follower_id",user.id);const{count:sc}=await supabaseClient.from("subscriptions").select("*",{count:"exact",head:true}).eq("subscriber_id",user.id).eq("status","active");const accountBox=document.getElementById("accountSection");accountBox.style.display=accountBox.dataset.open==="true"?"block":"none";document.getElementById("accountTitle").textContent="Hola, "+(p?.display_name||user.email);document.getElementById("accountEmail").textContent=user.email;document.getElementById("accountRole").textContent="Rol: "+(p?.role||"user")+" · @"+(p?.username||"usuario");document.getElementById("followCount").textContent=fc||0;document.getElementById("subCount").textContent=sc||0;document.getElementById("loginBtn").textContent="Mi cuenta";document.getElementById("signupBtn").style.display="none";const cb=document.getElementById("creatorBtn");cb.style.display="inline-block";cb.textContent=p?.role==="creator"?"Creator Studio":"Convertirme en creador";cb.onclick=()=>p?.role==="creator"?openCreatorStudio():becomeCreator();if(!document.getElementById("mySubscriptionsPanel").hidden)refreshMySubscriptions(user);}
+
+
+/* Real active subscriptions for the signed-in account.
+   The reader queries only the viewer's own subscriptions under Supabase RLS. */
+let mySubscriptionsRequest=0;
+function closeMySubscriptions(){
+  const panel=document.getElementById("mySubscriptionsPanel");
+  panel.hidden=true;
+  document.getElementById("mySubscriptionsTrigger").setAttribute("aria-expanded","false");
+  mySubscriptionsRequest++;
+}
+async function showMySubscriptions(userOverride){
+  const panel=document.getElementById("mySubscriptionsPanel");
+  panel.hidden=false;
+  document.getElementById("mySubscriptionsTrigger").setAttribute("aria-expanded","true");
+  panel.scrollIntoView({behavior:"smooth",block:"nearest"});
+  return refreshMySubscriptions(userOverride);
+}
+async function refreshMySubscriptions(userOverride){
+  const list=document.getElementById("mySubscriptionsList");
+  const request=++mySubscriptionsRequest;
+  list.innerHTML='<p class="my-subscriptions-loading">Cargando tus suscripciones...</p>';
+  try{
+    const user=userOverride||await currentUser();
+    if(request!==mySubscriptionsRequest)return;
+    if(!user){
+      list.textContent="Inicia sesión para ver tus suscripciones.";
+      return;
+    }
+    const{data:subscriptions,error:subscriptionError}=await supabaseClient.from("subscriptions")
+      .select("creator_id,status,created_at")
+      .eq("subscriber_id",user.id).eq("status","active")
+      .order("created_at",{ascending:false});
+    if(request!==mySubscriptionsRequest)return;
+    if(subscriptionError)throw subscriptionError;
+    if(!subscriptions?.length){
+      list.innerHTML='<p class="my-subscriptions-empty">Todavía no tienes suscripciones activas.</p>';
+      return;
+    }
+    const ids=[...new Set(subscriptions.map(s=>s.creator_id).filter(Boolean))];
+    const{data:profiles,error:profileError}=await supabaseClient.from("profiles")
+      .select("id,display_name,username,bio,subscription_price")
+      .in("id",ids);
+    if(request!==mySubscriptionsRequest)return;
+    if(profileError)throw profileError;
+    const byId=new Map((profiles||[]).map(p=>[p.id,p]));
+    list.innerHTML=subscriptions.map(row=>{
+      const creator=byId.get(row.creator_id);
+      if(!creator)return '<div class="my-subscription-card"><div><strong>Suscripción activa</strong><p>No pudimos encontrar el perfil de este creador.</p></div></div>';
+      const name=esc(creator.display_name||creator.username||"Creador");
+      const handle=esc("@"+(creator.username||"creador"));
+      const initial=esc((creator.display_name||creator.username||"C").slice(0,1).toUpperCase());
+      const date=row.created_at&&!Number.isNaN(Date.parse(row.created_at))
+        ?new Date(row.created_at).toLocaleDateString("es-CL",{day:"2-digit",month:"short",year:"numeric"})
+        :"";
+      return `<article class="my-subscription-card">
+        <div class="my-subscription-avatar" aria-hidden="true">${initial}</div>
+        <div class="my-subscription-info"><strong>${name}</strong><span>${handle}</span>
+          <small>Activa · suscripción de prueba, sin cobros reales${date?" · desde "+esc(date):""}</small></div>
+        <button type="button" class="my-subscription-open" data-creator-id="${esc(row.creator_id)}">Ver perfil y gestionar →</button>
+      </article>`;
+    }).join("");
+    list.querySelectorAll(".my-subscription-open").forEach(button=>button.onclick=()=>{
+      const creator=byId.get(button.dataset.creatorId);
+      if(!creator)return;
+      const entry={
+        id:creator.id,name:creator.display_name||creator.username,
+        handle:"@"+creator.username,sub:"US$"+Number(creator.subscription_price||0).toFixed(2),
+        bio:creator.bio||"",db:true,portrait:"",cover:""
+      };
+      openProfile(0,[entry]);
+    });
+  }catch(error){
+    if(request!==mySubscriptionsRequest)return;
+    console.error("Error consultando suscripciones:",error);
+    list.innerHTML='<div class="my-subscriptions-error">No pudimos cargar tus suscripciones. <button id="retryMySubscriptions" type="button" class="my-subscription-open">Reintentar</button></div>';
+    list.querySelector("#retryMySubscriptions").onclick=()=>refreshMySubscriptions(userOverride);
+  }
+}
+document.getElementById("mySubscriptionsTrigger").onclick=()=>{
+  const panel=document.getElementById("mySubscriptionsPanel");
+  if(panel.hidden)showMySubscriptions();
+  else closeMySubscriptions();
+};
+document.getElementById("hideSubscriptions").onclick=closeMySubscriptions;
 
 let visibleCreatorList=[];
 function drawCreatorGrid(search=""){
@@ -325,7 +412,8 @@ document.getElementById("creatorSearch").addEventListener("input",e=>drawCreator
 document.getElementById("navSubscriptions").onclick=async()=>{
   const user=await currentUser();
   if(!user){document.getElementById("loginBtn").click();return;}
-  const section=document.getElementById("accountSection");section.dataset.open="true";await loadAccount();section.scrollIntoView({behavior:"smooth"});
+  showAccountPanel();
+  await showMySubscriptions(user);
 };
 document.getElementById("exploreBtn").onclick=()=>document.getElementById("creators").scrollIntoView({behavior:"smooth"});
 document.getElementById("allBtn").onclick=()=>{document.getElementById("creatorSearch").value="";drawCreatorGrid();document.getElementById("creators").scrollIntoView({behavior:"smooth"});};

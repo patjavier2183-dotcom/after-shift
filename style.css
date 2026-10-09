@@ -28,3 +28,24 @@ html,body{background-color:#faf9f7!important}
 .sprite-avatar{background-image:url("assets/after-shift-approved-editorial.webp");background-repeat:no-repeat;background-size:400% auto;background-position-y:bottom;color:transparent}
 .visually-hidden{position:absolute;clip:rect(0,0,0,0);width:1px;height:1px;overflow:hidden}
 @media(max-width:680px){.hero-visual{background-size:cover,auto 131%;background-position:center,-24% top}.card .cover{aspect-ratio:5/4}.demo-profile .profile-cover{background-size:cover,auto 131%;background-position:center,left top}}
+
+/* V0 - Active subscriptions in My Account. Editorial colors unchanged. */
+.account-subscriptions-button{appearance:none;display:flex;flex-direction:column;align-items:flex-start;gap:0;border:0;border-radius:9px;background:transparent;color:inherit;padding:1px 8px;min-width:118px;text-align:left}
+.account-subscriptions-button strong{font-size:20px}
+.account-subscriptions-button span{font-size:11px;color:#66717c}
+.account-subscriptions-button:hover,.account-subscriptions-button[aria-expanded="true"]{background:#fff8e8}
+.my-subscriptions-panel{border-top:1px solid #e8e9e9;margin-top:22px;padding-top:20px}
+.my-subscriptions-panel[hidden]{display:none!important}
+.my-subscriptions-heading{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:12px}
+.my-subscriptions-heading h3{font:500 24px Georgia,"Times New Roman",serif;margin:0}
+.my-subscriptions-loading,.my-subscriptions-empty,.my-subscriptions-error{margin:0;padding:15px;background:#f7f7f6;border-radius:11px;color:#63707a;font-size:13px}
+.my-subscription-card{display:flex;align-items:center;gap:13px;padding:15px 0;border-top:1px solid #ececec}
+.my-subscription-card:first-child{border-top:0}
+.my-subscription-avatar{width:48px;height:48px;flex:none;border-radius:50%;background:#222d37;color:#ffd35a;display:grid;place-items:center;font:500 25px Georgia,serif}
+.my-subscription-info{min-width:0;flex:1;display:flex;flex-direction:column;gap:3px}
+.my-subscription-info strong{font:500 18px Georgia,serif;color:#1c2731}
+.my-subscription-info span{font-size:12px;color:#66717a}
+.my-subscription-info small{font-size:11px;color:#68747e;line-height:1.45}
+.my-subscription-open{border:1px solid #dee0e2;background:#fff;border-radius:8px;padding:10px 12px;color:#202b34;font-size:12px;font-weight:700;text-align:center;cursor:pointer}
+.my-subscription-open:hover{background:#fff6dc;border-color:#ffd35a}
+@media(max-width:680px){.my-subscription-card{flex-wrap:wrap}.my-subscription-open{width:100%;margin-left:61px}.my-subscriptions-heading h3{font-size:22px}}

@@ -40,7 +40,17 @@
   </section>
   <section class="section account-section" id="accountSection" style="display:none">
     <div class="section-head"><div><div class="eyebrow">MI CUENTA</div><h2 id="accountTitle">Tu cuenta</h2></div><div class="account-actions"><button class="text-btn" id="creatorBtn">Convertirme en creador</button><button class="text-btn" id="logoutBtn">Cerrar sesión</button></div></div>
-    <div class="account-card"><div id="accountEmail"></div><div id="accountRole"></div><div class="account-stats"><div><strong id="followCount">0</strong><span>Siguiendo</span></div><div><strong id="subCount">0</strong><span>Suscripciones</span></div></div></div>
+    <div class="account-card"><div id="accountEmail"></div><div id="accountRole"></div><div class="account-stats">
+  <div><strong id="followCount">0</strong><span>Siguiendo</span></div>
+  <button class="account-subscriptions-button" id="mySubscriptionsTrigger" type="button"
+    aria-controls="mySubscriptionsPanel" aria-expanded="false" aria-label="Ver mis suscripciones">
+    <strong id="subCount">0</strong><span>Suscripciones <span aria-hidden="true">→</span></span>
+  </button>
+</div>
+<section class="my-subscriptions-panel" id="mySubscriptionsPanel" aria-label="Mis suscripciones" hidden>
+  <div class="my-subscriptions-heading"><h3>Mis suscripciones</h3><button id="hideSubscriptions" class="text-btn" type="button">Cerrar</button></div>
+  <div id="mySubscriptionsList" role="status" aria-live="polite">Selecciona Suscripciones para ver a quién sigues.</div>
+</section></div>
   </section>
   <section class="section creator-section" id="creators">
     <div class="section-head"><h2>Creadores destacados</h2><button class="text-btn see-all" id="allBtn" type="button">Ver todos <span aria-hidden="true">→</span></button></div>
@@ -51,5 +61,5 @@
 <div class="auth-modal" id="authModal" style="display:none"><div class="auth-box"><button class="profile-close" id="authClose" type="button" aria-label="Cerrar">×</button><div class="eyebrow">AFTER SHIFT</div><h2 id="authTitle">Crear cuenta</h2><p id="authHint">Crea tu cuenta para continuar.</p><form id="authForm"><label id="authUserLabel">Nombre de usuario<input id="authUsername" autocomplete="username" maxlength="24" required></label><label>Correo electrónico<input id="authEmail" type="email" autocomplete="email" required></label><label>Contraseña<input id="authPassword" type="password" autocomplete="new-password" minlength="6" required></label><div id="authMsg" class="form-msg"></div><button class="action-btn action-primary" type="submit" id="authSubmit">CREAR CUENTA</button></form><button class="text-btn" type="button" id="authSwitch">Ya tengo una cuenta → Ingresar</button></div></div>
 <footer class="site-footer"><div class="footer-inner"><div class="footer-brand">AFTER <span>SHIFT</span></div><div class="footer-links"><span>Sobre nosotros</span><span>Términos</span><span>Privacidad</span><span>Soporte</span></div><div class="footer-note">AFTER SHIFT · V0 en pruebas</div></div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js?v=20261009-account-fixed-v4"></script>
+<script src="app.js?v=20261009-my-subscriptions-v5"></script>
 </body></html>
