@@ -1,6 +1,8 @@
 const SUPABASE_URL="https://heqjyafaxjzisddmgvob.supabase.co";
 const SUPABASE_KEY="sb_publishable_u8E7mHoZgYnUw02fmkAKUQ_8l1vnuJy";
 const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+// Trial signups are closed. Paid access requires server-verified payment.
+const AFTER_SHIFT_NEW_SUBSCRIPTIONS_PAUSED=true;
 const creators=[{name:"Valentina",handle:"@valentina",sub:"US$9.99",tag:"DEMO",bio:"Contenido exclusivo y comunidad."},{name:"Sofía",handle:"@sofia",sub:"US$12.00",tag:"DEMO",bio:"Contenido premium para suscriptores."},{name:"Isabella",handle:"@isabella",sub:"US$8.99",tag:"DEMO",bio:"Nuevas publicaciones cada semana."},{name:"Camila",handle:"@camila",sub:"US$14.99",tag:"DEMO",bio:"Perfil ilustrativo de AFTER SHIFT."}];
 const grid=document.getElementById("creatorGrid");
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
@@ -251,13 +253,13 @@ async function openPostDetail(post,creator,viewerMark){
   }
 }
 async function getPosts(creatorId){const{data,error}=await supabaseClient.from("posts").select("id,title,preview,access,image_url,media_type,media_url,created_at").eq("creator_id",creatorId).order("created_at",{ascending:false});return error?[]:(data||[]);}
-async function openProfile(i,list=creators,options={}){const c=list[i];if(!c.db){openDemoProfile(c);return;}const user=await currentUser();if(!user){alert("Primero debes ingresar a AFTER SHIFT.");return;}const creator=c.db?{id:c.id,display_name:c.name,username:c.handle.replace("@",""),bio:c.bio,subscription_price:Number(String(c.sub).replace("US$",""))}:await (async()=>{const{data}=await supabaseClient.from("profiles").select("id,display_name,username,bio,subscription_price").eq("username",c.handle.replace("@","")).maybeSingle();return data;})();if(!creator){alert("Este creador todavía no está registrado en la base de datos V0.");return;}const{data:follow}=await supabaseClient.from("follows").select("creator_id").eq("follower_id",user.id).eq("creator_id",creator.id).maybeSingle();const{data:sub}=await supabaseClient.from("subscriptions").select("creator_id,status").eq("subscriber_id",user.id).eq("creator_id",creator.id).maybeSingle();const subscribed=sub?.status==="active";const canViewExclusive=subscribed||user.id===creator.id;const posts=await authorizePostMedia(await getPosts(creator.id),creator.id,subscribed,user.id);const viewerMark=`ID ${user.id.replace(/-/g,"").slice(0,16).toUpperCase()}`;const overlay=document.createElement("div");overlay.className="profile-overlay";overlay.innerHTML=`<section class="creator-profile">
+async function openProfile(i,list=creators,options={}){const c=list[i];if(!c.db){openDemoProfile(c);return;}const user=await currentUser();if(!user){alert("Primero debes ingresar a AFTER SHIFT.");return;}const creator=c.db?{id:c.id,display_name:c.name,username:c.handle.replace("@",""),bio:c.bio,subscription_price:Number(String(c.sub).replace("US$",""))}:await (async()=>{const{data}=await supabaseClient.from("profiles").select("id,display_name,username,bio,subscription_price").eq("username",c.handle.replace("@","")).maybeSingle();return data;})();if(!creator){alert("Este creador todavía no está registrado en la base de datos V0.");return;}const{data:follow}=await supabaseClient.from("follows").select("creator_id").eq("follower_id",user.id).eq("creator_id",creator.id).maybeSingle();const{data:sub}=await supabaseClient.from("subscriptions").select("creator_id,status").eq("subscriber_id",user.id).eq("creator_id",creator.id).maybeSingle();const subscribed=sub?.status==="active";const displayPrice=Number(creator.subscription_price||0)>0?"US$"+Number(creator.subscription_price).toFixed(2)+"/mes":"Desde US$4,99/mes · precio pendiente";const canViewExclusive=subscribed||user.id===creator.id;const posts=await authorizePostMedia(await getPosts(creator.id),creator.id,subscribed,user.id);const viewerMark=`ID ${user.id.replace(/-/g,"").slice(0,16).toUpperCase()}`;const overlay=document.createElement("div");overlay.className="profile-overlay";overlay.innerHTML=`<section class="creator-profile">
 <button class="profile-close" id="closeProfile" aria-label="Cerrar">×</button>
 <div class="profile-cover"></div>
 <div class="profile-head">
  <div class="avatar">${c.portrait?'<img src="'+esc(c.portrait)+'" alt="" loading="lazy">':esc(creator.display_name.charAt(0))}</div>
  <div class="profile-main"><div class="eyebrow">CREATOR</div><h2>${esc(creator.display_name)}</h2><div class="profile-handle">@${esc(creator.username)}</div><p>${esc(creator.bio||c.bio)}</p></div>
- <div class="profile-actions"><button class="action-btn" id="followAction">${follow?"SIGUIENDO ✓":"SEGUIR"}</button><button class="action-btn action-primary" id="subAction">${subscribed?"SUSCRITO ✓":"SUSCRIBIRSE · US$"+Number(creator.subscription_price||0).toFixed(2)+"/mes"}</button></div>
+ <div class="profile-actions"><button class="action-btn" id="followAction">${follow?"SIGUIENDO ✓":"SEGUIR"}</button><button class="action-btn action-primary" id="subAction">${subscribed?"SUSCRITO ✓":"VER SUSCRIPCIÓN"}</button></div>
 </div>
 <div class="profile-tabs" role="tablist" aria-label="Secciones del creador">
  <button class="profile-tab active" type="button" data-tab="content" role="tab" aria-selected="true">Contenido</button>
@@ -266,10 +268,10 @@ async function openProfile(i,list=creators,options={}){const c=list[i];if(!c.db)
 </div>
 <div class="profile-panel" data-panel="content">
 <div class="post-heading"><div><div class="eyebrow">PUBLICACIONES</div><h3>Contenido de ${esc(creator.display_name)}</h3></div></div>
-<div class="posts">${posts.length?posts.map(p=>`<article class="post-card">${p.access==="subscriber"&&!canViewExclusive?`<div class="post-media" style="display:flex;align-items:center;justify-content:center;flex-direction:column;min-height:175px;background:linear-gradient(135deg,#5b4438,#231b1c 53%,#4c3830);position:relative;overflow:hidden"><div aria-hidden="true" style="position:absolute;inset:-35px;background:radial-gradient(circle at 65% 42%,#b98c75 0%,#523c3b 39%,#231e22 75%);filter:blur(36px);opacity:.8"></div><div style="position:relative;color:white;font-size:26px">🔒</div><strong style="position:relative;color:white;font-size:11px;margin-top:8px">CONTENIDO EXCLUSIVO</strong><button type="button" class="unlock-post-action" style="position:relative;margin-top:13px;padding:9px 11px;background:#ffd35a;color:#17212b;border:0;border-radius:7px;font-weight:700;font-size:11px">SUSCRIBIRME</button></div>`:(p.media_url||p.image_url)?renderViewerMedia(p,viewerMark):``}<div class="post-label">${p.access==="public"?"PÚBLICO":"SOLO SUSCRIPTORES"}</div><h4>${esc(p.title)}</h4><p>${esc(p.preview||"")}</p>${p.access==="subscriber"&&!canViewExclusive?'<div class="locked">🔒 Suscríbete para desbloquear</div>':'<button class="read-post" data-post="'+p.id+'">VER PUBLICACIÓN</button>'}</article>`).join(""):'<div class="empty-posts">Este creador todavía no tiene publicaciones.</div>'}</div>
+<div class="posts">${posts.length?posts.map(p=>`<article class="post-card">${p.access==="subscriber"&&!canViewExclusive?`<div class="post-media" style="display:flex;align-items:center;justify-content:center;flex-direction:column;min-height:175px;background:linear-gradient(135deg,#5b4438,#231b1c 53%,#4c3830);position:relative;overflow:hidden"><div aria-hidden="true" style="position:absolute;inset:-35px;background:radial-gradient(circle at 65% 42%,#b98c75 0%,#523c3b 39%,#231e22 75%);filter:blur(36px);opacity:.8"></div><div style="position:relative;color:white;font-size:26px">🔒</div><strong style="position:relative;color:white;font-size:11px;margin-top:8px">CONTENIDO EXCLUSIVO</strong><button type="button" class="unlock-post-action" style="position:relative;margin-top:13px;padding:9px 11px;background:#ffd35a;color:#17212b;border:0;border-radius:7px;font-weight:700;font-size:11px">VER SUSCRIPCIÓN</button></div>`:(p.media_url||p.image_url)?renderViewerMedia(p,viewerMark):``}<div class="post-label">${p.access==="public"?"PÚBLICO":"SOLO SUSCRIPTORES"}</div><h4>${esc(p.title)}</h4><p>${esc(p.preview||"")}</p>${p.access==="subscriber"&&!canViewExclusive?'<div class="locked">🔒 Acceso exclusivo mediante suscripción</div>':'<button class="read-post" data-post="'+p.id+'">VER PUBLICACIÓN</button>'}</article>`).join(""):'<div class="empty-posts">Este creador todavía no tiene publicaciones.</div>'}</div>
 </div>
 <div class="profile-panel profile-panel-extra" data-panel="about" hidden><h3>Sobre ${esc(creator.display_name)}</h3><p>${esc(creator.bio||c.bio||"Contenido exclusivo y comunidad.")}</p></div>
-<div class="profile-panel profile-panel-extra" data-panel="subscription" hidden><h3>Suscripción</h3><p>Precio indicado: <strong>US$${Number(creator.subscription_price||0).toFixed(2)}/mes</strong>.</p><p>Accede a las publicaciones exclusivas del creador. En esta versión V0 solo existen suscripciones de prueba, sin cobros reales.</p><button type="button" class="action-btn action-primary" id="tabSubscribe">${subscribed?"GESTIONAR SUSCRIPCIÓN":"SUSCRIBIRME"}</button></div>
+<div class="profile-panel profile-panel-extra" data-panel="subscription" hidden><h3>Suscripción</h3><p>Precio comercial: <strong>${esc(displayPrice)}</strong>.</p><p>Los pagos todavía no están habilitados. El contenido exclusivo se desbloqueará únicamente después de verificar un pago; por ahora no se activan nuevas suscripciones gratuitas.</p><button type="button" class="action-btn action-primary" id="tabSubscribe">${subscribed?"GESTIONAR SUSCRIPCIÓN":"VER DISPONIBILIDAD"}</button></div>
 </section>`;if(options.previousOverlay?.isConnected){
   const scrollPosition=options.previousOverlay.scrollTop;
   options.previousOverlay.replaceWith(overlay);
@@ -322,57 +324,48 @@ overlay.querySelector("#followAction").onclick=async()=>{
 };
 // Todas las entradas (botón superior, miniatura y candado) pasan por confirmación.
 const subscriptionAction=overlay.querySelector("#subAction");
+
 async function updateSubscription(){
+  // Existing test accounts can cancel their old trial. No browser flow creates new access.
+  if(!subscribed)return showSubscriptionUnavailable();
   if(subscriptionAction.disabled)return;
-  if(subscribed&&!confirm("¿Quieres cancelar tu suscripción a "+creator.display_name+"?"))return;
+  if(!confirm("¿Quieres cancelar tu suscripción de prueba a "+creator.display_name+"?"))return;
   subscriptionAction.disabled=true;
-  subscriptionAction.textContent=subscribed?"Cancelando...":"Activando suscripción...";
+  subscriptionAction.textContent="Cancelando...";
   try{
-    if(subscribed){
-      const{error}=await supabaseClient.from("subscriptions").delete()
-        .eq("subscriber_id",user.id).eq("creator_id",creator.id);
-      if(error)throw error;
-    }else{
-      const{error}=await supabaseClient.from("subscriptions").insert({
-        subscriber_id:user.id,creator_id:creator.id,status:"active"
-      });
-      if(error)throw error;
-    }
-    await openProfile(i,list,{
-      previousOverlay:overlay,
-      notice:subscribed?"Suscripción de prueba cancelada. El contenido volvió a bloquearse.":"Suscripción de prueba activada. Contenido desbloqueado; no hubo cobro real."
-    });
+    const {error}=await supabaseClient.from("subscriptions").delete()
+      .eq("subscriber_id",user.id).eq("creator_id",creator.id);
+    if(error)throw error;
+    await openProfile(i,list,{previousOverlay:overlay,notice:"Suscripción de prueba cancelada. El contenido volvió a bloquearse."});
     await loadAccount();
     await render();
   }catch(err){
     subscriptionAction.disabled=false;
-    subscriptionAction.textContent=subscribed?"SUSCRITO ✓":"SUSCRIBIRSE · US$"+Number(creator.subscription_price||0).toFixed(2)+"/mes";
+    subscriptionAction.textContent="SUSCRITO ✓";
     const notice=document.createElement("div");
     notice.className="profile-feedback";
     notice.setAttribute("role","alert");
-    notice.textContent="No se pudo cambiar la suscripción: "+(err?.message||"Inténtalo de nuevo.");
+    notice.textContent="No se pudo cancelar la suscripción: "+(err?.message||"Inténtalo de nuevo.");
     overlay.appendChild(notice);
     setTimeout(()=>notice.remove(),5000);
   }
 }
-function showSubscriptionConfirmation(){
+function showSubscriptionUnavailable(){
   if(overlay.querySelector(".subscription-confirm-overlay"))return;
-  const price="US$"+Number(creator.subscription_price||0).toFixed(2)+"/mes";
   const dialog=document.createElement("div");
   dialog.className="subscription-confirm-overlay";
   dialog.setAttribute("role","presentation");
-  dialog.innerHTML=`<section class="subscription-confirm-card" role="dialog" aria-modal="true" aria-labelledby="subscriptionConfirmTitle" aria-describedby="subscriptionConfirmDesc">
-    <button type="button" class="subscription-confirm-close" aria-label="Cerrar confirmación">×</button>
-    <div class="eyebrow">AFTER SHIFT · V0</div>
-    <h2 id="subscriptionConfirmTitle">Confirmar suscripción</h2>
-    <p id="subscriptionConfirmDesc">Estás por suscribirte a <strong>${esc(creator.display_name)}</strong>.</p>
-    <div class="subscription-confirm-price"><span>Precio mensual anunciado</span><strong>${price}</strong></div>
-    <p class="subscription-confirm-note">Esta es una <strong>prueba gratuita de funcionamiento</strong>. No se procesará ningún pago, no se solicitará tarjeta y no se generarán cobros automáticos.</p>
-    <div class="subscription-confirm-actions">
-      <button type="button" class="action-btn subscription-confirm-cancel">CANCELAR</button>
-      <button type="button" class="action-btn action-primary subscription-confirm-accept">CONFIRMAR PRUEBA</button>
-    </div>
-  </section>`;
+  const displayedPrice=esc(displayPrice);
+  dialog.innerHTML='<section class="subscription-confirm-card" role="dialog" aria-modal="true" aria-labelledby="subscriptionConfirmTitle" aria-describedby="subscriptionConfirmDesc">'+
+    '<button type="button" class="subscription-confirm-close" aria-label="Cerrar">×</button>'+
+    '<div class="eyebrow">AFTER SHIFT · SUSCRIPCIONES</div>'+
+    '<h2 id="subscriptionConfirmTitle">Acceso exclusivo</h2>'+
+    '<p id="subscriptionConfirmDesc">Suscripción a <strong>'+esc(creator.display_name)+'</strong>.</p>'+
+    '<div class="subscription-confirm-price"><span>Precio comercial</span><strong>'+displayedPrice+'</strong></div>'+
+    '<p class="subscription-confirm-note"><strong>Los pagos todavía no están habilitados.</strong> Para acceder a este contenido será necesario completar una compra y verificar el pago. Durante las pruebas no permitimos activar nuevas suscripciones gratuitas.</p>'+
+    '<div class="subscription-confirm-actions">'+
+      '<button type="button" class="action-btn action-primary subscription-confirm-cancel">ENTENDIDO</button>'+
+    '</div></section>';
   overlay.appendChild(dialog);
   const previousFocus=document.activeElement;
   const close=()=>{dialog.remove();if(previousFocus?.isConnected)previousFocus.focus();};
@@ -380,13 +373,9 @@ function showSubscriptionConfirmation(){
   dialog.querySelector(".subscription-confirm-cancel").onclick=close;
   dialog.addEventListener("click",e=>{if(e.target===dialog)close();});
   dialog.addEventListener("keydown",e=>{if(e.key==="Escape"){e.preventDefault();close();}});
-  dialog.querySelector(".subscription-confirm-accept").onclick=()=>{
-    dialog.remove();
-    updateSubscription();
-  };
   dialog.querySelector(".subscription-confirm-cancel").focus();
 }
-subscriptionAction.onclick=()=>subscribed?updateSubscription():showSubscriptionConfirmation();
+subscriptionAction.onclick=()=>subscribed?updateSubscription():showSubscriptionUnavailable();
 overlay.querySelectorAll(".read-post").forEach(btn=>btn.onclick=()=>{
   const post=posts.find(p=>p.id===btn.dataset.post);
   if(post)openPostDetail(post,creator,viewerMark);
