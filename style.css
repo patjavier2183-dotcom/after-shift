@@ -64,3 +64,8 @@ html,body{background-color:#faf9f7!important}
 .post-detail-media .secured-media-frame{position:relative;width:100%;height:auto!important;display:flex;justify-content:center;align-items:center;overflow:hidden;margin:0}
 .post-detail-description{white-space:pre-wrap;overflow-wrap:anywhere;color:#35424d;font-size:14px;line-height:1.6;margin:0;padding:24px 27px 28px}
 @media(max-width:680px){.post-detail-overlay{padding:10px}.post-detail-card{max-height:calc(100vh - 20px);border-radius:12px}.post-detail-head{padding:26px 58px 15px 18px}.post-detail-head h2{font-size:29px}.post-detail-description{padding:17px 19px 23px}.post-detail-media .post-media{max-height:65vh}}
+
+/* Account recovery, matching AFTER SHIFT's approved light design. */
+.auth-recovery-link{display:block;margin:13px 0 0 auto;border:0;background:transparent;color:#45505c;font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:3px;padding:4px 0}
+.auth-recovery-link:hover{color:#9c7423}
+.auth-box #authMsg:not(:empty){line-height:1.45;margin:12px 0;color:#654d1d;background:#fff8e8;padding:11px 13px;border-radius:8px}

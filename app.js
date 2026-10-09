@@ -591,13 +591,15 @@ supabaseClient.auth.onAuthStateChange((event,session)=>{
 render();
 loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
 
-// Auth UI V0: visible form instead of browser prompts.
+// AFTER SHIFT: reusable sign-up, login and email-based password recovery.
 (function(){
   const modal=document.getElementById("authModal");
   const form=document.getElementById("authForm");
   const title=document.getElementById("authTitle");
   const hint=document.getElementById("authHint");
   const userLabel=document.getElementById("authUserLabel");
+  const emailLabel=document.getElementById("authEmailLabel");
+  const passwordLabel=document.getElementById("authPasswordLabel");
   const username=document.getElementById("authUsername");
   const email=document.getElementById("authEmail");
   const password=document.getElementById("authPassword");
@@ -605,40 +607,85 @@ loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
   const submit=document.getElementById("authSubmit");
   const close=document.getElementById("authClose");
   const sw=document.getElementById("authSwitch");
-  if(!modal||!form)return;
+  const forgot=document.getElementById("authForgot");
+  if(!modal||!form||!emailLabel||!passwordLabel||!forgot)return;
   let mode="signup";
-  function open(modeName){
-    mode=modeName;
-    title.textContent=mode==="signup"?"Crear cuenta":"Ingresar";
-    hint.textContent=mode==="signup"?"Crea tu cuenta para continuar.":"Ingresa con tu cuenta de AFTER SHIFT.";
-    userLabel.style.display=mode==="signup"?"block":"none";
-    username.required=mode==="signup";
-    password.autocomplete=mode==="signup"?"new-password":"current-password";
-    submit.textContent=mode==="signup"?"CREAR CUENTA":"INGRESAR";
-    sw.textContent=mode==="signup"?"Ya tengo una cuenta → Ingresar":"No tengo cuenta → Crear cuenta";
+  let recoveryAuthorized=false;
+
+  function open(nextMode){
+    mode=nextMode;
+    const signingUp=mode==="signup";
+    const loggingIn=mode==="login";
+    const requesting=mode==="request-reset";
+    const recovering=mode==="new-password";
+    title.textContent=signingUp?"Crear cuenta":loggingIn?"Ingresar":requesting?"Recuperar contraseña":"Nueva contraseña";
+    hint.textContent=signingUp?"Crea tu cuenta para continuar."
+      :loggingIn?"Ingresa con tu cuenta de AFTER SHIFT."
+      :requesting?"Ingresa el correo con el que registraste tu cuenta. Te enviaremos un enlace para recuperar el acceso."
+      :"Escribe una contraseña nueva para recuperar tu cuenta.";
+    userLabel.style.display=signingUp?"block":"none";
+    emailLabel.style.display=recovering?"none":"block";
+    passwordLabel.style.display=requesting?"none":"block";
+    forgot.style.display=loggingIn?"block":"none";
+    sw.style.display=recovering?"none":"block";
+    username.required=signingUp;
+    email.required=!recovering;
+    password.required=!requesting;
+    password.minLength=recovering?8:6;
+    password.autocomplete=signingUp||recovering?"new-password":"current-password";
+    submit.textContent=signingUp?"CREAR CUENTA":loggingIn?"INGRESAR":requesting?"ENVIAR ENLACE":"GUARDAR CONTRASEÑA";
+    sw.textContent=signingUp?"Ya tengo una cuenta → Ingresar"
+      :loggingIn?"No tengo cuenta → Crear cuenta"
+      :"← Volver a ingresar";
     msg.textContent="";
+    password.value="";
     modal.style.display="flex";
-    setTimeout(()=>email.focus(),50);
+    if(recovering)password.focus();
+    else email.focus();
   }
-  function closeModal(){modal.style.display="none";form.reset();msg.textContent="";}
+
+  function closeModal(){
+    modal.style.display="none";
+    form.reset();
+    msg.textContent="";
+  }
   close.onclick=closeModal;
-  sw.onclick=()=>open(mode==="signup"?"login":"signup");
+  sw.onclick=()=>open(mode==="signup"?"login":mode==="login"?"signup":"login");
+  forgot.onclick=()=>open("request-reset");
   modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});
   document.getElementById("signupBtn").onclick=()=>open("signup");
   document.getElementById("loginBtn").onclick=()=>{
-    // The button is "Mi cuenta" for signed-in users and must react immediately.
     if(document.getElementById("loginBtn").textContent.trim()==="Mi cuenta"){
       showAccountPanel();
       loadAccount().catch(error=>{
         console.error("No se pudo actualizar Mi cuenta:",error);
         document.getElementById("accountRole").textContent="No se pudo actualizar la cuenta.";
       });
-    }else{
-      open("login");
-    }
+    }else open("login");
   };
+
+  // A recovery link issued by Supabase is required before changing a password.
+  // Do not trust the bare ?reset_password=1 query parameter as authorization.
+  supabaseClient.auth.onAuthStateChange((event,session)=>{
+    if(event==="PASSWORD_RECOVERY"&&session?.user){
+      recoveryAuthorized=true;
+      setTimeout(()=>open("new-password"),0);
+    }
+  });
+  // Some sessions may have expired while the email link was opened.
+  if(new URLSearchParams(window.location.search).has("reset_password")){
+    const errorParams=new URLSearchParams(window.location.hash.replace(/^#/,""));
+    if(errorParams.has("error")||new URLSearchParams(window.location.search).has("error")){
+      setTimeout(()=>{
+        open("request-reset");
+        msg.textContent="El enlace de recuperación expiró o no es válido. Solicita uno nuevo.";
+      },0);
+    }
+  }
+
   form.onsubmit=async e=>{
     e.preventDefault();
+    if(submit.disabled)return;
     msg.textContent="Procesando...";
     submit.disabled=true;
     try{
@@ -648,7 +695,7 @@ loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
           msg.textContent="El usuario debe tener 3 a 24 caracteres: letras, números, punto, guion o guion bajo.";
           return;
         }
-        const {data,error}=await supabaseClient.auth.signUp({
+        const{data,error}=await supabaseClient.auth.signUp({
           email:email.value.trim(),
           password:password.value,
           options:{data:{username:clean,display_name:username.value.trim()},emailRedirectTo:window.location.origin+"/?verified=1"}
@@ -660,14 +707,48 @@ loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
         }else{
           msg.textContent="Cuenta creada. Revisa tu correo para confirmar la cuenta y luego ingresa.";
         }
-      }else{
-        const {data,error}=await supabaseClient.auth.signInWithPassword({email:email.value.trim(),password:password.value});
-        if(error){msg.textContent=error.message.toLowerCase().includes("email not confirmed")?"Falta confirmar el correo. Revisa tu bandeja de entrada.":"No pudimos iniciar sesión: "+error.message;return;}
+      }else if(mode==="login"){
+        const{data,error}=await supabaseClient.auth.signInWithPassword({email:email.value.trim(),password:password.value});
+        if(error){
+          msg.textContent=error.message.toLowerCase().includes("email not confirmed")
+            ?"Falta confirmar el correo. Revisa tu bandeja de entrada."
+            :"El correo o la contraseña no son correctos. Compruébalos o usa «¿Olvidaste tu contraseña?»";
+          return;
+        }
+        closeModal();
+        await finishLogin(data.user);
+      }else if(mode==="request-reset"){
+        const target=email.value.trim();
+        if(!target){msg.textContent="Escribe el correo de tu cuenta.";return;}
+        const{error}=await supabaseClient.auth.resetPasswordForEmail(target,{
+          redirectTo:window.location.origin+"/?reset_password=1"
+        });
+        if(error){
+          console.error("No se pudo solicitar recuperación:",error.message);
+          msg.textContent="No se pudo enviar el enlace. Inténtalo nuevamente en unos minutos.";
+          return;
+        }
+        // Avoid revealing whether an email is registered.
+        msg.textContent="Si ese correo está asociado a una cuenta, recibirás un enlace de recuperación. Revisa también la carpeta Spam.";
+      }else if(mode==="new-password"){
+        if(!recoveryAuthorized){msg.textContent="Primero abre el enlace de recuperación enviado a tu correo.";return;}
+        if(password.value.length<8){msg.textContent="Tu nueva contraseña debe tener al menos 8 caracteres.";return;}
+        const{data,error}=await supabaseClient.auth.updateUser({password:password.value});
+        if(error){msg.textContent="No se pudo cambiar la contraseña. Solicita otro enlace si expiró.";return;}
+        recoveryAuthorized=false;
+        // Remove the recovery flag without navigating away from the current page.
+        const url=new URL(window.location.href);
+        url.searchParams.delete("reset_password");
+        url.searchParams.delete("error");
+        url.searchParams.delete("error_description");
+        url.hash="";
+        window.history.replaceState({},document.title,url.pathname+url.search);
         closeModal();
         await finishLogin(data.user);
       }
     }catch(err){
-      msg.textContent="Ocurrió un error al procesar la cuenta. Inténtalo nuevamente.";
+      console.error("Error de autenticación:",err);
+      msg.textContent="Ocurrió un error. Comprueba tu conexión e inténtalo nuevamente.";
     }finally{
       submit.disabled=false;
     }
