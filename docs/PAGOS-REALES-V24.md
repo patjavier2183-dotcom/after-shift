@@ -19,13 +19,24 @@ AFTER SHIFT será una plataforma de creadores de contenido **general y contenido
 
 **Próximo hito, pendiente de aprobación externa**: enviar consulta de preaprobación a Flow y verificar CCBill como alternativa; no integrar credenciales productivas hasta recibir respuesta positiva y los términos del modelo marketplace.
 
+## Modelo de ingresos y pagos a creadores acordado (2026-10-09)
+
+**Decisión comercial preliminar aprobada por el usuario:**
+
+- Cada suscripción cobrada se repartirá **80% para el creador** y **20% para AFTER SHIFT**, calculado inicialmente sobre el precio cobrado al suscriptor. Definir contractualmente los impuestos y ajustes aplicables antes de publicar precios finales.
+- **AFTER SHIFT asume la comisión de procesamiento** de la pasarela con cargo a su participación del 20%, sujeto al precio y autorización comercial efectiva del proveedor. La tarifa pública ilustrativa de Flow **2,89% + IVA** no es una cotización aprobada para este negocio adulto, que podría recibir cargos o reservas distintos.
+- **Liquidación semanal a los creadores** de ganancias **disponibles**: solo pagos efectivamente confirmados y fondos liberados por el proveedor, excluyendo montos en disputa, reembolsados, retenidos, impagos o pendientes de conciliación. No comprometer una fecha u hora específicas de pago sin definir el proveedor y plazos bancarios.
+- El panel del creador deberá distinguir **ingresos generados, pendientes de liberación, disponibles para cobrar y ya transferidos**, así como descuentos o reservas y el detalle de cada liquidación.
+- El reparto y la transferencia efectiva requieren verificar con la pasarela **si admite el modelo de marketplace y pago a múltiples creadores**, titulares legales y requisitos KYC/AML. No dar por hecho que AFTER SHIFT puede custodiar o distribuir fondos ajenos sin revisar las obligaciones aplicables.
+- Los cobros, renovaciones y pagos semanales **aún no están activados**. La web publicada continúa con simulaciones de pago V23.
+
 ## Preguntas comerciales restantes, antes de programar un proveedor
 
 1. Tipo de contenido: **resuelto**. Admitirá contenido general y sexual explícito de adultos, solo legal y consentido. Aún se requiere aprobación expresa del proveedor.
 2. ¿AFTER SHIFT cobrará en nombre propio, o cada creador debe recibir su proporción automáticamente (marketplace, múltiples destinatarios)?
 3. ¿Moneda del cobro: CLP, USD o ambas? En Creator Studio hoy hay precios locales de ejemplo en US$, no publicados ni validados por servidor.
 4. Quién es el titular legal del comercio y a qué cuenta bancaria se abonará; condiciones de reembolsos, contracargos y cumplimiento KYC para creadores.
-5. Acordar comisión de AFTER SHIFT y el tratamiento del IVA y la documentación tributaria.
+5. Comisión **80/20 acordada como propuesta inicial** y comisión de pasarela asumida por AFTER SHIFT; pendientes el tratamiento de IVA, impuestos, documentación tributaria, posibles contracargos y reservas.
 
 ## Proveedores candidatos verificados por documentación
 
