@@ -119,11 +119,23 @@ function translate(es){
   const i=es.indexOf(value);
   return es.slice(0,i)+target+es.slice(i+value.length);
 }
+
+function isGenerated(source,actual){
+  if(actual===source)return true;
+  const word=source.trim(),m=word.match(/^(\d+) publicaciones?$/);
+  const row=dict.get(word);
+  const i=source.indexOf(word);
+  if(row&&i>=0)return actual===source.slice(0,i)+row.en+source.slice(i+word.length)||
+                         actual===source.slice(0,i)+row.pt+source.slice(i+word.length);
+  if(m)return actual.trim()===m[1]+(m[1]==="1"?" post":" posts")||
+                actual.trim()===m[1]+(m[1]==="1"?" publicação":" publicações");
+  return false;
+}
 function translateNode(n){
   if(!n.parentElement||n.parentElement.closest(excluded))return;
   const actual=n.nodeValue;
   let source=savedText.get(n);
-  if(source!==undefined&&actual!==source&&actual!==(translate(source)||source))source=undefined;
+  if(source!==undefined&&!isGenerated(source,actual))source=undefined;
   if(source===undefined){
     source=actual;
     if(!dict.has(source.trim())&&!/^\d+ publicaciones?$/.test(source.trim()))return;
@@ -139,7 +151,7 @@ function translateAttrs(el){
     if(!el.hasAttribute(attr))return;
     const actual=el.getAttribute(attr);
     let source=stored[attr];
-    if(source!==undefined&&actual!==source&&actual!==(translate(source)||source))source=undefined;
+    if(source!==undefined&&!isGenerated(source,actual))source=undefined;
     if(source===undefined){source=actual;if(!dict.has(source.trim()))return;stored[attr]=source;}
     const result=translate(source)||source;
     if(actual!==result)el.setAttribute(attr,result);
