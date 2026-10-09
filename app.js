@@ -707,7 +707,7 @@ loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
   modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});
   document.getElementById("signupBtn").onclick=()=>open("signup");
   document.getElementById("loginBtn").onclick=()=>{
-    if(document.getElementById("loginBtn").textContent.trim()==="Mi cuenta"){
+    if(await currentUser()){
       showAccountPanel();
       loadAccount().catch(error=>{
         console.error("No se pudo actualizar Mi cuenta:",error);
