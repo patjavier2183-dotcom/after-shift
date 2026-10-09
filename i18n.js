@@ -101,6 +101,10 @@ const lines=[
 "Pago rechazado|Payment rejected|Pagamento recusado",
 "Suscripción vencida|Subscription expired|Assinatura expirada",
 "Sin intento de pago|No payment attempted|Nenhum pagamento tentado",
+"Contenido exclusivo y comunidad.|Exclusive content and community.|Conteúdo exclusivo e comunidade.",
+"Contenido premium para suscriptores.|Premium content for subscribers.|Conteúdo premium para assinantes.",
+"Nuevas publicaciones cada semana.|New posts every week.|Novas publicações toda semana.",
+"Perfil ilustrativo de AFTER SHIFT.|Sample AFTER SHIFT profile.|Perfil ilustrativo do AFTER SHIFT.",
 "Idioma de la interfaz|Interface language|Idioma da interface",
 "Ingresar|Log in|Entrar",
 "INGRESAR|LOG IN|ENTRAR",
@@ -282,7 +286,7 @@ const lines=[
 const dict=new Map(lines.map(s=>{const [es,en,pt]=s.split("|");return [es,{en,pt}]}));
 const savedText=new WeakMap(),savedAttr=new WeakMap();
 let lang="es",scheduled=false;
-const excluded="script,style,noscript,textarea,[contenteditable],.card .name,.card .handle,.creator-profile .profile-main p,.profile-panel-extra[data-panel='about'] p,.post-card h4,.post-card>p,.post-card p,.post-detail-head h2,.post-detail-description,.my-subscription-info strong,#accountEmail";
+const excluded="script,style,noscript,textarea,[contenteditable],.card .name,.card .handle,.post-card h4,.post-card>p,.post-card p,.post-detail-head h2,.post-detail-description,.my-subscription-info strong,#accountEmail";
 function formatVariable(value,language){
   const en=language==="en";
   let m=value.match(/^(\d+) publicaciones?$/);
