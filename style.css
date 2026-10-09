@@ -578,3 +578,46 @@ html,body{background-color:#faf9f7!important}
   .account-section .account-actions #creatorBtn,
   .account-section .account-actions #logoutBtn{font-size:11px;padding:9px 7px;}
 }
+
+
+/* AFTER SHIFT V30 · purchase-facing demo wallet with packages first.
+   UI only: no financial writes, no real purchases, same original 3 choices and math. */
+.account-section .account-actions #coinLabTrigger{
+  min-height:40px;
+  padding:9px 13px;
+  border:1px solid #ddcc9f;
+  background:#fff9eb;
+  color:#624918;
+  font-size:12px;
+  font-weight:750;
+}
+.account-section .account-actions #coinLabTrigger:hover{background:#fff1d5;color:#3e301b}
+.coin-lab-card .coin-lab-packs{margin:13px 0 16px}
+.coin-lab-card .coin-lab-pack{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:space-between;
+  min-height:145px;
+  padding:13px 10px 10px;
+  background:#fffefa;
+  text-align:center;
+  gap:6px;
+  border:1px solid #dedbd2;
+  border-radius:11px;
+}
+.coin-lab-card .coin-lab-pack:focus-visible{outline:3px solid #ddb34c;outline-offset:2px}
+.coin-lab-card .coin-lab-pack:hover{background:#fff7e3;border-color:#d5b45b}
+.coin-lab-pack-qty{color:#1f2f3a;font-size:14px;line-height:1.3}
+.coin-lab-pack-total{display:block;font-size:23px;line-height:1.15;letter-spacing:-.04em;color:#192b35}
+.coin-lab-pack-nominal{display:block;color:#6b7780;font-size:10px;line-height:1.3;font-weight:500}
+.coin-lab-pack-action{display:block;margin-top:4px;background:#1b2933;color:#fff;border-radius:7px;padding:9px 3px;font-size:10px;font-weight:800}
+.coin-lab-card .coin-lab-balance{margin:17px 0 10px}
+.coin-lab-card .coin-lab-intro{margin:7px 0 15px}
+@media(max-width:680px){
+  .coin-lab-card .coin-lab-pack{padding:12px 5px 8px;min-height:148px;gap:4px}
+  .coin-lab-pack-qty{font-size:12px}
+  .coin-lab-pack-total{font-size:19px}
+  .coin-lab-pack-nominal{font-size:9px}
+  .coin-lab-pack-action{font-size:9px;padding:8px 2px}
+}

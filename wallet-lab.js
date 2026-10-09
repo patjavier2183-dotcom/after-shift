@@ -6,14 +6,14 @@
 const PACKS=[50,100,200],CENT_PER_COIN=10,FEE_BPS=500,CREATOR_PERCENT=80;
 const messages={
  es:{
-  trigger:"🪙 Monedas de prueba",eyebrow:"AFTER SHIFT · LABORATORIO",title:"Monedas y regalos virtuales",
-  warning:"SIMULADOR: no compra monedas reales, no cobra dinero, no hace transferencias ni desbloquea publicaciones. El saldo desaparece al cerrar.",
-  how:"Prueba una recarga y luego úsala en regalos de un LIVE ficticio, propinas o una compra individual DEMO.",
-  packs:"1. Recargar monedas (simulación)",pack:(coins,charge)=>coins+" monedas · "+charge,
-  packInfo:"1 moneda = US$0,10. El precio de ejemplo incluye una tarifa visible de servicio del 5%.",
-  live:"2. Regalos durante un LIVE de ejemplo",notLive:"Esta es una simulación de regalos; todavía no hay transmisiones reales.",
+  trigger:"🪙 Comprar monedas",eyebrow:"AFTER SHIFT · COMPRA DE PRUEBA",title:"Comprar paquetes de monedas",
+  warning:"MODO PRUEBA · Aquí no se cobra dinero real. Elegir un paquete simula una compra: no crea monedas reales, transferencias ni acceso a videos. El saldo se elimina al cerrar.",
+  how:"Después de simular una compra, prueba los regalos para LIVE, propinas o una publicación DEMO.",
+  packs:"Elige tu paquete",pack:(coins,charge)=>coins+" monedas · "+charge,packQty:n=>n+" monedas",packCTA:"SIMULAR COMPRA",packNominal:"Valor de monedas",
+  packInfo:"Precios de ejemplo en USD (no definitivos). 1 moneda = US$0,10; el total ilustrativo incluye una tarifa de recarga del 5%. No se realiza ningún pago.",
+  live:"Regalos para LIVE (prueba)",notLive:"Esta es una simulación de regalos; todavía no hay transmisiones reales.",
   heart:"❤️ Corazón",star:"⭐ Estrella",diamond:"💎 Diamante",crown:"👑 Corona",
-  more:"3. Otros usos de las monedas",tip:"💛 Propina de 20 monedas",post:"🎬 Publicación DEMO · 30 monedas",bought:"✓ Comprada en la prueba",
+  more:"También puedes probar",tip:"💛 Propina de 20 monedas",post:"🎬 Publicación DEMO · 30 monedas",bought:"✓ Comprada en la prueba",
   noUnlock:"Esta compra solo cambia el indicador DEMO; no permite abrir videos ni contenido privado.",
   balance:"Saldo de prueba",charged:"Pago simulado al recargar",fee:"Tarifas de servicio simuladas",
   redeemed:"Valor gastado",creator:"A favor del creador (80% del gasto)",commission:"Comisión AFTER SHIFT (20% del gasto)",
@@ -26,14 +26,14 @@ const messages={
   reset:"Reiniciar prueba",close:"Cerrar prueba",unspentNote:"El saldo restante no es utilidad realizada. Tampoco permite retirar efectivo.",
  },
  en:{
-  trigger:"🪙 Demo coins",eyebrow:"AFTER SHIFT · TEST LAB",title:"Coins and virtual gifts",
-  warning:"DEMO ONLY: no real coin purchases, charges, transfers or private content unlocks. Balance resets on close.",
-  how:"Try a top-up, then use the demo coins for LIVE gifts, tips or an individual DEMO purchase.",
-  packs:"1. Add demo coins",pack:(coins,charge)=>coins+" coins · "+charge,
-  packInfo:"1 coin = US$0.10. Example price includes a clearly disclosed 5% service fee.",
-  live:"2. Gifts in a simulated LIVE",notLive:"This is a gift simulation; real live streams are not available yet.",
+  trigger:"🪙 Buy coins",eyebrow:"AFTER SHIFT · PURCHASE DEMO",title:"Buy coin packages",
+  warning:"DEMO MODE · No real money is charged. Selecting a package simulates a purchase: no real coins, transfers or private video access. Balance resets on close.",
+  how:"After simulating a purchase, try LIVE gifts, tips or an individual DEMO post.",
+  packs:"Choose your package",pack:(coins,charge)=>coins+" coins · "+charge,packQty:n=>n+" coins",packCTA:"SIMULATE PURCHASE",packNominal:"Coin value",
+  packInfo:"Illustrative USD prices (not final). 1 coin = US$0.10; the example total includes a 5% top-up fee. No payment occurs.",
+  live:"LIVE gifts (demo)",notLive:"This is a gift simulation; real live streams are not available yet.",
   heart:"❤️ Heart",star:"⭐ Star",diamond:"💎 Diamond",crown:"👑 Crown",
-  more:"3. Other ways to use coins",tip:"💛 Tip 20 coins",post:"🎬 DEMO post · 30 coins",bought:"✓ Bought in demo",
+  more:"Other demo uses",tip:"💛 Tip 20 coins",post:"🎬 DEMO post · 30 coins",bought:"✓ Bought in demo",
   noUnlock:"This DEMO purchase changes only the test indicator; it does not unlock videos or private posts.",
   balance:"Demo balance",charged:"Simulated top-up charges",fee:"Simulated service fees",
   redeemed:"Value spent",creator:"Creator allocation (80% of spending)",commission:"AFTER SHIFT commission (20% of spending)",
@@ -46,14 +46,14 @@ const messages={
   reset:"Reset demo",close:"Close demo",unspentNote:"Unspent coin value is not realized profit. Coins cannot be cashed out.",
  },
  pt:{
-  trigger:"🪙 Moedas de teste",eyebrow:"AFTER SHIFT · LABORATÓRIO",title:"Moedas e presentes virtuais",
-  warning:"SIMULAÇÃO: não compra moedas reais, não cobra, não transfere dinheiro nem libera conteúdo privado. O saldo zera ao fechar.",
-  how:"Simule uma recarga e use as moedas em presentes de LIVE, gorjetas ou uma compra individual DEMO.",
-  packs:"1. Recarregar moedas (simulação)",pack:(coins,charge)=>coins+" moedas · "+charge,
-  packInfo:"1 moeda = US$ 0,10. O valor de exemplo inclui uma taxa de serviço visível de 5%.",
-  live:"2. Presentes em um LIVE de exemplo",notLive:"Esta é uma simulação de presentes; ainda não há transmissões reais.",
+  trigger:"🪙 Comprar moedas",eyebrow:"AFTER SHIFT · COMPRA DE TESTE",title:"Comprar pacotes de moedas",
+  warning:"MODO TESTE · Nenhum dinheiro real é cobrado. A escolha do pacote simula uma compra: não cria moedas reais, transferências nem acesso a vídeos. Saldo zerado ao fechar.",
+  how:"Depois de simular uma compra, teste presentes em LIVE, gorjetas ou uma publicação DEMO.",
+  packs:"Escolha seu pacote",pack:(coins,charge)=>coins+" moedas · "+charge,packQty:n=>n+" moedas",packCTA:"SIMULAR COMPRA",packNominal:"Valor das moedas",
+  packInfo:"Valores ilustrativos em USD (não definitivos). 1 moeda = US$ 0,10; o total de exemplo inclui taxa de recarga de 5%. Nenhum pagamento ocorre.",
+  live:"Presentes para LIVE (teste)",notLive:"Esta é uma simulação de presentes; ainda não há transmissões reais.",
   heart:"❤️ Coração",star:"⭐ Estrela",diamond:"💎 Diamante",crown:"👑 Coroa",
-  more:"3. Outros usos das moedas",tip:"💛 Gorjeta de 20 moedas",post:"🎬 Publicação DEMO · 30 moedas",bought:"✓ Comprada no teste",
+  more:"Outros usos de teste",tip:"💛 Gorjeta de 20 moedas",post:"🎬 Publicação DEMO · 30 moedas",bought:"✓ Comprada no teste",
   noUnlock:"Esta compra DEMO muda apenas o indicador de teste; não libera vídeos nem conteúdo privado.",
   balance:"Saldo de teste",charged:"Recargas simuladas",fee:"Taxas de serviço simuladas",
   redeemed:"Valor gasto",creator:"Valor do criador (80% do gasto)",commission:"Comissão AFTER SHIFT (20% do gasto)",
@@ -136,7 +136,12 @@ function open(){
      state.events.unshift(notice);
      render();
    };
-   packButtons.push({coins,button});packs.appendChild(button);
+   const quantity=elem("strong","coin-lab-pack-qty");
+   const total=elem("span","coin-lab-pack-total");
+   const nominal=elem("small","coin-lab-pack-nominal");
+   const action=elem("span","coin-lab-pack-action");
+   button.append(quantity,total,nominal,action);
+   packButtons.push({coins,button,quantity,total,nominal,action});packs.appendChild(button);
  });
  [{kind:"heart",coins:5},{kind:"star",coins:10},{kind:"diamond",coins:50},{kind:"crown",coins:100}]
  .forEach(({kind,coins})=>{
@@ -165,7 +170,14 @@ function open(){
    packH.textContent=t("packs");packInfo.textContent=t("packInfo");
    liveH.textContent=t("live");liveInfo.textContent=t("notLive");
    otherH.textContent=t("more");otherInfo.textContent=t("noUnlock");
-   packButtons.forEach(({coins,button})=>{button.textContent=t("pack")(coins,money(price(coins).charged));});
+   packButtons.forEach(({coins,button,quantity,total,nominal,action})=>{
+     const q=price(coins);
+     quantity.textContent=t("packQty")(coins);
+     total.textContent=money(q.charged);
+     nominal.textContent=t("packNominal")+": "+money(q.face);
+     action.textContent=t("packCTA");
+     button.setAttribute("aria-label",t("packQty")(coins)+" · "+money(q.charged)+" · "+t("packCTA"));
+   });
    actionButtons.forEach(({kind,coins,button})=>{
      button.textContent=kind==="post"&&state.postBought?t("bought"):t(kind)+(kind==="tip"||kind==="post"?"":" · "+coins+" 🪙");
      button.disabled=(kind==="post"&&state.postBought);
@@ -196,7 +208,7 @@ function open(){
  reset.onclick=()=>{state=blank();notice="";render();};
  document.addEventListener("keydown",onKey);
  document.getElementById("uiLanguage")?.addEventListener("change",onLanguage);
- card.append(close,eyebrow,title,warning,intro,balance,packH,packInfo,packs,liveH,liveInfo,gifts,otherH,other,otherInfo,stats,message,histH,history,fine,note,reset);
+ card.append(close,eyebrow,title,warning,packH,packInfo,packs,balance,intro,liveH,liveInfo,gifts,otherH,other,otherInfo,stats,message,histH,history,fine,note,reset);
  overlay.appendChild(card);
  document.body.appendChild(overlay);
  render();
