@@ -187,3 +187,20 @@ html,body{background-color:#faf9f7!important}
 }
 .payment-lab-action-feedback[hidden]{display:none!important}
 .payment-lab-actions .action-btn.action-primary:not(:disabled){background:#17212b;color:#fff}
+
+
+/* V0: gallery to exercise fictional photo/video/post icons after a simulated payment. */
+.payment-lab-demo-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;width:100%;margin-top:11px}
+.payment-lab-demo-button{min-width:0;padding:11px 5px;background:#17212b;color:#fff;border:1px solid #17212b;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer}
+.payment-lab-demo-button:disabled{background:#f0f1f1;border-color:#d6d9dc;color:#747e85;cursor:not-allowed}
+.payment-lab-demo-backdrop{position:fixed;inset:0;z-index:10090;display:flex;align-items:center;justify-content:center;padding:15px;background:rgba(10,16,23,.86);overflow-y:auto}
+.payment-lab-demo-dialog{position:relative;width:min(100%,500px);max-height:calc(100dvh - 30px);overflow-y:auto;background:#fff;color:#1b2630;border-radius:15px;padding:23px;box-shadow:0 20px 60px #0008}
+.payment-lab-demo-dialog h2{font:500 26px Georgia,serif;margin:7px 40px 14px 0}
+.payment-lab-demo-dialog p{font-size:13px;line-height:1.5;color:#63717d}
+.payment-lab-demo-dialog .action-btn{width:100%;margin-top:12px}
+.payment-lab-demo-close{position:absolute;right:11px;top:11px;width:38px;height:38px;border:0;border-radius:50%;background:#f3f3f3;font-size:25px}
+.payment-lab-demo-eyebrow{font-size:10px;font-weight:800;letter-spacing:.1em;color:#8d711b}
+.payment-lab-demo-photo{width:100%;height:300px;max-height:44dvh;border-radius:10px;background-color:#28313b}
+.payment-lab-demo-video{display:block;width:100%;max-height:52dvh;min-height:180px;background:#131c25;border-radius:10px}
+.payment-lab-demo-story{background:#f7f7f4;padding:18px;border-radius:10px}
+@media(max-width:400px){.payment-lab-demo-button{font-size:11px;padding:10px 4px}.payment-lab-demo-dialog{padding:19px}}

@@ -128,6 +128,7 @@ function open({creatorId,creatorName}={}){
   const message=buildElement("div","payment-lab-state");
   message.setAttribute("role","status");message.setAttribute("aria-live","polite");
   const accessCard=buildElement("div","payment-lab-content");
+  // Isolated demo gallery; never grants a real subscription or access to private posts.
   const buttonRow=buildElement("div","payment-lab-actions");
   const btnStart=buildElement("button","action-btn action-primary","1. Iniciar pago simulado");
   const btnApprove=buildElement("button","action-btn","2. Aprobar");
@@ -169,6 +170,62 @@ function open({creatorId,creatorName}={}){
     actionFeedback.hidden=true;
     actionFeedback.textContent="";
   }
+  function openDemoPreview(kind){
+    if(!access(state,now())){
+      showActionFeedback("Primero aprueba el pago ficticio. Los íconos de prueba se habilitan solo durante la simulación activa.");
+      return;
+    }
+    const labels={photo:"Foto de prueba",video:"Video de prueba",post:"Publicación de prueba"};
+    if(!Object.prototype.hasOwnProperty.call(labels,kind))return;
+    const backdrop=buildElement("div","payment-lab-demo-backdrop");
+    const pane=buildElement("section","payment-lab-demo-dialog");
+    pane.setAttribute("role","dialog");
+    pane.setAttribute("aria-modal","true");
+    pane.setAttribute("aria-label",labels[kind]);
+    const closeBtn=buildElement("button","payment-lab-demo-close","×");
+    closeBtn.type="button";
+    closeBtn.setAttribute("aria-label","Cerrar publicación de prueba");
+    pane.appendChild(closeBtn);
+    pane.appendChild(buildElement("div","payment-lab-demo-eyebrow","AFTER SHIFT · CONTENIDO DEMO"));
+    pane.appendChild(buildElement("h2","",labels[kind]));
+    if(kind==="photo"){
+      const photo=buildElement("div","creator-photo-sprite sprite-0 payment-lab-demo-photo");
+      photo.setAttribute("role","img");
+      photo.setAttribute("aria-label","Fotografía editorial ilustrativa utilizada en AFTER SHIFT");
+      pane.appendChild(photo);
+      pane.appendChild(buildElement("p","","Imagen editorial de ejemplo. No es una publicación privada ni corresponde a una compra real."));
+    }else if(kind==="video"){
+      const player=buildElement("video","payment-lab-demo-video");
+      player.controls=true;
+      player.playsInline=true;
+      player.preload="metadata";
+      const source=buildElement("source");
+      source.src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4";
+      source.type="video/mp4";
+      player.appendChild(source);
+      pane.appendChild(player);
+      pane.appendChild(buildElement("p","","Video público de muestra para comprobar el reproductor. No pertenece al creador. Si tu conexión bloquea el video externo, la prueba de navegación sigue disponible."));
+    }else{
+      pane.appendChild(buildElement("p","payment-lab-demo-story","Esta es una publicación ficticia de AFTER SHIFT. Sirve para comprobar que, después de aprobar un pago simulado, el botón permite abrir y cerrar una publicación. Ninguna fotografía, video o archivo privado se desbloquea."));
+    }
+    const closeAction=buildElement("button","action-btn","Cerrar y volver a la prueba");
+    closeAction.type="button";
+    pane.appendChild(closeAction);
+    backdrop.appendChild(pane);
+    parent.appendChild(backdrop);
+    const previousFocus=document.activeElement;
+    function closePreview(){
+      const player=pane.querySelector("video");
+      if(player)player.pause();
+      backdrop.remove();
+      if(previousFocus?.isConnected)previousFocus.focus();
+    }
+    closeBtn.onclick=closePreview;
+    closeAction.onclick=closePreview;
+    backdrop.onclick=e=>{if(e.target===backdrop)closePreview();};
+    backdrop.onkeydown=e=>{if(e.key==="Escape"){e.preventDefault();e.stopPropagation();closePreview();}};
+    closeBtn.focus();
+  }
   function resetForNewPlan(){state=initial();history=[];clearActionFeedback();}
   function render(){
     const date=now(),estimate=quote(plan,months,welcome);
@@ -199,9 +256,22 @@ function open({creatorId,creatorName}={}){
       :"Todavía no hay un período de acceso aprobado."));
     accessCard.replaceChildren();
     accessCard.appendChild(buildElement("span","payment-lab-lock",entitled?"🔓":"🔒"));
-    accessCard.appendChild(buildElement("strong","",entitled?"Contenido ficticio desbloqueado":"Contenido ficticio bloqueado"));
+    accessCard.appendChild(buildElement("strong","",entitled?"Galería DEMO desbloqueada":"Galería DEMO bloqueada"));
     accessCard.appendChild(buildElement("small","",
-      "Esta tarjeta NO es una publicación real. Las fotos y videos exclusivos de "+creatorName+" siguen protegidos."));
+      "Estas publicaciones son de PRUEBA. Las fotos y videos privados de "+creatorName+" siguen protegidos."));
+    const demoActions=buildElement("div","payment-lab-demo-actions");
+    for(const item of [
+      {kind:"photo",locked:"🔒 Foto",unlocked:"📷 Abrir foto"},
+      {kind:"video",locked:"🔒 Video",unlocked:"▶ Ver video"},
+      {kind:"post",locked:"🔒 Publicación",unlocked:"📄 Leer texto"}
+    ]){
+      const button=buildElement("button","payment-lab-demo-button",entitled?item.unlocked:item.locked);
+      button.type="button";
+      button.disabled=!entitled;
+      button.onclick=()=>openDemoPreview(item.kind);
+      demoActions.appendChild(button);
+    }
+    accessCard.appendChild(demoActions);
     btnStart.disabled=state.payment==="pending"||access(state,date);
     btnApprove.disabled=state.payment!=="pending";
     btnApprove.textContent=state.payment==="approved"?"✓ Aprobado":"2. Aprobar";
@@ -229,7 +299,7 @@ function open({creatorId,creatorName}={}){
       render();
       const feedback={
         start:"Solicitud iniciada. Ahora presiona «2. Aprobar» o «2. Rechazar».",
-        approve:"✓ PAGO APROBADO (SIMULACIÓN). La tarjeta ficticia quedó desbloqueada. No se cobró dinero ni se abrió contenido real.",
+        approve:"✓ PAGO APROBADO (SIMULACIÓN). Se habilitaron tres íconos de prueba: foto, video y publicación. Puedes tocarlos arriba. No se cobró dinero ni se abrió contenido privado.",
         reject:"✕ PAGO RECHAZADO (SIMULACIÓN). La tarjeta ficticia permanece bloqueada.",
         cancel:"Renovación cancelada. El acceso ficticio continúa solo hasta la fecha indicada.",
         expire:"Suscripción vencida. La tarjeta ficticia volvió a bloquearse."
@@ -241,7 +311,7 @@ function open({creatorId,creatorName}={}){
     }
   }
   btnStart.onclick=()=>apply("start","Solicitud iniciada · esperando respuesta del banco ficticio.");
-  btnApprove.onclick=()=>apply("approve","Aprobación simulada · solo se habilitó la tarjeta ficticia.");
+  btnApprove.onclick=()=>apply("approve","Aprobación simulada · galería de pruebas habilitada.");
   btnReject.onclick=()=>apply("reject","Rechazo simulado · no se concedió acceso.");
   btnCancel.onclick=()=>apply("cancel","Renovación cancelada · acceso ficticio hasta el vencimiento.");
   btnExpire.onclick=()=>apply("expire","Vencimiento simulado · tarjeta ficticia bloqueada.");
