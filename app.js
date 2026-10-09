@@ -108,6 +108,7 @@ document.getElementById("mySubscriptionsTrigger").onclick=()=>{
 document.getElementById("hideSubscriptions").onclick=closeMySubscriptions;
 
 let visibleCreatorList=[];
+let creatorDirectoryLoadError="";
 function drawCreatorGrid(search=""){
   // Accept @username and @display-name as well as ordinary names on mobile.
   const q=String(search||"").trim().toLowerCase().replace(/^@+\s*/,"");
@@ -117,14 +118,28 @@ function drawCreatorGrid(search=""){
     const photo=c.portrait||"";
     const art=c.spriteIndex!==undefined?'<div class="creator-photo-sprite sprite-'+c.spriteIndex+'" role="img" aria-label="Imagen ilustrativa de '+esc(c.name)+'"></div>':photo?'<img class="creator-photo" src="'+esc(photo)+'" alt="Retrato de '+esc(c.name)+'" loading="lazy" referrerpolicy="no-referrer">':'<div class="creator-photo-fallback">'+esc(c.name.charAt(0))+'</div>';
     return '<article class="card"><div class="cover">'+art+'</div><div class="info"><div class="name">'+esc(c.name)+'</div><div class="handle">'+esc(c.handle)+'</div>'+(c.db?'':'<span class="creator-demo">Perfil de demostración</span>')+'<div class="card-footer"><span class="card-price">'+esc(c.sub)+'/mes</span><button class="profile-open" type="button" data-index="'+index+'">Ver perfil</button></div></div></article>';
-  }).join(""):'<div class="empty-creators">No encontramos creadores con ese nombre.</div>';
+  }).join(""):creatorDirectoryLoadError
+    ? '<div class="empty-creators" role="status">No se pudieron cargar los perfiles reales. <button id="retryCreators" type="button" class="text-btn">Reintentar</button></div>'
+    : '<div class="empty-creators">No encontramos creadores con ese nombre.</div>';
+  grid.querySelector("#retryCreators")?.addEventListener("click",()=>render());
   grid.querySelectorAll(".profile-open").forEach(btn=>btn.onclick=()=>openProfile(Number(btn.dataset.index),visibleCreatorList));
 }
 async function render(){
-  const{data:dbCreators,error}=await supabaseClient.from("profiles")
+  // First try optional portrait/cover columns; older live databases may lack them.
+  // A failed optional-field query must never make the whole creator directory disappear.
+  let {data:dbCreators,error}=await supabaseClient.from("profiles")
     .select("id,display_name,username,bio,subscription_price,avatar_url,cover_url")
     .eq("role","creator").order("display_name");
-  if(error)console.warn("Perfiles: ",error.message);
+  if(error){
+    console.warn("Directorio: intentando consulta compatible sin columnas opcionales:",error.message);
+    const fallback=await supabaseClient.from("profiles")
+      .select("id,display_name,username,bio,subscription_price")
+      .eq("role","creator").order("display_name");
+    dbCreators=fallback.data;
+    error=fallback.error;
+  }
+  if(error)console.warn("No se pudieron cargar los creadores reales:",error.message);
+  creatorDirectoryLoadError=error?.message||"";
   const dynamic=(dbCreators||[]).map(p=>({
     id:p.id,name:p.display_name||p.username,handle:"@"+p.username,
     sub:"US$"+Number(p.subscription_price||0).toFixed(2),tag:"CREATOR",
@@ -503,6 +518,7 @@ async function finishLogin(user){
   try{
     await ensureProfile(user);
     await loadAccount(user);
+    await render();
   }catch(error){
     console.error("Error al cargar Mi cuenta:",error);
     document.getElementById("accountRole").textContent="No pudimos cargar tus datos. Inténtalo nuevamente.";
@@ -570,8 +586,10 @@ supabaseClient.auth.onAuthStateChange((event,session)=>{
       if(session?.user){
         await ensureProfile(session.user);
         await loadAccount(session.user);
+        await render();
       }else{
         await loadAccount();
+        await render();
       }
     }catch(error){
       console.error("No se pudo actualizar la sesión:",error);
