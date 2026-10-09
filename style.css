@@ -482,3 +482,11 @@ html,body{background-color:#faf9f7!important}
 .live-manager-status{padding:11px 12px;border-left:3px solid #c9aa56;background:#f8f9f7;border-radius:7px;font-size:12px;line-height:1.5}
 .live-manager-note{border-top:1px solid #e5e6e5;padding-top:12px;color:#68757e;font-size:11px;line-height:1.5}
 @media(max-width:680px){.creator-live-manager-banner{flex-wrap:wrap;padding:14px}.creator-live-manager-trigger{width:100%}.live-manager-card{padding:20px 14px}.live-manager-title{font-size:25px}.live-manager-date-row{grid-template-columns:1fr}.live-manager-metric strong{font-size:15px}}
+
+/* AFTER SHIFT V28 · actual LOCAL camera preview for creator LIVE lab. Not broadcast. */
+.live-manager-camera{margin:18px 0;padding:13px;background:#1c2330;border-radius:12px;color:#fff}
+.live-manager-camera[hidden]{display:none!important}
+.live-manager-camera h3{color:#f8e6a9;font-size:13px;margin:0 0 10px}
+.live-manager-camera-video{display:block;aspect-ratio:3/4;width:min(100%,315px);max-height:400px;object-fit:cover;background:#101722;border-radius:11px;transform:scaleX(-1);margin:0 auto}
+.live-manager-camera-caption{color:#dce2e6;font-size:11px;line-height:1.4;text-align:center;margin:10px 0 0}
+@media(max-width:680px){.live-manager-camera{padding:12px}.live-manager-camera-video{max-height:350px}}
