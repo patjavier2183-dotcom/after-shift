@@ -24,3 +24,12 @@ footer{border-top:1px solid var(--line);padding:28px 20px;color:#706c65;font-siz
 .subscription-confirm-note{color:#e4dccb;font-size:14px}
 .subscription-confirm-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
 .subscription-confirm-actions button{flex:1;min-width:130px;min-height:48px}
+
+/* V0: personalized visual watermark on authorized subscriber-only media.
+   Not a screenshot blocker. Protected originals must remain in private Storage. */
+.secured-media-frame{position:relative;width:100%;overflow:hidden;border-radius:12px;margin:0 0 14px;background:#0b0b0a}
+.secured-media-frame .post-media{width:100%;display:block;margin:0;border-radius:0}
+.secured-watermark{pointer-events:none;position:absolute;inset:0;z-index:2;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));place-items:center;overflow:hidden;user-select:none;-webkit-user-select:none}
+.secured-watermark span{color:rgba(255,255,255,.44);font-size:clamp(9px,2.4vw,13px);font-weight:700;text-align:center;line-height:1.25;letter-spacing:.02em;text-shadow:0 1px 3px rgba(0,0,0,.94),0 0 5px #000;white-space:normal;overflow-wrap:anywhere;transform:rotate(-20deg);max-width:94%}
+.secured-media-frame img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
+.secured-media-unavailable{padding:22px 12px;color:#ddcda8;border:1px solid #514735;border-radius:12px;margin-bottom:14px}
