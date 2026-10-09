@@ -4,9 +4,24 @@
 **Sistema publicado estable:** AFTER SHIFT V23. No reemplazar ni reinterpretar el diseño aprobado de V22.
 **No aplicado a producción:** este documento no cambia clientes, cuentas, importes ni permisos.
 
-## Decisión comercial pendiente, antes de programar un proveedor
+## Alcance comercial confirmado (2026-10-09)
 
-1. ¿La plataforma admitirá contenido sexual explícito de adultos o solo contenido no sexual? Solicitar confirmación escrita del proveedor respecto al modelo real de negocio.
+AFTER SHIFT será una plataforma de creadores de contenido **general y contenido para adultos**, incluyendo fotografías, videos, material erótico y sexual explícito de adultos. Los accesos comerciales deberán limitarse a personas de 18 años o más y a contenidos legales y consentidos.
+
+**No** se incorporarán materiales con menores, representaciones de abuso sexual infantil, sexualidad no consentida, explotación, tráfico sexual, contenidos íntimos sin consentimiento, falsificaciones sexuales no consentidas ni actividades ilegales. Requerimientos operativos antes de liberar: validación de edad/identidad de todos los participantes (no solo de la cuenta creadora), documentación de consentimiento, moderación y revisión de contenido, canal de denuncias, retiro expedito, política de derechos de autor, auditoría y cumplimiento legal local e internacional.
+
+### Revisión de proveedores frente a este alcance
+
+- **Flow Chile**: los términos en su ANEXO I (versión vigente del sitio consultado) clasifican las **suscripciones a sitios web de contenido adulto y streaming** dentro de actividades **restringidas sujetas a pre-aprobación**, no como rechazo automático de toda actividad adulta. Debemos enviar URL, contacto y descripción fiel del negocio a `compliance-flow@flow.cl`, confirmar aprobación **por escrito**, alcance marketplace/múltiples creadores y mecanismos de pagos a terceros. Flow puede aplicar costos especiales adicionales. **No activar ningún cobro antes del visto bueno.** Fuente: https://www.flow.cl/terminos.php
+- **CCBill**: especialista en contenido adulto, fan sites y suscripciones. Falta confirmar por escrito aceptación de entidad domiciliada en Chile, abonos a una cuenta chilena, comisión, reservas y capacidad de pagar/repartir a múltiples creadores. Fuente: https://ccbill.com/industries/adult-business
+- **Segpay**: acepta contenido adulto pero sus FAQ dicen aceptar **comerciantes radicados en EE. UU., Reino Unido y Europa**; no asumir incorporación comercial directa de Chile. Fuente: https://segpay.com/csfaq/
+- **Visa**: exige proceso verificable de consentimiento y mayoría de edad de personas que aparezcan en contenido adulto y canal de reporte y respuesta. Fuente: https://corporate.visa.com/en/about-visa/visa-network-integrity.html
+
+**Próximo hito, pendiente de aprobación externa**: enviar consulta de preaprobación a Flow y verificar CCBill como alternativa; no integrar credenciales productivas hasta recibir respuesta positiva y los términos del modelo marketplace.
+
+## Preguntas comerciales restantes, antes de programar un proveedor
+
+1. Tipo de contenido: **resuelto**. Admitirá contenido general y sexual explícito de adultos, solo legal y consentido. Aún se requiere aprobación expresa del proveedor.
 2. ¿AFTER SHIFT cobrará en nombre propio, o cada creador debe recibir su proporción automáticamente (marketplace, múltiples destinatarios)?
 3. ¿Moneda del cobro: CLP, USD o ambas? En Creator Studio hoy hay precios locales de ejemplo en US$, no publicados ni validados por servidor.
 4. Quién es el titular legal del comercio y a qué cuenta bancaria se abonará; condiciones de reembolsos, contracargos y cumplimiento KYC para creadores.
