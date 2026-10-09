@@ -36,15 +36,16 @@ const messages={
   packInfo:"Estos paquetes incluyen regalos valorizados + monedas libres. El valor no se duplica. Precio ficticio en USD con tarifa ilustrativa del 5%.",
   live:"Regalos para LIVE (prueba)",notLive:"Esta es una simulación de regalos; todavía no hay transmisiones reales.",
   heart:"❤️ Corazón",star:"⭐ Estrella",diamond:"💎 Diamante",crown:"👑 Corona",
-  more:"También puedes probar",tip:"💛 Propina de 20 monedas",post:"🎬 Publicación DEMO · 30 monedas",bought:"✓ Comprada en la prueba",
-  noUnlock:"Esta compra solo cambia el indicador DEMO; no permite abrir videos ni contenido privado.",
+  vipHeader:"🔒 CONTENIDO VIP · SOLO SUSCRIPTORES",vipDescription:"Foto, galería o video especial del creador. Se compra aparte de la mensualidad, solo para suscriptores activos. Precio de ejemplo: 30 monedas (US$3).",vipEnable:"Simular suscripción activa",vipDisable:"Quitar suscripción simulada",vipDisabled:"Para esta prueba, activa la suscripción ficticia antes de comprar. Tu cuenta real no cambia.",vipEnabled:"✓ Suscripción DEMO activa solo aquí. No modifica tu cuenta real.",vipLocked:"Primero simula una suscripción activa. En producción se verificará la suscripción real del creador.",vipPurchased:"✓ Compra VIP de prueba confirmada. Se descontaron 30 monedas libres. No se ha desbloqueado ningún archivo real.",vipRule:"Solo para ver dentro de AFTER SHIFT · No descargable. El contenido VIP real aún no está conectado.",vipPurchasedLabel:"ADQUIRIDO EN DEMO · NO ES ACCESO REAL",tipSection:"Propinas (prueba)",tipDescription:"Las propinas son voluntarias. No requieren comprar contenido VIP.",
+  more:"También puedes probar",tip:"💛 Propina de 20 monedas",post:"🔒 Contenido VIP · 30 monedas",bought:"✓ Contenido VIP adquirido (prueba)",
+  noUnlock:"Este módulo representa una compra VIP exclusiva para suscriptores. No abre fotografías, videos ni archivos reales; no genera permisos de acceso.",
   balance:"Monedas libres",charged:"Pago simulado al recargar",fee:"Tarifas de servicio simuladas",
   redeemed:"Valor gastado",creator:"A favor del creador (80% del gasto)",commission:"Comisión AFTER SHIFT (20% del gasto)",
   platform:"AFTER SHIFT total simulado",pending:"Regalos y monedas pendientes",history:"Movimientos de esta prueba",
   ready:"Elige un paquete para recibir tus regalos de prueba.",chargeOk:(n,p)=>"✓ Recarga ficticia: "+n+" monedas. Total simulado "+p+".",
   actionOk:(what,n)=>"✓ "+what+": "+n+" monedas usadas.",
   insufficient:"No tienes ese regalo incluido ni monedas libres suficientes. Simula otro paquete.",
-  duplicate:"Esta publicación DEMO ya fue comprada en esta prueba.",empty:"Sin movimientos todavía.",
+  duplicate:"Este contenido VIP ya se compró en la prueba. No se cobra de nuevo.",empty:"Sin movimientos todavía.",
   fine:"Paquete 100: US$8 de regalos incluidos y US$2 en monedas libres. El creador recibe el 80% solo de regalos ENVIADOS; AFTER SHIFT, 20% más tarifa ilustrativa del 5%. No hay cobros reales.",
   reset:"Reiniciar prueba",close:"Cerrar prueba",unspentNote:"Regalos no enviados y monedas libres todavía son valor pendiente. No son ganancias realizadas.",
  },
@@ -56,15 +57,16 @@ const messages={
   packInfo:"Packages contain priced gifts + flexible coins. No value is duplicated. Illustrative USD prices with a hypothetical 5% fee.",
   live:"LIVE gifts (demo)",notLive:"This is a gift simulation; real live streams are not available yet.",
   heart:"❤️ Heart",star:"⭐ Star",diamond:"💎 Diamond",crown:"👑 Crown",
-  more:"Other demo uses",tip:"💛 Tip 20 coins",post:"🎬 DEMO post · 30 coins",bought:"✓ Bought in demo",
-  noUnlock:"This DEMO purchase changes only the test indicator; it does not unlock videos or private posts.",
+  vipHeader:"🔒 VIP CONTENT · SUBSCRIBERS ONLY",vipDescription:"Special photo, gallery or video from a creator. A separate purchase beyond the subscription, for active subscribers only. Sample price: 30 coins (US$3).",vipEnable:"Simulate active subscription",vipDisable:"Remove simulated subscription",vipDisabled:"For this demo, simulate a subscription before buying. Your real account is unchanged.",vipEnabled:"✓ DEMO subscription active here only. Your real account is unchanged.",vipLocked:"Simulate an active subscription first. Production will verify the creator's real subscription.",vipPurchased:"✓ VIP demo purchase complete. 30 flexible coins were deducted. No real files were unlocked.",vipRule:"Watch inside AFTER SHIFT only · No downloads. Real VIP media is not connected yet.",vipPurchasedLabel:"PURCHASED IN DEMO · NOT REAL ACCESS",tipSection:"Tips (demo)",tipDescription:"Tips are optional and do not require a VIP purchase.",
+  more:"Other demo uses",tip:"💛 Tip 20 coins",post:"🔒 VIP content · 30 coins",bought:"✓ VIP content purchased (demo)",
+  noUnlock:"This illustrates a subscriber-only VIP purchase. It does not unlock any real photos, videos or files, or grant media permissions.",
   balance:"Flexible coins",charged:"Simulated top-up charges",fee:"Simulated service fees",
   redeemed:"Value spent",creator:"Creator allocation (80% of spending)",commission:"AFTER SHIFT commission (20% of spending)",
   platform:"AFTER SHIFT simulated total",pending:"Unsent gifts and unused coins",history:"Demo activity",
   ready:"Choose a package to receive your demo gifts.",chargeOk:(n,p)=>"✓ Fictional top-up: "+n+" coins. Simulated charge "+p+".",
   actionOk:(what,n)=>"✓ "+what+": "+n+" coins spent.",
   insufficient:"No included gift of that type or enough flexible coins. Simulate another package.",
-  duplicate:"You've already bought this DEMO post.",empty:"No activity yet.",
+  duplicate:"This VIP content has already been purchased in the demo. No double charge.",empty:"No activity yet.",
   fine:"100-coin package: US$8 in included gifts plus US$2 in flexible coins. Creators receive 80% only when gifts are SENT; AFTER SHIFT gets 20% plus the illustrative 5% fee. No real payments.",
   reset:"Reset demo",close:"Close demo",unspentNote:"Unsent gifts and unused coins remain unspent value, not realized profit.",
  },
@@ -76,15 +78,16 @@ const messages={
   packInfo:"Pacotes incluem presentes valorizados + moedas livres. Nenhum valor é duplicado. Valores ilustrativos em USD com taxa hipotética de 5%.",
   live:"Presentes para LIVE (teste)",notLive:"Esta é uma simulação de presentes; ainda não há transmissões reais.",
   heart:"❤️ Coração",star:"⭐ Estrela",diamond:"💎 Diamante",crown:"👑 Coroa",
-  more:"Outros usos de teste",tip:"💛 Gorjeta de 20 moedas",post:"🎬 Publicação DEMO · 30 moedas",bought:"✓ Comprada no teste",
-  noUnlock:"Esta compra DEMO muda apenas o indicador de teste; não libera vídeos nem conteúdo privado.",
+  vipHeader:"🔒 CONTEÚDO VIP · SÓ ASSINANTES",vipDescription:"Foto, galeria ou vídeo especial do criador. Compra separada da assinatura, apenas para assinantes ativos. Preço de exemplo: 30 moedas (US$ 3).",vipEnable:"Simular assinatura ativa",vipDisable:"Retirar assinatura simulada",vipDisabled:"Para este teste, simule uma assinatura antes de comprar. Sua conta real não muda.",vipEnabled:"✓ Assinatura DEMO ativa só aqui. Sua conta real não foi alterada.",vipLocked:"Simule primeiro uma assinatura ativa. Em produção será validada a assinatura real do criador.",vipPurchased:"✓ Compra VIP fictícia confirmada. Foram descontadas 30 moedas livres. Nenhum arquivo real foi liberado.",vipRule:"Assistir apenas no AFTER SHIFT · Sem downloads. O conteúdo VIP real ainda não está conectado.",vipPurchasedLabel:"COMPRADO NO TESTE · NÃO É ACESSO REAL",tipSection:"Gorjetas (teste)",tipDescription:"As gorjetas são voluntárias e não exigem compra VIP.",
+  more:"Outros usos de teste",tip:"💛 Gorjeta de 20 moedas",post:"🔒 Conteúdo VIP · 30 moedas",bought:"✓ Conteúdo VIP comprado (teste)",
+  noUnlock:"Este módulo simula uma compra VIP só para assinantes. Não libera fotos, vídeos, arquivos reais nem permissões.",
   balance:"Moedas livres",charged:"Recargas simuladas",fee:"Taxas de serviço simuladas",
   redeemed:"Valor gasto",creator:"Valor do criador (80% do gasto)",commission:"Comissão AFTER SHIFT (20% do gasto)",
   platform:"Total simulado AFTER SHIFT",pending:"Presentes e moedas pendentes",history:"Movimentos de teste",
   ready:"Escolha um pacote para receber presentes de teste.",chargeOk:(n,p)=>"✓ Recarga fictícia: "+n+" moedas. Total simulado "+p+".",
   actionOk:(what,n)=>"✓ "+what+": "+n+" moedas usadas.",
   insufficient:"Você não tem esse presente incluído nem moedas livres suficientes. Simule outro pacote.",
-  duplicate:"Esta publicação DEMO já foi comprada neste teste.",empty:"Nenhum movimento ainda.",
+  duplicate:"Este conteúdo VIP já foi comprado no teste. Não há cobrança duplicada.",empty:"Nenhum movimento ainda.",
   fine:"Pacote 100: US$8 em presentes incluídos e US$2 em moedas livres. O criador recebe 80% apenas de presentes ENVIADOS; AFTER SHIFT fica com 20% mais taxa ilustrativa de 5%. Sem pagamentos reais.",
   reset:"Reiniciar teste",close:"Fechar teste",unspentNote:"Presentes não enviados e moedas não usadas são valor pendente, não lucro realizado.",
  }
@@ -118,7 +121,7 @@ function elem(tag,className,value){
 }
 function open(){
  if(document.getElementById("coinLabOverlay"))return;
- let state=blank(),notice="",focusFrom=document.activeElement;
+ let state=blank(),notice="",focusFrom=document.activeElement,vipSubscriberDemo=false;
  const overlay=elem("div","coin-lab-overlay");
  overlay.id="coinLabOverlay";
  const card=elem("section","coin-lab-card");
@@ -135,6 +138,16 @@ function open(){
  const packH=elem("h3"),packInfo=elem("p","coin-lab-small"),packs=elem("div","coin-lab-packs");
  const liveH=elem("h3"),liveInfo=elem("p","coin-lab-small"),stock=elem("p","coin-lab-stock"),gifts=elem("div","coin-lab-gifts");
  const otherH=elem("h3"),other=elem("div","coin-lab-other"),otherInfo=elem("p","coin-lab-small");
+ const vipPanel=elem("section","coin-lab-vip-panel");
+ const vipH=elem("h3","coin-lab-vip-heading");
+ const vipDescription=elem("p","coin-lab-small coin-lab-vip-description");
+ const vipGate=elem("button","coin-lab-vip-gate");vipGate.type="button";
+ const vipGateStatus=elem("p","coin-lab-small coin-lab-vip-gate-status");
+ const vipPurchase=elem("div","coin-lab-vip-purchase");
+ const vipRule=elem("p","coin-lab-small coin-lab-vip-rule");
+ const vipPurchasedInfo=elem("p","coin-lab-small coin-lab-vip-success");vipPurchasedInfo.hidden=true;
+ vipPanel.append(vipH,vipDescription,vipGate,vipGateStatus,vipPurchase,vipRule,vipPurchasedInfo);
+ vipGate.onclick=()=>{vipSubscriberDemo=!vipSubscriberDemo;notice="";render();};
  const stats=elem("dl","coin-lab-stats");
  const metricKeys=["charged","fee","redeemed","creator","commission","platform","pending"];
  const metrics={};
@@ -176,14 +189,17 @@ function open(){
  [{kind:"tip",coins:20},{kind:"post",coins:30}].forEach(({kind,coins})=>{
    const button=elem("button","coin-lab-use");button.type="button";
    button.onclick=()=>spend(kind,coins);
-   actionButtons.push({kind,coins,button});other.appendChild(button);
+   actionButtons.push({kind,coins,button});(kind==="post"?vipPurchase:other).appendChild(button);
  });
  function spend(kind,coins){
+   if(kind==="post"&&!vipSubscriberDemo){
+     notice=t("vipLocked");render();return;
+   }
    const included=!!COST[kind]&&state.inventory[kind]>0;
    const result=included?sendIncluded(state,kind):redeem(state,coins,kind);
    if(result.error){notice=t(result.error);render();return;}
    state=result;
-   notice=included?t("sentGift")(t(kind)):COST[kind]?t("sentExtra")(t(kind)):t("actionOk")(t(kind),coins);
+   notice=kind==="post"?t("vipPurchased"):included?t("sentGift")(t(kind)):COST[kind]?t("sentExtra")(t(kind)):t("actionOk")(t(kind),coins);
    state.events.unshift(notice);render();
  }
  function render(){
@@ -196,7 +212,13 @@ function open(){
    const held=KINDS.filter(k=>state.inventory[k]>0);
    stock.hidden=!held.length;
    stock.textContent=t("stockTitle")+": "+held.map(k=>t(k)+" ×"+state.inventory[k]).join(" · ");
-   otherH.textContent=t("more");otherInfo.textContent=t("noUnlock");
+   otherH.textContent=t("tipSection");otherInfo.textContent=t("tipDescription");
+   vipH.textContent=t("vipHeader");vipDescription.textContent=t("vipDescription");
+   vipGate.textContent=vipSubscriberDemo?t("vipDisable"):t("vipEnable");
+   vipGateStatus.textContent=vipSubscriberDemo?t("vipEnabled"):t("vipDisabled");
+   vipRule.textContent=t("vipRule");
+   vipPurchasedInfo.hidden=!state.postBought;
+   vipPurchasedInfo.textContent=t("vipPurchasedLabel");
    packButtons.forEach(({coins,button,quantity,total,nominal,detail,action})=>{
      const q=price(coins),info=bundleInfo(coins);
      quantity.textContent=t("packQty")(coins);
@@ -240,10 +262,10 @@ function open(){
  function onLanguage(){notice="";render();}
  close.onclick=finish;
  overlay.onclick=ev=>{if(ev.target===overlay)finish();};
- reset.onclick=()=>{state=blank();notice="";render();};
+ reset.onclick=()=>{state=blank();vipSubscriberDemo=false;notice="";render();};
  document.addEventListener("keydown",onKey);
  document.getElementById("uiLanguage")?.addEventListener("change",onLanguage);
- card.append(close,eyebrow,title,warning,packH,packInfo,packs,balance,intro,liveH,liveInfo,stock,gifts,otherH,other,otherInfo,stats,message,histH,history,fine,note,reset);
+ card.append(close,eyebrow,title,warning,packH,packInfo,packs,balance,intro,liveH,liveInfo,stock,gifts,vipPanel,otherH,other,otherInfo,stats,message,histH,history,fine,note,reset);
  overlay.appendChild(card);
  document.body.appendChild(overlay);
  render();

@@ -633,3 +633,50 @@ html,body{background-color:#faf9f7!important}
 .coin-lab-stock[hidden]{display:none!important}
 .coin-lab-card .coin-lab-gift{white-space:pre-line;min-height:88px;line-height:1.6}
 @media(max-width:680px){.coin-lab-card .coin-lab-pack{min-height:295px;padding:9px 4px}.coin-lab-pack-contents{padding:7px 4px;gap:5px}.coin-lab-contents-heading,.coin-lab-contents-line,.coin-lab-contents-flex{font-size:9px}.coin-lab-card .coin-lab-pack-total{font-size:17px}.coin-lab-card .coin-lab-gift{min-height:94px}}
+
+/* AFTER SHIFT V32 — subscriber-only VIP post purchase demo, separate from LIVE gifts. */
+.coin-lab-vip-panel{
+  padding:15px;
+  margin:20px 0;
+  border:1px solid #dac99d;
+  border-radius:12px;
+  background:linear-gradient(145deg,#fffcf3,#f7f0df);
+}
+.coin-lab-vip-panel .coin-lab-vip-heading{
+  font-size:14px;
+  line-height:1.35;
+  color:#564018;
+  letter-spacing:.012em;
+  margin:0 0 9px;
+}
+.coin-lab-vip-description{color:#35434a;line-height:1.5;margin:8px 0 12px}
+.coin-lab-vip-gate{
+  min-height:42px;
+  border:1px solid #ccb16e;
+  border-radius:8px;
+  padding:10px 12px;
+  background:#fff;
+  color:#564321;
+  font-size:12px;
+  font-weight:750;
+}
+.coin-lab-vip-gate:focus-visible{outline:3px solid #a78332;outline-offset:3px}
+.coin-lab-vip-gate-status{color:#536066;margin:8px 0 12px}
+.coin-lab-vip-purchase{margin:12px 0}
+.coin-lab-vip-purchase button{
+  min-height:46px;
+  width:100%;
+  border:0;
+  border-radius:9px;
+  background:#243440;
+  color:white;
+  font-size:13px;
+  font-weight:800;
+  padding:11px 14px;
+  text-align:center;
+}
+.coin-lab-vip-purchase button:disabled{opacity:.55}
+.coin-lab-vip-rule{margin:11px 0 0;color:#5b666e}
+.coin-lab-vip-success{border:1px solid #bdcbb6;background:#f5f9ef;padding:10px;border-radius:8px;color:#315b37;font-weight:700}
+.coin-lab-vip-success[hidden]{display:none!important}
+@media(max-width:680px){.coin-lab-vip-panel{padding:12px}}
