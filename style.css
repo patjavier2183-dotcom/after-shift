@@ -361,3 +361,9 @@ html,body{background-color:#faf9f7!important}
   :root{--as-mobile-gutter:17px}
   .creator-studio .studio-actions .action-btn{font-size:11px}
 }
+
+/* V24 i18n: unobtrusive mobile-friendly ES / EN / PT selector. */
+.lang-control{display:inline-flex;align-items:center;flex:0 0 auto}
+.lang-control select{box-sizing:border-box;width:61px;min-height:38px;border:1px solid #e9e7e1;border-radius:9px;padding:7px 3px;background:#fbfaf8;color:#25323c;font-size:11px;font-weight:750;text-align:center;cursor:pointer}
+.lang-control select:focus-visible{outline:2px solid #bc8b32;outline-offset:2px}
+@media(max-width:680px){.top-actions{gap:3px}.lang-control select{width:52px;min-height:36px;padding:7px 1px;font-size:10px}.top-actions #loginBtn,.top-actions #signupBtn{padding:8px 8px;font-size:11px}}
