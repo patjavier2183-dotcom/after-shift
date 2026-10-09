@@ -447,3 +447,38 @@ html,body{background-color:#faf9f7!important}
 .premium-live-foot{border-top:1px solid #eae7df;padding-top:12px}
 .premium-live-reset{width:100%;padding:12px;background:#f7f5f0;border:1px solid #dcd9ce;border-radius:9px;font-size:12px;font-weight:700}
 @media(max-width:680px){.premium-live-teaser{flex-wrap:wrap;padding:13px}.premium-live-teaser-btn{width:100%}.premium-live-overlay{padding:10px}.premium-live-dialog{padding:20px 14px}.premium-live-title{font-size:25px}.premium-live-gifts{grid-template-columns:repeat(2,minmax(0,1fr))}.premium-live-metric strong{font-size:14px}}
+
+
+/* AFTER SHIFT V27 · standalone LIVE PREMIUM creator planner */
+.creator-live-manager-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:16px 0 22px;padding:15px 17px;border:1px solid #e7dcc1;border-radius:11px;background:#fffcf4}
+.creator-live-manager-info{min-width:0}.creator-live-manager-info strong{font-size:13px;color:#26343e}
+.creator-live-manager-info p{font-size:11px;color:#67747b;line-height:1.5;margin:5px 0 0;overflow-wrap:anywhere}
+.creator-live-manager-trigger{min-height:41px;border:1px solid #ceb36c;border-radius:9px;background:#fff7df;color:#5c4616;padding:9px 13px;font-size:11px;font-weight:800;flex:0 0 auto}
+.live-manager-overlay{position:fixed;inset:0;z-index:10200;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;overscroll-behavior:contain;padding:12px;background:#111820e3}
+.live-manager-card{position:relative;flex:0 0 auto;width:min(100%,620px);margin:auto 0;border-radius:16px;border:1px solid #e4e6e6;padding:24px;background:#fff;color:#1d2832;box-shadow:0 22px 75px #0006}
+.live-manager-close{position:absolute;right:12px;top:12px;width:40px;height:40px;border:0;border-radius:50%;background:#f4f4f1;font-size:27px}
+.live-manager-eyebrow{font-size:11px;font-weight:800;letter-spacing:.07em;color:#99771a}
+.live-manager-title{font:500 29px/1.2 Georgia,serif;margin:9px 42px 15px 0}
+.live-manager-warning{border:1px solid #e8d7a8;background:#fff9e8;border-radius:9px;font-size:12px;line-height:1.5;font-weight:650;padding:12px}
+.live-manager-form{display:grid;gap:12px;margin:17px 0}
+.live-manager-form label{display:flex;flex-direction:column;gap:6px;min-width:0}
+.live-manager-form label span{font-size:12px;font-weight:700;color:#25333c}
+.live-manager-form input,.live-manager-form textarea{min-height:44px;width:100%;border:1px solid #d8dddf;border-radius:8px;background:#fff;color:#192732;padding:10px;font-size:13px}
+.live-manager-form textarea{min-height:75px;resize:vertical}
+.live-manager-date-row{display:grid;grid-template-columns:1.2fr .8fr;gap:11px}
+.live-manager-save{min-height:46px;border:0;border-radius:9px;background:#1b2933;color:white;font-size:13px;font-weight:800}
+.live-manager-card h3{font-size:14px;color:#293640;margin:23px 0 9px}
+.live-manager-preview{border:1px solid #e4e5e5;border-radius:10px;background:#f7f8f7;padding:14px}
+.live-manager-tag{font-size:10px;color:#a07b28;font-weight:800;letter-spacing:.07em}
+.live-manager-preview strong{display:block;font-size:15px;line-height:1.35;margin:7px 0 0;overflow-wrap:anywhere}
+.live-manager-preview p{font-size:12px;color:#67747d;margin:5px 0}
+.live-manager-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.live-manager-control{border:1px solid #dadee0;background:#fffdfa;color:#24313c;min-height:45px;font-size:12px;font-weight:700;padding:9px;border-radius:9px}
+.live-manager-control:disabled{opacity:.4;cursor:not-allowed}
+.live-manager-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.live-manager-metric{padding:12px;border:1px solid #ededec;background:#f7f7f5;border-radius:9px}
+.live-manager-metric span{display:block;font-size:11px;color:#65747f}
+.live-manager-metric strong{display:block;font-size:17px;margin-top:6px}
+.live-manager-status{padding:11px 12px;border-left:3px solid #c9aa56;background:#f8f9f7;border-radius:7px;font-size:12px;line-height:1.5}
+.live-manager-note{border-top:1px solid #e5e6e5;padding-top:12px;color:#68757e;font-size:11px;line-height:1.5}
+@media(max-width:680px){.creator-live-manager-banner{flex-wrap:wrap;padding:14px}.creator-live-manager-trigger{width:100%}.live-manager-card{padding:20px 14px}.live-manager-title{font-size:25px}.live-manager-date-row{grid-template-columns:1fr}.live-manager-metric strong{font-size:15px}}

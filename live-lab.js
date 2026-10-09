@@ -106,8 +106,8 @@ const TICKET_PERCENT=20;
 function language(){const key=document.getElementById("uiLanguage")?.value;return langs[key]?key:"es";}
 function d(){return langs[language()];}
 function currency(cents){return "US$"+(cents/100).toFixed(2).replace(".",language()==="en"?".":",");}
-function summary(ticketPaid,wallet){
- const ticket=ticketPaid?TICKET_CENTS:0;
+function summary(ticketPaid,wallet,priceCents=TICKET_CENTS){
+ const ticket=ticketPaid?priceCents:0;
  const creatorTicket=Math.round(ticket*CREATOR_PERCENT/100);
  return {ticket,giftSpend:wallet.spent,coins:wallet.balance,
  creator:creatorTicket+wallet.creator,
@@ -119,21 +119,23 @@ function element(tag,className,value){
  if(value!==undefined)e.textContent=value;return e;
 }
 function makeButton(className){const el=element("button",className);el.type="button";return el;}
-function mount(overlay,{creatorName,subscribed,owner=false}={}){
+function mount(overlay,{creatorId,creatorName,subscribed,owner=false}={}){
  const panel=overlay.querySelector('.profile-panel[data-panel="content"]');
  if(!panel||panel.querySelector(".premium-live-teaser"))return;
  const promo=element("section","premium-live-teaser");
  const inner=element("div","premium-live-teaser-text");
  inner.append(element("span","premium-live-teaser-label","LIVE PREMIUM"),element("strong","", "PRUEBA · SOLO SUSCRIPTORES"),element("p","","Cada LIVE requiere entrada adicional a la suscripción. Los regalos son voluntarios."));
  const button=makeButton("premium-live-teaser-btn");button.textContent="PROBAR LIVE PREMIUM";
- button.onclick=()=>open({creatorName,subscribed:subscribed===true,owner});
+ button.onclick=()=>open({creatorId,creatorName,subscribed:subscribed===true,owner});
  promo.append(inner,button);
  panel.prepend(promo);
 }
-function open({creatorName="Creador",subscribed=false,owner=false}={}){
+function open({creatorId,creatorName="Creador",subscribed=false,owner=false}={}){
  if(document.getElementById("premiumLiveLab"))return;
  const coinAPI=window.AfterShiftCoinDemo;
  if(!coinAPI)return;
+ const draft=window.AfterShiftLiveManager?.getDraft(creatorId);
+ const ticketPriceCents=draft?.priceCents||TICKET_CENTS;
  let fakeSub=false,ticketPaid=false,wallet=coinAPI.blank(),events=[],notice="";
  const previousFocus=document.activeElement;
  const overlay=element("div","premium-live-overlay");overlay.id="premiumLiveLab";
@@ -148,7 +150,7 @@ function open({creatorName="Creador",subscribed=false,owner=false}={}){
  const why=element("p","premium-live-note");
  const fakeBtn=makeButton("premium-live-muted");
  const price=element("div","premium-live-ticket");
- const ticketTitle=element("strong"),amount=element("b","",currency(TICKET_CENTS));
+ const ticketTitle=element("strong"),amount=element("b","",currency(ticketPriceCents));
  price.append(ticketTitle,amount);
  const ticketBtn=makeButton("premium-live-ticket-btn");
  const ticketNote=element("p","premium-live-note");
@@ -200,24 +202,24 @@ function open({creatorName="Creador",subscribed=false,owner=false}={}){
  ticketBtn.onclick=()=>{
    if(!eligible()){notice=d().ticketLocked;render();return;}
    if(ticketPaid)return;
-   ticketPaid=true;notice=d().ticketMsg;events.unshift(notice);render();
+   ticketPaid=true;notice=d().ticketMsg.replace(/US\$\s*5/,currency(ticketPriceCents));events.unshift(notice);render();
  };
  reset.onclick=()=>{
    fakeSub=false;ticketPaid=false;wallet=coinAPI.blank();events=[];notice="";render();
  };
  function render(){
-   const x=d(),total=summary(ticketPaid,wallet);
+   const x=d(),total=summary(ticketPaid,wallet,ticketPriceCents);
    close.setAttribute("aria-label",x.close);
    eyebrow.textContent=x.eyebrow;heading.textContent=x.title;disclaimer.textContent=x.disclaimer;
-   creator.textContent=x.creator+": "+creatorName;
+   creator.textContent=x.creator+": "+creatorName+(draft?.title?" · "+draft.title:"");
    state.textContent=x.status+": "+(owner?x.owner:subscribed?x.active:fakeSub?x.simulated:x.inactive);
    state.classList.toggle("is-eligible",eligible());
    why.textContent=x.why;fakeBtn.textContent=x.mock;
    fakeBtn.hidden=eligible();
-   ticketTitle.textContent=x.ticket;amount.textContent=currency(TICKET_CENTS);
-   ticketBtn.textContent=ticketPaid?x.ticketDone:x.ticketBtn;
+   ticketTitle.textContent=x.ticket;amount.textContent=currency(ticketPriceCents);
+   ticketBtn.textContent=ticketPaid?x.ticketDone:x.ticketBtn.replace(/US\$\s*5/,currency(ticketPriceCents));
    ticketBtn.disabled=ticketPaid||!eligible();
-   ticketNote.textContent=eligible()?x.ticketNote:x.ticketLocked;
+   ticketNote.textContent=eligible()?x.ticketNote.replace(/US\$\s*5/,currency(ticketPriceCents))+(draft?" · "+(language()==="en"?"Local draft in this browser only":language()==="pt"?"Rascunho local apenas neste navegador":"Borrador local solo en este navegador"):""):x.ticketLocked;
    demoStage.hidden=!ticketPaid;demoEyebrow.textContent=x.liveTag;
    stageText.textContent=x.stage;stageNote.textContent=x.stageDetail;
    packsTitle.textContent=x.topups;packNote.textContent=x.topupInfo;
