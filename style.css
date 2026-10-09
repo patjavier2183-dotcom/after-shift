@@ -30,8 +30,6 @@ footer{border-top:1px solid var(--line);padding:28px 20px;color:#706c65;font-siz
 .secured-media-frame{position:relative;width:100%;overflow:hidden;border-radius:12px;margin:0 0 14px;background:#0b0b0a}
 .secured-media-frame .post-media{width:100%;display:block;margin:0;border-radius:0}
 .secured-watermark{pointer-events:none;position:absolute;inset:0;z-index:2;overflow:hidden;user-select:none;-webkit-user-select:none}
-.secured-watermark span{position:absolute;max-width:52%;color:rgba(255,255,255,.25);font-size:clamp(9px,2.2vw,12px);font-weight:600;line-height:1.25;letter-spacing:.035em;text-shadow:0 1px 2px rgba(0,0,0,.46);overflow-wrap:anywhere;white-space:normal}
-.secured-watermark-brand{top:16px;right:14px;text-align:right}
-.secured-watermark-viewer{left:14px;bottom:19%;transform:rotate(-8deg)}
+.secured-watermark-viewer{position:absolute;top:12px;right:12px;max-width:70%;color:rgba(255,255,255,.24);font-size:clamp(9px,2vw,11px);font-weight:600;letter-spacing:.025em;text-align:right;text-shadow:0 1px 2px rgba(0,0,0,.55);overflow-wrap:anywhere;white-space:normal}
 .secured-media-frame img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .secured-media-unavailable{padding:22px 12px;color:#ddcda8;border:1px solid #514735;border-radius:12px;margin-bottom:14px}
