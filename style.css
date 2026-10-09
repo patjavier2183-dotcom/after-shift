@@ -621,3 +621,15 @@ html,body{background-color:#faf9f7!important}
   .coin-lab-pack-nominal{font-size:9px}
   .coin-lab-pack-action{font-size:9px;padding:8px 2px}
 }
+
+/* AFTER SHIFT V31 · package composition and available gift inventory */
+.coin-lab-card .coin-lab-pack{min-height:275px;gap:6px;justify-content:flex-start}
+.coin-lab-pack-contents{flex:1;display:flex;flex-direction:column;gap:6px;padding:8px 6px;border-radius:8px;background:#f7f6f2;text-align:left}
+.coin-lab-contents-heading{font-size:11px;color:#38454e;font-weight:800}
+.coin-lab-contents-line{font-size:10px;line-height:1.4;color:#33424b;font-weight:600}
+.coin-lab-contents-flex{font-size:10px;line-height:1.4;color:#33424b;border-top:1px dashed #d5d5cf;padding-top:7px;margin-top:auto;font-weight:800}
+.coin-lab-card .coin-lab-pack-action{margin-top:auto}
+.coin-lab-stock{margin:12px 0;padding:11px;border:1px solid #e5d6ae;border-radius:9px;background:#fff9eb;color:#544426;font-size:12px;line-height:1.5;font-weight:700}
+.coin-lab-stock[hidden]{display:none!important}
+.coin-lab-card .coin-lab-gift{white-space:pre-line;min-height:88px;line-height:1.6}
+@media(max-width:680px){.coin-lab-card .coin-lab-pack{min-height:295px;padding:9px 4px}.coin-lab-pack-contents{padding:7px 4px;gap:5px}.coin-lab-contents-heading,.coin-lab-contents-line,.coin-lab-contents-flex{font-size:9px}.coin-lab-card .coin-lab-pack-total{font-size:17px}.coin-lab-card .coin-lab-gift{min-height:94px}}
