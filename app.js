@@ -393,7 +393,29 @@ function showSubscriptionUnavailable(){
   const labButton=dialog.querySelector(".payment-lab-launch");
   if(labButton)labButton.onclick=()=>{
     close();
-    if(window.AfterShiftPaymentLab)window.AfterShiftPaymentLab.open({creatorId:creator.id,creatorName:creator.display_name});
+    if(window.AfterShiftPaymentLab){
+      // Only this pre-authorized TEST pair can ask Supabase to refresh a 2-hour
+      // controlled entitlement. The server validates identity and allowlist.
+      const testAccess=(testViewer?.username==="aftershift"&&creator.username==="pat")?{
+        async grant(){
+          const {data,error}=await supabaseClient.rpc("v0_trial_access",{p_creator_id:creator.id,p_action:"grant"});
+          if(error)throw error;
+          if(!data?.ok||!data?.active)throw new Error("Supabase no confirmó la autorización de prueba.");
+          return data;
+        },
+        async revoke(){
+          const {data,error}=await supabaseClient.rpc("v0_trial_access",{p_creator_id:creator.id,p_action:"revoke"});
+          if(error)throw error;
+          if(!data?.ok||data?.active)throw new Error("Supabase no confirmó la revocación de prueba.");
+          return data;
+        },
+        async onClose(){
+          await openProfile(i,list,{previousOverlay:overlay,notice:"Perfil actualizado desde Supabase."});
+          await loadAccount();
+        }
+      }:null;
+      window.AfterShiftPaymentLab.open({creatorId:creator.id,creatorName:creator.display_name,testAccess});
+    }
     else alert("El laboratorio todavía se está cargando. Actualiza AFTER SHIFT e inténtalo otra vez.");
   };
   dialog.addEventListener("click",e=>{if(e.target===dialog)close();});

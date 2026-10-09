@@ -1,6 +1,7 @@
-/* AFTER SHIFT · V0 payment-lifecycle laboratory.
-   Fake transactions, in-memory only. NO payments, storage signatures, or Supabase writes.
-   An "approved" result NEVER provides access to actual posts or entitlements.
+/* AFTER SHIFT · V23 payment simulator + tightly allowlisted test authorization.
+   No real payments. For the preauthorized @aftershift -> @pat pair only, a
+   separately validated Supabase RPC grants short-lived test access.
+   Every other user and creator remains in the isolated fake simulation.
 */
 (function(){
 "use strict";
@@ -90,13 +91,14 @@ function buildElement(tag,className,textContent){
   if(textContent!==undefined)el.textContent=textContent;
   return el;
 }
-function open({creatorId,creatorName}={}){
+function open({creatorId,creatorName,testAccess=null}={}){
   if(!creatorId||!creatorName)return;
   if(document.getElementById("afterShiftPaymentLab"))return;
   const plan=getSettings(creatorId);
   const activeTerms=plan.terms.filter(t=>t.enabled!==false&&TERMS.includes(t.m));
   if(!activeTerms.length)activeTerms.push({m:1,enabled:true,discount:0});
   let months=activeTerms[0].m,welcome=false,state=initial(),history=[];
+  let serverStatus="none",serverBusy=false,changedRealAccess=false;
   const parent=document.createElement("div");
   parent.id="afterShiftPaymentLab";
   parent.className="payment-lab-overlay";
@@ -113,7 +115,9 @@ function open({creatorId,creatorName}={}){
   closeButton.setAttribute("aria-label","Cerrar simulación");
   header.append(caption,title,closeButton);
   const note=buildElement("p","payment-lab-disclaimer",
-    "Esta pantalla simula pagos y acceso sobre datos ficticios. NO cobra, no activa una suscripción real ni desbloquea archivos privados.");
+    testAccess
+      ?"SIN COBROS: solo para @aftershift y @pat, una aprobación de PRUEBA pedirá a Supabase una autorización temporal de 2 horas. No es un pago real."
+      :"Esta pantalla simula pagos y acceso sobre datos ficticios. NO cobra, no activa una suscripción real ni desbloquea archivos privados.");
   const creator=buildElement("p","payment-lab-by","Creador: "+creatorName);
   const source=buildElement("p","payment-lab-source",plan.source);
   const sectionTitle=buildElement("h3","","Selecciona el plazo");
@@ -146,7 +150,9 @@ function open({creatorId,creatorName}={}){
   const activityTitle=buildElement("h3","","Registro de esta prueba");
   const historyEl=buildElement("ol","payment-lab-history");
   const foot=buildElement("p","payment-lab-foot",
-    "El estado de prueba se borra al cerrar. La seguridad de las publicaciones reales continúa en Supabase. En producción, solo un servidor podrá confirmar el pago.");
+    testAccess
+      ?"La aprobación ficticia no verifica dinero. El acceso a @pat es una excepción administrativa de prueba, limitada a esta cuenta y autorizada por Supabase durante 2 horas. Puedes cancelarla en el perfil o con «Simular vencimiento»."
+      :"El estado de prueba se borra al cerrar. La seguridad de las publicaciones reales continúa en Supabase. En producción, solo un servidor podrá confirmar el pago.");
   dialog.append(header,note,creator,source,sectionTitle,termsContainer,promo,totals,message,accessCard,buttonRow,actionFeedback,activityTitle,historyEl,foot);
   parent.appendChild(dialog);
   document.body.appendChild(parent);
@@ -154,6 +160,9 @@ function open({creatorId,creatorName}={}){
   function close(){
     document.removeEventListener("keydown",onKey);
     parent.remove();
+    if(changedRealAccess&&testAccess?.onClose){
+      Promise.resolve().then(()=>testAccess.onClose()).catch(e=>console.error("No se pudo actualizar el perfil de prueba:",e));
+    }
     if(oldFocus&&oldFocus.isConnected)oldFocus.focus();
   }
   function onKey(e){if(e.key==="Escape"){e.preventDefault();close();}}
@@ -226,6 +235,30 @@ function open({creatorId,creatorName}={}){
     backdrop.onkeydown=e=>{if(e.key==="Escape"){e.preventDefault();e.stopPropagation();closePreview();}};
     closeBtn.focus();
   }
+  async function authorizeTrial(action){
+    if(!testAccess||serverBusy)return;
+    serverBusy=true;
+    try{
+      showActionFeedback("Consultando autorización de prueba en Supabase...");
+      const data=await testAccess[action]();
+      if(!data?.ok)throw new Error("Supabase no confirmó la operación.");
+      serverStatus=action==="grant"?"active":"revoked";
+      changedRealAccess=true;
+      const text=action==="grant"
+        ?"✓ PRUEBA REAL AUTORIZADA. Los archivos exclusivos de @pat ya tienen permiso por 2 horas. Cierra esta ventana para verlos; no se cobró dinero."
+        :"✓ PRUEBA REVOCADA EN SUPABASE. Las publicaciones exclusivas volverán a mostrar candados.";
+      record(text);
+      showActionFeedback(text);
+      if(!parent.isConnected&&testAccess.onClose)await testAccess.onClose();
+    }catch(error){
+      console.error("AFTER SHIFT · Autorización controlada:",error);
+      if(action==="grant")serverStatus="failed";
+      showActionFeedback("El simulador funcionó, pero Supabase NO "+(action==="grant"?"habilitó":"revocó")+" el acceso real: "+(error?.message||"Error inesperado"));
+    }finally{
+      serverBusy=false;
+      render();
+    }
+  }
   function resetForNewPlan(){state=initial();history=[];clearActionFeedback();}
   function render(){
     const date=now(),estimate=quote(plan,months,welcome);
@@ -235,11 +268,12 @@ function open({creatorId,creatorName}={}){
         t.m===1?"1 mes":t.m===12?"12 meses":t.m+" meses");
       button.type="button";
       button.setAttribute("aria-pressed",String(months===t.m));
-      button.onclick=()=>{months=t.m;welcome=false;promoInput.checked=false;resetForNewPlan();render();};
+      button.disabled=serverBusy||serverStatus==="active";
+      button.onclick=()=>{if(button.disabled)return;months=t.m;welcome=false;promoInput.checked=false;resetForNewPlan();render();};
       termsContainer.appendChild(button);
     }
     promo.hidden=months!==1||plan.offer!==true;
-    promoInput.disabled=months!==1||plan.offer!==true;
+    promoInput.disabled=months!==1||plan.offer!==true||serverBusy||serverStatus==="active";
     const cents=estimate.totalCents;
     totals.replaceChildren();
     totals.appendChild(buildElement("span","","Total del plazo · descuento "+estimate.discount+"%"));
@@ -272,20 +306,29 @@ function open({creatorId,creatorName}={}){
       demoActions.appendChild(button);
     }
     accessCard.appendChild(demoActions);
-    btnStart.disabled=state.payment==="pending"||access(state,date);
-    btnApprove.disabled=state.payment!=="pending";
+    if(testAccess){
+      accessCard.appendChild(buildElement("small","",serverStatus==="active"
+        ?"✓ PERMISO REAL DE PRUEBA: @aftershift puede abrir las publicaciones de @pat durante 2 horas. Cierra esta ventana para actualizar el perfil."
+        :serverStatus==="revoked"
+          ?"El permiso real de prueba está revocado."
+          :serverStatus==="failed"
+            ?"La galería DEMO se abrió, pero el acceso REAL NO fue autorizado."
+            :"Los tres íconos son demostraciones. Si apruebas esta prueba, Supabase autorizará temporalmente las publicaciones reales de @pat."));
+    }
+    btnStart.disabled=serverBusy||state.payment==="pending"||access(state,date);
+    btnApprove.disabled=serverBusy||state.payment!=="pending";
     btnApprove.textContent=state.payment==="approved"?"✓ Aprobado":"2. Aprobar";
     btnApprove.classList.toggle("action-primary",state.payment==="pending");
-    btnReject.disabled=state.payment!=="pending";
+    btnReject.disabled=serverBusy||state.payment!=="pending";
     btnReject.textContent=state.payment==="rejected"?"✕ Rechazado":"2. Rechazar";
-    btnCancel.disabled=!entitled||!state.autoRenew;
-    btnExpire.disabled=!entitled;
+    btnCancel.disabled=serverBusy||!entitled||!state.autoRenew;
+    btnExpire.disabled=serverBusy||!entitled;
     historyEl.replaceChildren();
     if(!history.length){
       historyEl.appendChild(buildElement("li","","Selecciona un plazo y comienza la simulación."));
     }else for(const line of history)historyEl.appendChild(buildElement("li","",line));
   }
-  promoInput.onchange=()=>{welcome=promoInput.checked;resetForNewPlan();render();};
+  promoInput.onchange=()=>{if(promoInput.disabled)return;welcome=promoInput.checked;resetForNewPlan();render();};
   function apply(action,text){
     // Never fail silently when Android/WebView errors or a stale tap occurs.
     try{
@@ -311,11 +354,26 @@ function open({creatorId,creatorName}={}){
     }
   }
   btnStart.onclick=()=>apply("start","Solicitud iniciada · esperando respuesta del banco ficticio.");
-  btnApprove.onclick=()=>apply("approve","Aprobación simulada · galería de pruebas habilitada.");
+  btnApprove.onclick=async()=>{
+    if(state.payment!=="pending"||serverBusy)return;
+    apply("approve","Aprobación simulada · galería de pruebas habilitada.");
+    if(testAccess)await authorizeTrial("grant");
+  };
   btnReject.onclick=()=>apply("reject","Rechazo simulado · no se concedió acceso.");
   btnCancel.onclick=()=>apply("cancel","Renovación cancelada · acceso ficticio hasta el vencimiento.");
-  btnExpire.onclick=()=>apply("expire","Vencimiento simulado · tarjeta ficticia bloqueada.");
-  btnReset.onclick=()=>{resetForNewPlan();render();};
+  btnExpire.onclick=async()=>{
+    if(!access(state,now())||serverBusy)return;
+    apply("expire","Vencimiento simulado · tarjeta ficticia bloqueada.");
+    if(testAccess&&serverStatus==="active")await authorizeTrial("revoke");
+  };
+  btnReset.onclick=async()=>{
+    if(serverBusy)return;
+    if(testAccess&&serverStatus==="active"){
+      await authorizeTrial("revoke");
+      if(serverStatus==="active")return;
+    }
+    serverStatus="none";resetForNewPlan();render();
+  };
   render();
   closeButton.focus();
 }
