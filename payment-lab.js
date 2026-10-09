@@ -72,7 +72,9 @@ function step(state,event,at,months){
   throw new Error("Evento desconocido");
 }
 function dateTime(time){
-  return new Date(time).toLocaleString("es-CL",{dateStyle:"medium",timeStyle:"short"});
+  const date=new Date(time);
+  try{return date.toLocaleString("es-CL",{dateStyle:"medium",timeStyle:"short"});}
+  catch{return date.toLocaleString();}
 }
 function status(state,at){
   if(state.payment==="pending")return "Pago pendiente de confirmar";
@@ -135,11 +137,16 @@ function open({creatorId,creatorName}={}){
   const btnReset=buildElement("button","action-btn","Reiniciar prueba");
   for(const button of [btnStart,btnApprove,btnReject,btnCancel,btnExpire,btnReset])button.type="button";
   buttonRow.append(btnStart,btnApprove,btnReject,btnCancel,btnExpire,btnReset);
+  // Immediate, persistent feedback NEXT TO the clicked controls on small screens.
+  const actionFeedback=buildElement("div","payment-lab-action-feedback","");
+  actionFeedback.setAttribute("role","status");
+  actionFeedback.setAttribute("aria-live","assertive");
+  actionFeedback.hidden=true;
   const activityTitle=buildElement("h3","","Registro de esta prueba");
   const historyEl=buildElement("ol","payment-lab-history");
   const foot=buildElement("p","payment-lab-foot",
     "El estado de prueba se borra al cerrar. La seguridad de las publicaciones reales continúa en Supabase. En producción, solo un servidor podrá confirmar el pago.");
-  dialog.append(header,note,creator,source,sectionTitle,termsContainer,promo,totals,message,accessCard,buttonRow,activityTitle,historyEl,foot);
+  dialog.append(header,note,creator,source,sectionTitle,termsContainer,promo,totals,message,accessCard,buttonRow,actionFeedback,activityTitle,historyEl,foot);
   parent.appendChild(dialog);
   document.body.appendChild(parent);
   let oldFocus=document.activeElement;
@@ -154,7 +161,15 @@ function open({creatorId,creatorName}={}){
   document.addEventListener("keydown",onKey);
   const now=()=>Date.now();
   function record(text){history.unshift(text);if(history.length>8)history.length=8;}
-  function resetForNewPlan(){state=initial();history=[];}
+  function showActionFeedback(text){
+    actionFeedback.hidden=false;
+    actionFeedback.textContent=text;
+  }
+  function clearActionFeedback(){
+    actionFeedback.hidden=true;
+    actionFeedback.textContent="";
+  }
+  function resetForNewPlan(){state=initial();history=[];clearActionFeedback();}
   function render(){
     const date=now(),estimate=quote(plan,months,welcome);
     termsContainer.replaceChildren();
@@ -189,7 +204,10 @@ function open({creatorId,creatorName}={}){
       "Esta tarjeta NO es una publicación real. Las fotos y videos exclusivos de "+creatorName+" siguen protegidos."));
     btnStart.disabled=state.payment==="pending"||access(state,date);
     btnApprove.disabled=state.payment!=="pending";
+    btnApprove.textContent=state.payment==="approved"?"✓ Aprobado":"2. Aprobar";
+    btnApprove.classList.toggle("action-primary",state.payment==="pending");
     btnReject.disabled=state.payment!=="pending";
+    btnReject.textContent=state.payment==="rejected"?"✕ Rechazado":"2. Rechazar";
     btnCancel.disabled=!entitled||!state.autoRenew;
     btnExpire.disabled=!entitled;
     historyEl.replaceChildren();
@@ -199,9 +217,28 @@ function open({creatorId,creatorName}={}){
   }
   promoInput.onchange=()=>{welcome=promoInput.checked;resetForNewPlan();render();};
   function apply(action,text){
-    const before=state;
-    state=step(state,action,now(),months);
-    if(before!==state){record(text);render();}
+    // Never fail silently when Android/WebView errors or a stale tap occurs.
+    try{
+      const next=step(state,action,now(),months);
+      if(next===state){
+        showActionFeedback("Esta acción no está disponible en el estado actual. Usa «Reiniciar prueba» si necesitas empezar de nuevo.");
+        return;
+      }
+      state=next;
+      record(text);
+      render();
+      const feedback={
+        start:"Solicitud iniciada. Ahora presiona «2. Aprobar» o «2. Rechazar».",
+        approve:"✓ PAGO APROBADO (SIMULACIÓN). La tarjeta ficticia quedó desbloqueada. No se cobró dinero ni se abrió contenido real.",
+        reject:"✕ PAGO RECHAZADO (SIMULACIÓN). La tarjeta ficticia permanece bloqueada.",
+        cancel:"Renovación cancelada. El acceso ficticio continúa solo hasta la fecha indicada.",
+        expire:"Suscripción vencida. La tarjeta ficticia volvió a bloquearse."
+      };
+      showActionFeedback(feedback[action]||text);
+    }catch(error){
+      console.error("AFTER SHIFT · Error en la simulación de pago:",error);
+      showActionFeedback("No se pudo actualizar la simulación: "+(error?.message||"error inesperado")+". Prueba «Reiniciar prueba».");
+    }
   }
   btnStart.onclick=()=>apply("start","Solicitud iniciada · esperando respuesta del banco ficticio.");
   btnApprove.onclick=()=>apply("approve","Aprobación simulada · solo se habilitó la tarjeta ficticia.");
