@@ -36,13 +36,13 @@ function open(parent,creatorId){
   '<p class="as-help">Simulación para preparar ofertas. No genera pagos ni suscripciones. Precio comercial mínimo: US$4,99 al mes.</p>'+ 
   '<form id="asPricingForm"><label>Precio mensual de referencia (US$)<input id="asBasePrice" type="number" inputmode="decimal" min="4.99" max="10000" step="0.01" required value="'+old.price.toFixed(2)+'"></label>'+
   '<h3>Plazos y descuentos</h3>'+options+
-  '<div class="as-plan-row as-intro"><label><input id="asIntroOn" type="checkbox" '+(old.offer?'checked':'')+'> 10% de bienvenida (editable)</label>'+
+  '<div class="as-plan-row as-intro"><label><input id="asIntroOn" type="checkbox" '+(old.offer?'checked':'')+'> Oferta de bienvenida (primer mes)</label>'+
   '<label>Descuento <input id="asIntroPct" type="number" inputmode="numeric" min="0" max="50" step="1" required value="'+old.offerDiscount+'"> %</label></div>'+
   '<h3>Vista previa</h3><div id="asPreview" class="as-preview" aria-live="polite"></div>'+
   '<p class="as-help">Los descuentos de 3, 6 y 12 meses se aplican al total anticipado del periodo. La promoción del primer mes es solo para nuevos suscriptores y no se acumula con otros descuentos.</p>'+
   '<div id="asPricingMsg" class="form-msg" role="status" aria-live="polite"></div>'+
   '<div class="form-actions"><button type="button" class="action-btn" id="asCancelPricing">Cancelar</button><button type="submit" class="action-btn action-primary">GUARDAR BORRADOR</button></div>'+
-  '<p class="as-help">Se guarda únicamente en este navegador. No está publicado ni cambia tu precio en Supabase.</p></form></section>';
+  '<p class="as-help">El precio propuesto aparece en Creator Studio al guardar. Solo se guarda en este navegador; tu suscripción activa de prueba sigue siendo gratuita.</p></form></section>';
  parent.appendChild(overlay);
  const close=()=>overlay.remove();
  overlay.querySelector("#closePricing").onclick=close;
