@@ -1,19 +1,13 @@
 const SUPABASE_URL="https://heqjyafaxjzisddmgvob.supabase.co";
 const SUPABASE_KEY="sb_publishable_u8E7mHoZgYnUw02fmkAKUQ_8l1vnuJy";
 const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const creators=[{name:"Alex Morgan",handle:"@alexm",sub:"US$9.99",tag:"CREATOR",bio:"Contenido exclusivo y comunidad."},{name:"Sofia Lane",handle:"@sofialane",sub:"US$12.00",tag:"FEATURED",bio:"Contenido premium para suscriptores."},{name:"Mia Carter",handle:"@miac",sub:"US$8.99",tag:"CREATOR",bio:"Nuevas publicaciones cada semana."},{name:"Valentina R.",handle:"@valer",sub:"US$14.99",tag:"FEATURED",bio:"Perfil premium de AFTER SHIFT."}];
+const creators=[{name:"Valentina",handle:"@valentina",sub:"US$9.99",tag:"DEMO",bio:"Contenido exclusivo y comunidad."},{name:"Sofía",handle:"@sofia",sub:"US$12.00",tag:"DEMO",bio:"Contenido premium para suscriptores."},{name:"Isabella",handle:"@isabella",sub:"US$8.99",tag:"DEMO",bio:"Nuevas publicaciones cada semana."},{name:"Camila",handle:"@camila",sub:"US$14.99",tag:"DEMO",bio:"Perfil ilustrativo de AFTER SHIFT."}];
 const grid=document.getElementById("creatorGrid");
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 async function currentUser(){const{data}=await supabaseClient.auth.getUser();return data.user;}
 async function getMyProfile(){const user=await currentUser();if(!user)return null;const{data}=await supabaseClient.from("profiles").select("id,username,display_name,role,bio,subscription_price").eq("id",user.id).maybeSingle();return data||null;}
-async function loadAccount(){const user=await currentUser();if(!user)return;const p=await getMyProfile();const{count:fc}=await supabaseClient.from("follows").select("*",{count:"exact",head:true}).eq("follower_id",user.id);const{count:sc}=await supabaseClient.from("subscriptions").select("*",{count:"exact",head:true}).eq("subscriber_id",user.id).eq("status","active");document.getElementById("accountSection").style.display="block";document.getElementById("accountTitle").textContent="Hola, "+(p?.display_name||user.email);document.getElementById("accountEmail").textContent=user.email;document.getElementById("accountRole").textContent="Rol: "+(p?.role||"user")+" · @"+(p?.username||"usuario");document.getElementById("followCount").textContent=fc||0;document.getElementById("subCount").textContent=sc||0;document.getElementById("loginBtn").textContent="Mi cuenta";document.getElementById("signupBtn").style.display="none";const cb=document.getElementById("creatorBtn");cb.style.display="inline-block";cb.textContent=p?.role==="creator"?"Creator Studio":"Convertirme en creador";cb.onclick=()=>p?.role==="creator"?openCreatorStudio():becomeCreator();}
+async function loadAccount(){const user=await currentUser();if(!user)return;const p=await getMyProfile();const{count:fc}=await supabaseClient.from("follows").select("*",{count:"exact",head:true}).eq("follower_id",user.id);const{count:sc}=await supabaseClient.from("subscriptions").select("*",{count:"exact",head:true}).eq("subscriber_id",user.id).eq("status","active");const accountBox=document.getElementById("accountSection");accountBox.style.display=accountBox.dataset.open==="true"?"block":"none";document.getElementById("accountTitle").textContent="Hola, "+(p?.display_name||user.email);document.getElementById("accountEmail").textContent=user.email;document.getElementById("accountRole").textContent="Rol: "+(p?.role||"user")+" · @"+(p?.username||"usuario");document.getElementById("followCount").textContent=fc||0;document.getElementById("subCount").textContent=sc||0;document.getElementById("loginBtn").textContent="Mi cuenta";document.getElementById("signupBtn").style.display="none";const cb=document.getElementById("creatorBtn");cb.style.display="inline-block";cb.textContent=p?.role==="creator"?"Creator Studio":"Convertirme en creador";cb.onclick=()=>p?.role==="creator"?openCreatorStudio():becomeCreator();}
 
-const demoPortraits=[
- "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=75",
- "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=75",
- "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=75",
- "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=600&q=75"
-];
 let visibleCreatorList=[];
 function drawCreatorGrid(search=""){
   const q=search.trim().toLowerCase();
@@ -21,7 +15,7 @@ function drawCreatorGrid(search=""){
     .filter(item=>!q||(item.creator.name+" "+item.creator.handle+" "+item.creator.bio).toLowerCase().includes(q));
   grid.innerHTML=filtered.length?filtered.map(({creator:c,index})=>{
     const photo=c.portrait||"";
-    const art=photo?'<img class="creator-photo" src="'+esc(photo)+'" alt="Retrato de '+esc(c.name)+'" loading="lazy" referrerpolicy="no-referrer">':'<div class="creator-photo-fallback">'+esc(c.name.charAt(0))+'</div>';
+    const art=c.spriteIndex!==undefined?'<div class="creator-photo-sprite sprite-'+c.spriteIndex+'" role="img" aria-label="Imagen ilustrativa de '+esc(c.name)+'"></div>':photo?'<img class="creator-photo" src="'+esc(photo)+'" alt="Retrato de '+esc(c.name)+'" loading="lazy" referrerpolicy="no-referrer">':'<div class="creator-photo-fallback">'+esc(c.name.charAt(0))+'</div>';
     return '<article class="card"><div class="cover">'+art+'</div><div class="info"><div class="name">'+esc(c.name)+'</div><div class="handle">'+esc(c.handle)+'</div>'+(c.db?'':'<span class="creator-demo">Perfil de demostración</span>')+'<div class="card-footer"><span class="card-price">'+esc(c.sub)+'/mes</span><button class="profile-open" type="button" data-index="'+index+'">Ver perfil</button></div></div></article>';
   }).join(""):'<div class="empty-creators">No encontramos creadores con ese nombre.</div>';
   grid.querySelectorAll(".profile-open").forEach(btn=>btn.onclick=()=>openProfile(Number(btn.dataset.index),visibleCreatorList));
@@ -38,7 +32,7 @@ async function render(){
     portrait:p.avatar_url||"",cover:p.cover_url||""
   }));
   const demo=creators.filter(c=>!(dbCreators||[]).some(p=>p.username===c.handle.replace("@","")))
-    .map((c,i)=>({...c,portrait:demoPortraits[i]||""}));
+    .map((c,i)=>({...c,portrait:"",spriteIndex:i}));
   visibleCreatorList=[...dynamic,...demo];
   drawCreatorGrid(document.getElementById("creatorSearch")?.value||"");
 }
@@ -50,7 +44,7 @@ function openDemoProfile(c){
     <button class="profile-close" type="button" aria-label="Cerrar">×</button>
     <div class="profile-cover"></div>
     <div class="profile-head">
-      <div class="avatar">${c.portrait?'<img src="'+esc(c.portrait)+'" alt="">':esc(c.name.charAt(0))}</div>
+      <div class="avatar sprite-avatar sprite-${c.spriteIndex}"><span class="visually-hidden">${esc(c.name)}</span></div>
       <div class="profile-main"><h2>${esc(c.name)}</h2><div class="profile-handle">${esc(c.handle)}</div><p>${esc(c.bio)}</p></div>
       <div class="profile-actions"><button class="action-btn action-primary" type="button" disabled>PERFIL DE EJEMPLO</button></div>
     </div>
@@ -60,7 +54,7 @@ function openDemoProfile(c){
   document.body.appendChild(overlay);
   overlay.querySelector(".profile-close").onclick=()=>overlay.remove();
   overlay.addEventListener("click",e=>{if(e.target===overlay)overlay.remove()});
-  if(c.portrait){overlay.querySelector(".profile-cover").style.backgroundImage='linear-gradient(90deg,#00000044,#00000010),url("'+c.portrait.replaceAll('"',"%22")+'")';}
+  // The demonstration profile uses only the approved editorial image sprite.
 }
 // Private media: signed links are issued only after Supabase Storage RLS authorizes access.
 async function secureMediaUrl(post){
@@ -224,8 +218,7 @@ document.getElementById("creatorSearch").addEventListener("input",e=>drawCreator
 document.getElementById("navSubscriptions").onclick=async()=>{
   const user=await currentUser();
   if(!user){document.getElementById("loginBtn").click();return;}
-  await loadAccount();
-  document.getElementById("accountSection").scrollIntoView({behavior:"smooth"});
+  const section=document.getElementById("accountSection");section.dataset.open="true";await loadAccount();section.scrollIntoView({behavior:"smooth"});
 };
 document.getElementById("exploreBtn").onclick=()=>document.getElementById("creators").scrollIntoView({behavior:"smooth"});
 document.getElementById("allBtn").onclick=()=>{document.getElementById("creatorSearch").value="";drawCreatorGrid();document.getElementById("creators").scrollIntoView({behavior:"smooth"});};
@@ -251,7 +244,7 @@ async function finishLogin(user){
 
 document.getElementById("signupBtn").onclick=async()=>{
   const existing=await currentUser();
-  if(existing){await finishLogin(existing);return;}
+  if(existing){const box=document.getElementById("accountSection");box.dataset.open="true";await loadAccount();box.scrollIntoView({behavior:"smooth"});return;}
   const email=prompt("Correo electrónico:");
   if(!email)return;
   const password=prompt("Contraseña (mínimo 6 caracteres):");
