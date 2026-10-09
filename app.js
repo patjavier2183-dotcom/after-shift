@@ -271,7 +271,7 @@ async function openPostDetail(post,creator,viewerMark){
   }
 }
 async function getPosts(creatorId){const{data,error}=await supabaseClient.from("posts").select("id,title,preview,access,image_url,media_type,media_url,created_at").eq("creator_id",creatorId).order("created_at",{ascending:false});return error?[]:(data||[]);}
-async function openProfile(i,list=creators,options={}){const c=list[i];if(!c.db){openDemoProfile(c);return;}const user=await currentUser();if(!user){alert("Primero debes ingresar a AFTER SHIFT.");return;}const creator=c.db?{id:c.id,display_name:c.name,username:c.handle.replace("@",""),bio:c.bio,subscription_price:Number(String(c.sub).replace("US$",""))}:await (async()=>{const{data}=await supabaseClient.from("profiles").select("id,display_name,username,bio,subscription_price").eq("username",c.handle.replace("@","")).maybeSingle();return data;})();if(!creator){alert("Este creador todavía no está registrado en la base de datos V0.");return;}const{data:follow}=await supabaseClient.from("follows").select("creator_id").eq("follower_id",user.id).eq("creator_id",creator.id).maybeSingle();const{data:sub}=await supabaseClient.from("subscriptions").select("creator_id,status").eq("subscriber_id",user.id).eq("creator_id",creator.id).maybeSingle();const subscribed=sub?.status==="active";const displayPrice=Number(creator.subscription_price||0)>0?"US$"+Number(creator.subscription_price).toFixed(2)+"/mes":"Precio por definir";const canViewExclusive=subscribed||user.id===creator.id;const posts=await authorizePostMedia(await getPosts(creator.id),creator.id,subscribed,user.id);const viewerMark=`ID ${user.id.replace(/-/g,"").slice(0,16).toUpperCase()}`;const overlay=document.createElement("div");overlay.className="profile-overlay";overlay.innerHTML=`<section class="creator-profile">
+async function openProfile(i,list=creators,options={}){const c=list[i];if(!c.db){openDemoProfile(c);return;}const user=await currentUser();if(!user){alert("Primero debes ingresar a AFTER SHIFT.");return;}const testViewer=await getMyProfile();const canUsePaymentLab=["aftershift","pat"].includes(String(testViewer?.username||"").toLowerCase());const creator=c.db?{id:c.id,display_name:c.name,username:c.handle.replace("@",""),bio:c.bio,subscription_price:Number(String(c.sub).replace("US$",""))}:await (async()=>{const{data}=await supabaseClient.from("profiles").select("id,display_name,username,bio,subscription_price").eq("username",c.handle.replace("@","")).maybeSingle();return data;})();if(!creator){alert("Este creador todavía no está registrado en la base de datos V0.");return;}const{data:follow}=await supabaseClient.from("follows").select("creator_id").eq("follower_id",user.id).eq("creator_id",creator.id).maybeSingle();const{data:sub}=await supabaseClient.from("subscriptions").select("creator_id,status").eq("subscriber_id",user.id).eq("creator_id",creator.id).maybeSingle();const subscribed=sub?.status==="active";const displayPrice=Number(creator.subscription_price||0)>0?"US$"+Number(creator.subscription_price).toFixed(2)+"/mes":"Precio por definir";const canViewExclusive=subscribed||user.id===creator.id;const posts=await authorizePostMedia(await getPosts(creator.id),creator.id,subscribed,user.id);const viewerMark=`ID ${user.id.replace(/-/g,"").slice(0,16).toUpperCase()}`;const overlay=document.createElement("div");overlay.className="profile-overlay";overlay.innerHTML=`<section class="creator-profile">
 <button class="profile-close" id="closeProfile" aria-label="Cerrar">×</button>
 <div class="profile-cover"></div>
 <div class="profile-head">
@@ -382,6 +382,7 @@ function showSubscriptionUnavailable(){
     '<div class="subscription-confirm-price"><span>Precio comercial pendiente de habilitación</span><strong>'+displayedPrice+'</strong></div>'+
     '<p class="subscription-confirm-note"><strong>Los pagos todavía no están habilitados.</strong> Para acceder a este contenido será necesario completar una compra y verificar el pago. Durante las pruebas no permitimos activar nuevas suscripciones gratuitas.</p>'+
     '<div class="subscription-confirm-actions">'+
+      (canUsePaymentLab?'<button type="button" class="action-btn payment-lab-launch">PROBAR PAGOS (SIMULACIÓN)</button>':'')+
       '<button type="button" class="action-btn action-primary subscription-confirm-cancel">ENTENDIDO</button>'+
     '</div></section>';
   overlay.appendChild(dialog);
@@ -389,6 +390,12 @@ function showSubscriptionUnavailable(){
   const close=()=>{dialog.remove();if(previousFocus?.isConnected)previousFocus.focus();};
   dialog.querySelector(".subscription-confirm-close").onclick=close;
   dialog.querySelector(".subscription-confirm-cancel").onclick=close;
+  const labButton=dialog.querySelector(".payment-lab-launch");
+  if(labButton)labButton.onclick=()=>{
+    close();
+    if(window.AfterShiftPaymentLab)window.AfterShiftPaymentLab.open({creatorId:creator.id,creatorName:creator.display_name});
+    else alert("El laboratorio todavía se está cargando. Actualiza AFTER SHIFT e inténtalo otra vez.");
+  };
   dialog.addEventListener("click",e=>{if(e.target===dialog)close();});
   dialog.addEventListener("keydown",e=>{if(e.key==="Escape"){e.preventDefault();close();}});
   dialog.querySelector(".subscription-confirm-cancel").focus();
