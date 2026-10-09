@@ -706,7 +706,7 @@ loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
   forgot.onclick=()=>open("request-reset");
   modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});
   document.getElementById("signupBtn").onclick=()=>open("signup");
-  document.getElementById("loginBtn").onclick=()=>{
+  document.getElementById("loginBtn").onclick=async()=>{
     if(await currentUser()){
       showAccountPanel();
       loadAccount().catch(error=>{
