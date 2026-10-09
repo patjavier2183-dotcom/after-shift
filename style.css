@@ -204,3 +204,25 @@ html,body{background-color:#faf9f7!important}
 .payment-lab-demo-video{display:block;width:100%;max-height:52dvh;min-height:180px;background:#131c25;border-radius:10px}
 .payment-lab-demo-story{background:#f7f7f4;padding:18px;border-radius:10px}
 @media(max-width:400px){.payment-lab-demo-button{font-size:11px;padding:10px 4px}.payment-lab-demo-dialog{padding:19px}}
+
+
+/* AFTER SHIFT V20 · Account actions should look and behave like tappable buttons. */
+.account-section .account-actions{display:flex;align-items:stretch;justify-content:flex-end;flex-wrap:wrap;gap:10px}
+.account-section .account-actions .text-btn{display:inline-flex;align-items:center;justify-content:center;min-width:140px;min-height:46px;padding:12px 16px;border:1px solid #d7dcdf;border-radius:10px;background:#fff;color:#24313b;font-size:13px;font-weight:750;line-height:1.25;text-align:center;box-shadow:0 2px 5px rgba(27,38,47,.06);transition:background-color .15s ease,transform .15s ease}
+.account-section #creatorBtn{background:#17212b;border-color:#17212b;color:#fff}
+.account-section #creatorBtn:hover{background:#2b3a47}
+.account-section #logoutBtn:hover{background:#f3f4f4;border-color:#bfc6cb}
+.account-section .account-actions .text-btn:active{transform:scale(.98)}
+.top-actions #loginBtn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;border:1px solid #dce0e3;border-radius:10px;background:#fff;padding:9px 12px;font-weight:750}
+.top-actions #loginBtn:hover{background:#f4f5f4}
+.account-section .account-subscriptions-button{min-height:61px;padding:8px 13px;border:1px solid #e0e4e5;background:#f9faf9;border-radius:11px}
+.account-section .account-subscriptions-button:hover,.account-section .account-subscriptions-button[aria-expanded="true"]{border-color:#e2bb47;background:#fff8e8}
+.account-section #hideSubscriptions{padding:9px 13px;border:1px solid #d7dcdf;border-radius:8px;background:#fff}
+.creator-section .see-all{padding:10px 13px;border:1px solid #d9dddf;border-radius:10px;background:#fff;min-height:42px}
+.creator-section .see-all:hover{background:#fff8e8;border-color:#e0c05c}
+@media(max-width:680px){
+  .account-section .account-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;justify-content:stretch;margin-top:15px;gap:9px}
+  .account-section .account-actions .text-btn{min-width:0;min-height:48px;width:100%;padding:10px 7px;font-size:12px;white-space:normal}
+  .creator-section .see-all{font-size:12px;padding:10px 11px}
+}
+@media(prefers-reduced-motion:reduce){.account-section .account-actions .text-btn{transition:none}}
