@@ -13,6 +13,22 @@
 - El registro de razón social, dominio y marca son trámites distintos. Deben identificarse correctamente los derechos del software y las autorizaciones/licencias, particularmente cuando se usan terceros o herramientas de desarrollo.
 - Fuentes: https://www.registrodeempresasysociedades.cl/Constituir/Default.aspx ; https://www.chileatiende.gob.cl/fichas/21409 ; https://www.inapi.cl/preguntas-frecuentes/marcas
 
+## Prechequeo marcario AFTER SHIFT (Chile, 2026-10-09)
+
+**Resultado no concluyente:** Se localizó el buscador oficial INAPI `https://buscadormarcas.inapi.cl/`, pero no fue posible ejecutar y leer su consulta interactiva de expedientes desde las herramientas. No puede afirmarse aún que la marca esté libre, registrada o rechazada. La búsqueda general en motores web **no reemplaza** el buscador oficial ni el examen de INAPI.
+
+### Coincidencias comerciales conocidas (no equivalen a inscripción chilena)
+
+- "AfterShift: Sueño y Turnos", app de salud/turnos disponible en Apple App Store Chile: `https://apps.apple.com/cl/app/aftershift-sue%C3%B1o-y-turnos/id6757163182`. Usar mismo vocablo en una app motiva análisis del riesgo de confusión según servicios y titularidad.
+- "AFTERSHIFT", solicitud estadounidense de marca para servicios AI, serie 99352185, presentada en 2025. La ficha más actualizada revisada indica **abandonada en abril 2026**, y las fuentes se contradicen sobre vigencia. Su existencia en EE. UU. no prueba derechos registrados en Chile. `https://www.trademarkelite.com/trademark/trademark-detail/99352185/AFTERSHIFT`.
+
+### Diligencia pendiente antes de pagar o constituir bajo ese nombre
+
+1. Abrir `https://buscadormarcas.inapi.cl/`, ingresar **AFTER SHIFT** en campo **Nombre de Marca**, buscar por **Contenga**, anotar solicitudes, registros, estados, titulares y clases. Repetir como **AFTERSHIFT**, y considerar **SHIFT** y variaciones fonéticamente similares en rubros próximos. Registrar capturas y números de solicitud.
+2. Priorizar examen de marcas en **clase 41** (entretenimiento y contenido en línea), **clase 42** (software como servicio, plataforma web), y evaluar **clases 9** (app descargable), **38** (transmisión), **45** (red social) y **35** (mercado de creadores) de acuerdo con redacción de servicios real. Evitar seleccionar clases innecesarias sin revisión.
+3. INAPI explica que las marcas nuevas tienen tasa de **3 UTM por clase**, pagadera **1 UTM al solicitar** y **2 UTM al obtener concesión**, más publicación en Diario Oficial; valor CLP varía por mes. `https://www.inapi.cl/marcas/para-informarse`.
+4. Mantener estado **pendiente de verificación** y **no presentar ni pagar** solicitud hasta revisar resultados oficiales y eventualmente consultar especialista de propiedad industrial.
+
 ## Alcance comercial confirmado (2026-10-09)
 
 AFTER SHIFT será una plataforma de creadores de contenido **general y contenido para adultos**, incluyendo fotografías, videos, material erótico y sexual explícito de adultos. Los accesos comerciales deberán limitarse a personas de 18 años o más y a contenidos legales y consentidos.
