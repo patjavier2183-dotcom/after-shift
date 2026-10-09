@@ -109,7 +109,8 @@ document.getElementById("hideSubscriptions").onclick=closeMySubscriptions;
 
 let visibleCreatorList=[];
 function drawCreatorGrid(search=""){
-  const q=search.trim().toLowerCase();
+  // Accept @username and @display-name as well as ordinary names on mobile.
+  const q=String(search||"").trim().toLowerCase().replace(/^@+\s*/,"");
   const filtered=visibleCreatorList.map((creator,index)=>({creator,index}))
     .filter(item=>!q||(item.creator.name+" "+item.creator.handle+" "+item.creator.bio).toLowerCase().includes(q));
   grid.innerHTML=filtered.length?filtered.map(({creator:c,index})=>{
