@@ -42,6 +42,26 @@ async function render(){
   visibleCreatorList=[...dynamic,...demo];
   drawCreatorGrid(document.getElementById("creatorSearch")?.value||"");
 }
+// Demo cards are illustrative and never create subscriptions or claim verified identities.
+function openDemoProfile(c){
+  const overlay=document.createElement("div");
+  overlay.className="profile-overlay";
+  overlay.innerHTML=`<section class="creator-profile demo-profile">
+    <button class="profile-close" type="button" aria-label="Cerrar">×</button>
+    <div class="profile-cover"></div>
+    <div class="profile-head">
+      <div class="avatar">${c.portrait?'<img src="'+esc(c.portrait)+'" alt="">':esc(c.name.charAt(0))}</div>
+      <div class="profile-main"><h2>${esc(c.name)}</h2><div class="profile-handle">${esc(c.handle)}</div><p>${esc(c.bio)}</p></div>
+      <div class="profile-actions"><button class="action-btn action-primary" type="button" disabled>PERFIL DE EJEMPLO</button></div>
+    </div>
+    <div class="profile-tabs"><span class="profile-tab active">Contenido</span><span class="profile-tab">Sobre mí</span><span class="profile-tab">Suscripción</span></div>
+    <div class="profile-panel-extra"><h3>Perfil de demostración</h3><p>Esta imagen representa solamente una vista de ejemplo del diseño de AFTER SHIFT. No corresponde a una cuenta verificada ni permite suscripciones reales.</p></div>
+  </section>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector(".profile-close").onclick=()=>overlay.remove();
+  overlay.addEventListener("click",e=>{if(e.target===overlay)overlay.remove()});
+  if(c.portrait){overlay.querySelector(".profile-cover").style.backgroundImage='linear-gradient(90deg,#00000044,#00000010),url("'+c.portrait.replaceAll('"',"%22")+'")';}
+}
 // Private media: signed links are issued only after Supabase Storage RLS authorizes access.
 async function secureMediaUrl(post){
   const raw=post.media_url||post.image_url;
@@ -72,7 +92,7 @@ function renderViewerMedia(post, viewerMark){
   return `<div class="secured-media-frame">${media}<div class="secured-watermark" aria-hidden="true"><span class="secured-watermark-viewer">${stamp}</span></div></div>`;
 }
 async function getPosts(creatorId){const{data,error}=await supabaseClient.from("posts").select("id,title,preview,access,image_url,media_type,media_url,created_at").eq("creator_id",creatorId).order("created_at",{ascending:false});return error?[]:(data||[]);}
-async function openProfile(i,list=creators,options={}){const c=list[i],user=await currentUser();if(!user){alert("Primero debes ingresar a AFTER SHIFT.");return;}const creator=c.db?{id:c.id,display_name:c.name,username:c.handle.replace("@",""),bio:c.bio,subscription_price:Number(String(c.sub).replace("US$",""))}:await (async()=>{const{data}=await supabaseClient.from("profiles").select("id,display_name,username,bio,subscription_price").eq("username",c.handle.replace("@","")).maybeSingle();return data;})();if(!creator){alert("Este creador todavía no está registrado en la base de datos V0.");return;}const{data:follow}=await supabaseClient.from("follows").select("creator_id").eq("follower_id",user.id).eq("creator_id",creator.id).maybeSingle();const{data:sub}=await supabaseClient.from("subscriptions").select("creator_id,status").eq("subscriber_id",user.id).eq("creator_id",creator.id).maybeSingle();const subscribed=sub?.status==="active";const canViewExclusive=subscribed||user.id===creator.id;const posts=await authorizePostMedia(await getPosts(creator.id),creator.id,subscribed,user.id);const viewerMark=`ID ${user.id.replace(/-/g,"").slice(0,16).toUpperCase()}`;const overlay=document.createElement("div");overlay.className="profile-overlay";overlay.innerHTML=`<section class="creator-profile">
+async function openProfile(i,list=creators,options={}){const c=list[i];if(!c.db){openDemoProfile(c);return;}const user=await currentUser();if(!user){alert("Primero debes ingresar a AFTER SHIFT.");return;}const creator=c.db?{id:c.id,display_name:c.name,username:c.handle.replace("@",""),bio:c.bio,subscription_price:Number(String(c.sub).replace("US$",""))}:await (async()=>{const{data}=await supabaseClient.from("profiles").select("id,display_name,username,bio,subscription_price").eq("username",c.handle.replace("@","")).maybeSingle();return data;})();if(!creator){alert("Este creador todavía no está registrado en la base de datos V0.");return;}const{data:follow}=await supabaseClient.from("follows").select("creator_id").eq("follower_id",user.id).eq("creator_id",creator.id).maybeSingle();const{data:sub}=await supabaseClient.from("subscriptions").select("creator_id,status").eq("subscriber_id",user.id).eq("creator_id",creator.id).maybeSingle();const subscribed=sub?.status==="active";const canViewExclusive=subscribed||user.id===creator.id;const posts=await authorizePostMedia(await getPosts(creator.id),creator.id,subscribed,user.id);const viewerMark=`ID ${user.id.replace(/-/g,"").slice(0,16).toUpperCase()}`;const overlay=document.createElement("div");overlay.className="profile-overlay";overlay.innerHTML=`<section class="creator-profile">
 <button class="profile-close" id="closeProfile" aria-label="Cerrar">×</button>
 <div class="profile-cover"></div>
 <div class="profile-head">
