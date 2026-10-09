@@ -171,3 +171,19 @@ html,body{background-color:#faf9f7!important}
 .payment-lab-history li{font-size:12px;line-height:1.45;color:#626e77}
 .payment-lab-foot{font-size:11px;color:#65717a;line-height:1.55;border-top:1px solid #e6e8e8;margin:14px 0 0;padding-top:14px}
 @media(max-width:680px){.payment-lab-overlay{padding:10px}.payment-lab-card{max-height:calc(100dvh - 20px);padding:21px 15px}.payment-lab-title{font-size:28px}.payment-lab-term{font-size:11px}.payment-lab-actions{gap:7px}.payment-lab-actions .action-btn{font-size:11px;padding:11px 6px}.subscription-confirm-actions .payment-lab-launch{flex-basis:100%}}
+
+/* Payment test: visible feedback directly below buttons, also on narrow mobile screens. */
+.payment-lab-action-feedback{
+  margin:12px 0 14px;
+  padding:13px 14px;
+  border:1px solid #d2dce2;
+  border-left:4px solid #1b2932;
+  border-radius:9px;
+  background:#f6f8f9;
+  color:#1c2933;
+  font-size:13px;
+  font-weight:700;
+  line-height:1.5
+}
+.payment-lab-action-feedback[hidden]{display:none!important}
+.payment-lab-actions .action-btn.action-primary:not(:disabled){background:#17212b;color:#fff}
