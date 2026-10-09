@@ -52,12 +52,13 @@ overlay.querySelectorAll(".post-card").forEach(card=>{
   lock.style.cursor="pointer";lock.setAttribute("role","button");lock.setAttribute("tabindex","0");lock.onclick=subscribe;lock.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();subscribe();}};
 });
 overlay.querySelector("#followAction").onclick=async()=>{if(follow){const{error}=await supabaseClient.from("follows").delete().eq("follower_id",user.id).eq("creator_id",creator.id);if(error)alert(error.message);else{overlay.remove();await loadAccount();}}else{const{error}=await supabaseClient.from("follows").insert({follower_id:user.id,creator_id:creator.id});if(error)alert(error.message);else{overlay.remove();await loadAccount();}}};
-overlay.querySelector("#subAction").onclick=async()=>{
-  const action=overlay.querySelector("#subAction");
-  if(action.disabled)return;
+// Todas las entradas (botón superior, miniatura y candado) pasan por confirmación.
+const subscriptionAction=overlay.querySelector("#subAction");
+async function updateSubscription(){
+  if(subscriptionAction.disabled)return;
   if(subscribed&&!confirm("¿Quieres cancelar tu suscripción a "+creator.display_name+"?"))return;
-  action.disabled=true;
-  action.textContent=subscribed?"Cancelando...":"Activando suscripción...";
+  subscriptionAction.disabled=true;
+  subscriptionAction.textContent=subscribed?"Cancelando...":"Activando suscripción...";
   try{
     if(subscribed){
       const{error}=await supabaseClient.from("subscriptions").delete()
@@ -69,7 +70,6 @@ overlay.querySelector("#subAction").onclick=async()=>{
       });
       if(error)throw error;
     }
-    // Update the open profile in place: no blocking alert or browser Back.
     await openProfile(i,list,{
       previousOverlay:overlay,
       notice:subscribed?"Suscripción de prueba cancelada. El contenido volvió a bloquearse.":"Suscripción de prueba activada. Contenido desbloqueado; no hubo cobro real."
@@ -77,8 +77,8 @@ overlay.querySelector("#subAction").onclick=async()=>{
     await loadAccount();
     await render();
   }catch(err){
-    action.disabled=false;
-    action.textContent=subscribed?"SUSCRITO ✓":"SUSCRIBIRSE · US$"+Number(creator.subscription_price||0).toFixed(2)+"/mes";
+    subscriptionAction.disabled=false;
+    subscriptionAction.textContent=subscribed?"SUSCRITO ✓":"SUSCRIBIRSE · US$"+Number(creator.subscription_price||0).toFixed(2)+"/mes";
     const notice=document.createElement("div");
     notice.className="profile-feedback";
     notice.setAttribute("role","alert");
@@ -86,7 +86,39 @@ overlay.querySelector("#subAction").onclick=async()=>{
     overlay.appendChild(notice);
     setTimeout(()=>notice.remove(),5000);
   }
-};
+}
+function showSubscriptionConfirmation(){
+  if(overlay.querySelector(".subscription-confirm-overlay"))return;
+  const price="US$"+Number(creator.subscription_price||0).toFixed(2)+"/mes";
+  const dialog=document.createElement("div");
+  dialog.className="subscription-confirm-overlay";
+  dialog.setAttribute("role","presentation");
+  dialog.innerHTML=`<section class="subscription-confirm-card" role="dialog" aria-modal="true" aria-labelledby="subscriptionConfirmTitle" aria-describedby="subscriptionConfirmDesc">
+    <button type="button" class="subscription-confirm-close" aria-label="Cerrar confirmación">×</button>
+    <div class="eyebrow">AFTER SHIFT · V0</div>
+    <h2 id="subscriptionConfirmTitle">Confirmar suscripción</h2>
+    <p id="subscriptionConfirmDesc">Estás por suscribirte a <strong>${esc(creator.display_name)}</strong>.</p>
+    <div class="subscription-confirm-price"><span>Precio mensual anunciado</span><strong>${price}</strong></div>
+    <p class="subscription-confirm-note">Esta es una <strong>prueba gratuita de funcionamiento</strong>. No se procesará ningún pago, no se solicitará tarjeta y no se generarán cobros automáticos.</p>
+    <div class="subscription-confirm-actions">
+      <button type="button" class="action-btn subscription-confirm-cancel">CANCELAR</button>
+      <button type="button" class="action-btn action-primary subscription-confirm-accept">CONFIRMAR PRUEBA</button>
+    </div>
+  </section>`;
+  overlay.appendChild(dialog);
+  const previousFocus=document.activeElement;
+  const close=()=>{dialog.remove();if(previousFocus?.isConnected)previousFocus.focus();};
+  dialog.querySelector(".subscription-confirm-close").onclick=close;
+  dialog.querySelector(".subscription-confirm-cancel").onclick=close;
+  dialog.addEventListener("click",e=>{if(e.target===dialog)close();});
+  dialog.addEventListener("keydown",e=>{if(e.key==="Escape"){e.preventDefault();close();}});
+  dialog.querySelector(".subscription-confirm-accept").onclick=()=>{
+    dialog.remove();
+    updateSubscription();
+  };
+  dialog.querySelector(".subscription-confirm-cancel").focus();
+}
+subscriptionAction.onclick=()=>subscribed?updateSubscription():showSubscriptionConfirmation();
 overlay.querySelectorAll(".read-post").forEach(btn=>btn.onclick=async()=>{const id=btn.dataset.post;const{data:content,error}=await supabaseClient.from("post_content").select("body").eq("post_id",id).maybeSingle();if(error){alert(error.message);return;}const post=posts.find(p=>p.id===id);alert((post?.title||"Publicación")+"\n\n"+(content?.body||post?.preview||"Sin contenido."));});}
 async function becomeCreator(){const user=await currentUser();if(!user)return;const p=await getMyProfile();if(p?.role==="creator"){openCreatorStudio();return;}const username=prompt("Elige tu nombre de usuario para AFTER SHIFT:");if(!username)return;const clean=username.trim().replace(/\s+/g,"").replace(/^@/,"").toLowerCase();if(!/^[a-z0-9_.-]{3,24}$/.test(clean)){alert("Usa 3 a 24 caracteres: letras, números, punto, guion o guion bajo.");return;}const display=prompt("Nombre público del perfil:",p?.display_name||clean);if(!display)return;const{error}=await supabaseClient.from("profiles").update({username:clean,display_name:display.trim(),role:"creator"}).eq("id",user.id);if(error){alert(error.message);return;}alert("Tu perfil de creador está listo.");await loadAccount();openCreatorStudio();}
 async function openCreatorStudio(){const user=await currentUser();if(!user)return;let p=await getMyProfile();if(!p)return;if(p.role!=="creator"){const ok=confirm("¿Quieres convertir tu cuenta en creador? Podrás publicar contenido desde AFTER SHIFT.");if(ok)await becomeCreator();return;}const posts=await authorizePostMedia(await getPosts(user.id),user.id,false,user.id);const overlay=document.createElement("div");overlay.className="profile-overlay";overlay.innerHTML=`<section class="creator-studio"><button class="profile-close" id="closeStudio" aria-label="Cerrar">×</button><div class="studio-head"><div><div class="eyebrow">AFTER SHIFT</div><h2>Creator Studio</h2><p>Publica y administra tu contenido.</p></div><button class="action-btn action-primary" id="newPostBtn">+ NUEVA PUBLICACIÓN</button></div><div class="studio-profile"><div><strong>${esc(p.display_name)}</strong><span>@${esc(p.username)}</span></div><div><strong>${Number(p.subscription_price||0).toFixed(2)}</strong><span>Precio mensual</span></div></div><div class="post-heading"><div><div class="eyebrow">MIS PUBLICACIONES</div><h3>${posts.length} publicación${posts.length===1?"":"es"}</h3></div></div><div class="posts" id="studioPosts">${posts.length?posts.map(x=>`<article class="post-card studio-post"><div>${(x.media_url||x.image_url)?(x.media_type==="video"?`<video class="post-media studio-image" src="${esc(x.display_media_url)}" controls playsinline preload="metadata"></video>`:`<img class="post-media studio-image" src="${esc(x.display_media_url)}" alt="${esc(x.title)}">`):``}<div class="post-label">${x.access==="public"?"PÚBLICO":"SOLO SUSCRIPTORES"}</div><h4>${esc(x.title)}</h4><p>${esc(x.preview)}</p></div><button class="delete-post" data-id="${x.id}">ELIMINAR</button></article>`).join(""):'<div class="empty-posts">Todavía no has publicado nada.</div>'}</div></section>`;document.body.appendChild(overlay);
