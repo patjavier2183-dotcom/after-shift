@@ -27,4 +27,4 @@ html,body{background-color:#faf9f7!important}
 .demo-profile .profile-cover{background-image:linear-gradient(90deg,#0002,#0001),url("assets/after-shift-approved-editorial.webp");background-size:cover,auto 131%;background-position:center,right top}
 .sprite-avatar{background-image:url("assets/after-shift-approved-editorial.webp");background-repeat:no-repeat;background-size:400% auto;background-position-y:bottom;color:transparent}
 .visually-hidden{position:absolute;clip:rect(0,0,0,0);width:1px;height:1px;overflow:hidden}
-@media(max-width:680px){.hero-visual{background-size:cover,auto 131%;background-position:center,right top}.card .cover{aspect-ratio:5/4}.demo-profile .profile-cover{background-size:cover,auto 131%}}
+@media(max-width:680px){.hero-visual{background-size:cover,auto 131%;background-position:center,-24% top}.card .cover{aspect-ratio:5/4}.demo-profile .profile-cover{background-size:cover,auto 131%;background-position:center,left top}}
