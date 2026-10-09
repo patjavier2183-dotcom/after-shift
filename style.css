@@ -114,3 +114,23 @@ html,body{background-color:#faf9f7!important}
 .as-restart-offer{font-size:12px;margin:5px 0 10px}
 .as-restart-offer[hidden]{display:none!important}
 @media(max-width:680px){.as-pricing .as-offer-duration{display:block;line-height:1.5}.as-offer-duration select{display:block;width:100%;max-width:none;margin-top:7px}.as-offer-status{font-size:11px}}
+
+/* On smaller screens the subscription dialog must never be clipped at the top. */
+@media(max-width:680px){
+  .subscription-confirm-overlay{
+    align-items:flex-start;
+    justify-content:center;
+    padding:14px 12px;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+  }
+  .subscription-confirm-card{
+    flex:0 0 auto;
+    width:100%;
+    max-height:calc(100dvh - 28px);
+    overflow-y:auto;
+    margin:auto 0;
+    padding:27px 21px;
+    overscroll-behavior:contain;
+  }
+}
