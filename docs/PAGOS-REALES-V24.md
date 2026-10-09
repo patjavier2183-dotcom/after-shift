@@ -4,6 +4,15 @@
 **Sistema publicado estable:** AFTER SHIFT V23. No reemplazar ni reinterpretar el diseño aprobado de V22.
 **No aplicado a producción:** este documento no cambia clientes, cuentas, importes ni permisos.
 
+## Estructura societaria prevista — decisión del fundador (2026-10-09)
+
+- El usuario declara ser **fundador, creador y titular original de la idea de AFTER SHIFT** y desea iniciar **sin socios adicionales**. Por tanto, la propuesta inicial es **SpA unipersonal con el 100% de las acciones en manos del fundador**, una vez formalizada legalmente. Este es un objetivo de constitución, **no una sociedad ya constituida**.
+- AFTER SHIFT se constituiría **independiente de MOVE**, con identidad fiscal, cuenta bancaria, contratos y contabilidad separados.
+- El fundador podrá definir si más adelante incorpora accionistas; **no se incorporarán socios ni emitirán participaciones sin su instrucción y la formalización correspondiente**.
+- Aún pendientes: comprobar disponibilidad y registrabilidad del nombre comercial **AFTER SHIFT** ante INAPI; estatutos, capital, domicilio, administración, actividad económica, contador/asesoría legal, inicio de actividades SII, política y contratos de propiedad intelectual del código y de la marca, y revisión de obligaciones específicas de una plataforma de contenido adulto.
+- El registro de razón social, dominio y marca son trámites distintos. Deben identificarse correctamente los derechos del software y las autorizaciones/licencias, particularmente cuando se usan terceros o herramientas de desarrollo.
+- Fuentes: https://www.registrodeempresasysociedades.cl/Constituir/Default.aspx ; https://www.chileatiende.gob.cl/fichas/21409 ; https://www.inapi.cl/preguntas-frecuentes/marcas
+
 ## Alcance comercial confirmado (2026-10-09)
 
 AFTER SHIFT será una plataforma de creadores de contenido **general y contenido para adultos**, incluyendo fotografías, videos, material erótico y sexual explícito de adultos. Los accesos comerciales deberán limitarse a personas de 18 años o más y a contenidos legales y consentidos.
