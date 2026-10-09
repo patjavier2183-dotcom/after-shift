@@ -261,3 +261,103 @@ html,body{background-color:#faf9f7!important}
   .creator-section .see-all{min-width:0;padding:8px 2px;font-size:12px}
 }
 @media(prefers-reduced-motion:reduce){.account-section .account-actions .text-btn{transition:none}}
+
+
+/* AFTER SHIFT V22 · consistent mobile spacing and harmonious card geometry.
+   Account and Creator Studio actions remain the same; this is CSS-only. */
+:root{--as-mobile-gutter:20px;--as-layout-gap:12px}
+.section.account-section{padding:24px}
+.account-section .section-head{gap:15px;margin-bottom:22px}
+.account-section .section-head h2{margin:4px 0 0;overflow-wrap:anywhere}
+.account-section .account-card{min-width:0}
+.account-section #accountEmail{overflow-wrap:anywhere;word-break:normal}
+.account-section .account-stats{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:var(--as-layout-gap);align-items:stretch;margin-top:17px
+}
+.account-section .account-stats>div,
+.account-section .account-stats>.account-subscriptions-button{
+  width:100%;min-width:0;min-height:61px;margin:0;padding:7px 9px 10px;
+  border-bottom:1px solid #e8e2d7;text-align:left
+}
+.account-section .account-stats>div{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:3px}
+.account-section .account-stats>.account-subscriptions-button{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:3px}
+.account-section .account-stats strong{font-size:20px;line-height:1.2}
+.account-section .account-stats span{line-height:1.35}
+.creator-studio{--studio-gutter:28px;padding:var(--studio-gutter)}
+.creator-studio .studio-head{
+  display:block;margin:0 0 23px;
+}
+.creator-studio .studio-head>div:first-child{padding-right:52px}
+.creator-studio .studio-head h2{margin:5px 0 8px;line-height:1.14}
+.creator-studio .studio-head p{line-height:1.5;margin:0}
+.creator-studio .studio-actions{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:var(--as-layout-gap);width:100%;margin-top:21px
+}
+.creator-studio .studio-actions .action-btn{
+  width:100%;min-width:0;min-height:46px;padding:11px 10px;
+  border:1px solid #e1e2e0;border-radius:10px;box-shadow:none;
+  background:#fff;color:#28333d;font-size:12px;font-weight:650;
+  line-height:1.25;text-align:center
+}
+.creator-studio .studio-actions .action-primary{
+  background:#f9f6ee;border-color:#e4dccc;color:#253039
+}
+.creator-studio .studio-actions .action-btn:hover{background:#f6f6f3}
+.creator-studio .studio-actions .action-primary:hover{background:#f2ead9}
+.creator-studio .studio-profile{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  align-items:start;gap:var(--as-layout-gap);padding:20px
+}
+.creator-studio .studio-profile>div{min-width:0;max-width:none}
+.creator-studio .studio-profile strong{line-height:1.3}
+.creator-studio .studio-profile span,
+.creator-studio .studio-profile small{line-height:1.45;overflow-wrap:anywhere}
+.creator-studio .post-heading{margin:26px 0 13px}
+.creator-studio .post-heading h3{margin:6px 0 0;line-height:1.25}
+.creator-studio .posts{
+  padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  column-gap:var(--as-layout-gap);row-gap:var(--as-layout-gap)
+}
+.creator-studio .studio-post{display:flex;flex-direction:column;min-width:0;padding:0 0 12px}
+.creator-studio .studio-post>div{flex:1;min-width:0}
+.creator-studio .studio-post .post-media{
+  display:block;width:100%;aspect-ratio:1/1;height:auto;min-height:0;
+  margin:0 0 11px;object-fit:cover
+}
+.creator-studio .studio-post .delete-post{align-self:stretch;margin:auto 11px 0;min-height:37px}
+.creator-section .section-head{align-items:flex-end;gap:12px}
+.creator-section .section-head h2{line-height:1.12}
+@media(max-width:680px){
+  .section.account-section{padding:var(--as-mobile-gutter);margin-top:22px}
+  .account-section .section-head{display:block;margin-bottom:22px}
+  .account-section .account-actions{margin-top:14px;gap:7px}
+  .account-section .account-stats{gap:12px}
+  .creator-studio{--studio-gutter:var(--as-mobile-gutter);padding:var(--studio-gutter)}
+  .creator-studio .studio-head{margin-bottom:23px}
+  .creator-studio .studio-head h2{font-size:30px}
+  .creator-studio .studio-actions{gap:10px;margin-top:22px}
+  .creator-studio .studio-actions .action-btn{
+    min-width:0;min-height:45px;font-size:12px;padding:9px 8px;
+    white-space:normal
+  }
+  .creator-studio .studio-profile{
+    grid-template-columns:1fr;gap:12px;padding:17px
+  }
+  .creator-studio .studio-profile>div:last-child{
+    max-width:none;border-top:1px solid #e4e7e7;
+    padding-top:13px;text-align:left
+  }
+  .creator-studio .post-heading{margin-top:25px}
+  .creator-studio .posts{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    padding:0;gap:10px
+  }
+  .creator-section .section-head{align-items:flex-end}
+  .creator-section .section-head h2{font-size:clamp(26px,6.5vw,32px)}
+}
+@media(max-width:370px){
+  :root{--as-mobile-gutter:17px}
+  .creator-studio .studio-actions .action-btn{font-size:11px}
+}
