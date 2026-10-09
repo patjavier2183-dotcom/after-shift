@@ -99,3 +99,10 @@ html,body{background-color:#faf9f7!important}
 .as-price-card b{font-size:22px;color:#19222b}
 .as-welcome{background:#fffbec;border-color:#ebd28b}
 @media(max-width:680px){.studio-actions{width:100%;justify-content:stretch}.studio-actions .action-btn{flex:1;min-width:132px}.as-pricing{padding:22px 15px}.as-plan-row label{font-size:11px}.as-plan-row input[type=number]{width:49px;padding:7px}}
+
+/* Distinguish proposed creator prices from the active free trial price. */
+.studio-profile>div{min-width:0}
+.studio-profile>div:last-child{text-align:right}
+.studio-profile .studio-live-price{color:#77828a;font-size:11px;font-weight:400;line-height:1.45;margin-top:4px}
+#studioDraftPrice{overflow-wrap:anywhere}
+@media(max-width:680px){.studio-profile{gap:10px}.studio-profile>div:last-child{max-width:60%}}
