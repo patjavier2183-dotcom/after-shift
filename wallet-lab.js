@@ -6,7 +6,7 @@
 const PACKS=[50,100,200],CENT_PER_COIN=10,FEE_BPS=500,CREATOR_PERCENT=80;
 const messages={
  es:{
-  trigger:"🪙 Monedas · prueba",eyebrow:"AFTER SHIFT · LABORATORIO",title:"Monedas y regalos virtuales",
+  trigger:"🪙 Monedas de prueba",eyebrow:"AFTER SHIFT · LABORATORIO",title:"Monedas y regalos virtuales",
   warning:"SIMULADOR: no compra monedas reales, no cobra dinero, no hace transferencias ni desbloquea publicaciones. El saldo desaparece al cerrar.",
   how:"Prueba una recarga y luego úsala en regalos de un LIVE ficticio, propinas o una compra individual DEMO.",
   packs:"1. Recargar monedas (simulación)",pack:(coins,charge)=>coins+" monedas · "+charge,
@@ -26,7 +26,7 @@ const messages={
   reset:"Reiniciar prueba",close:"Cerrar prueba",unspentNote:"El saldo restante no es utilidad realizada. Tampoco permite retirar efectivo.",
  },
  en:{
-  trigger:"🪙 Coins · demo",eyebrow:"AFTER SHIFT · TEST LAB",title:"Coins and virtual gifts",
+  trigger:"🪙 Demo coins",eyebrow:"AFTER SHIFT · TEST LAB",title:"Coins and virtual gifts",
   warning:"DEMO ONLY: no real coin purchases, charges, transfers or private content unlocks. Balance resets on close.",
   how:"Try a top-up, then use the demo coins for LIVE gifts, tips or an individual DEMO purchase.",
   packs:"1. Add demo coins",pack:(coins,charge)=>coins+" coins · "+charge,
@@ -46,7 +46,7 @@ const messages={
   reset:"Reset demo",close:"Close demo",unspentNote:"Unspent coin value is not realized profit. Coins cannot be cashed out.",
  },
  pt:{
-  trigger:"🪙 Moedas · teste",eyebrow:"AFTER SHIFT · LABORATÓRIO",title:"Moedas e presentes virtuais",
+  trigger:"🪙 Moedas de teste",eyebrow:"AFTER SHIFT · LABORATÓRIO",title:"Moedas e presentes virtuais",
   warning:"SIMULAÇÃO: não compra moedas reais, não cobra, não transfere dinheiro nem libera conteúdo privado. O saldo zera ao fechar.",
   how:"Simule uma recarga e use as moedas em presentes de LIVE, gorjetas ou uma compra individual DEMO.",
   packs:"1. Recarregar moedas (simulação)",pack:(coins,charge)=>coins+" moedas · "+charge,

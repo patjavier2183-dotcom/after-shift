@@ -490,3 +490,91 @@ html,body{background-color:#faf9f7!important}
 .live-manager-camera-video{display:block;aspect-ratio:3/4;width:min(100%,315px);max-height:400px;object-fit:cover;background:#101722;border-radius:11px;transform:scaleX(-1);margin:0 auto}
 .live-manager-camera-caption{color:#dce2e6;font-size:11px;line-height:1.4;text-align:center;margin:10px 0 0}
 @media(max-width:680px){.live-manager-camera{padding:12px}.live-manager-camera-video{max-height:350px}}
+
+
+/* AFTER SHIFT V29 · account buttons per mobile review: clear logout + quiet demo tools.
+   Preserve IDs/handlers, creator actions, active sessions and all other screens. */
+.account-section .account-actions{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:auto auto;
+  align-items:stretch;
+  justify-content:stretch;
+  width:min(100%,408px);
+  gap:8px;
+  margin-left:auto;
+}
+.account-section .account-actions #creatorBtn,
+.account-section .account-actions #logoutBtn{
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  min-height:47px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 10px;
+  border-radius:10px;
+  font-size:12px;
+  line-height:1.25;
+  text-align:center;
+  white-space:normal;
+}
+.account-section .account-actions #creatorBtn{
+  grid-column:1;
+  grid-row:1;
+  color:#26323b;
+  background:#f8f6ef;
+  border:1px solid #e0d7c4;
+  font-weight:750;
+}
+.account-section .account-actions #logoutBtn{
+  grid-column:2;
+  grid-row:1;
+  background:#fff;
+  color:#36444d;
+  border:1px solid #d9dddf;
+  font-weight:700;
+}
+.account-section .account-actions #logoutBtn:hover{
+  background:#f3f5f4;
+  border-color:#b9c0c4;
+  color:#192832;
+}
+.account-section .account-actions #coinLabTrigger{
+  grid-column:1/-1;
+  grid-row:2;
+  justify-self:start;
+  width:auto;
+  min-width:0;
+  min-height:34px;
+  margin:2px 0 0;
+  padding:7px 11px;
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  border:1px solid #e6e1d6;
+  border-radius:8px;
+  background:#fbfaf6;
+  color:#716858;
+  font-size:11px;
+  font-weight:600;
+  line-height:1.25;
+  box-shadow:none;
+}
+.account-section .account-actions #coinLabTrigger:hover{
+  background:#f6f1e7;
+  color:#50432d;
+}
+@media(max-width:680px){
+  .account-section .account-actions{
+    width:100%;
+    margin:15px 0 0;
+    gap:9px;
+  }
+}
+@media(max-width:360px){
+  .account-section .account-actions #creatorBtn,
+  .account-section .account-actions #logoutBtn{font-size:11px;padding:9px 7px;}
+}
