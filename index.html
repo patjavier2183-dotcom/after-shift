@@ -1,6 +1,55 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0f"><title>AFTER SHIFT</title><link rel="stylesheet" href="style.css?v=20261008-watermark-anon-3"></head>
-<body><header class="topbar"><a class="brand" href="#">AFTER SHIFT</a><div class="top-actions"><button class="ghost" id="loginBtn">Ingresar</button><button class="ghost" id="signupBtn">Crear cuenta</button></div></header>
-<main><section class="hero"><div class="eyebrow">CREATOR PLATFORM</div><h1>Tu contenido.<br><span>Tu comunidad.</span></h1><p>Una plataforma premium para descubrir creadores, seguir perfiles y acceder a contenido exclusivo.</p><button class="primary" id="exploreBtn">Explorar creadores</button></section>
-<section class="section" id="accountSection" style="display:none"><div class="section-head"><div><div class="eyebrow">MI CUENTA</div><h2 id="accountTitle">Tu cuenta</h2></div><div class="account-actions"><button class="text-btn" id="creatorBtn">Convertirme en creador</button><button class="text-btn" id="logoutBtn">Cerrar sesión</button></div></div><div class="account-card"><div id="accountEmail"></div><div id="accountRole"></div><div class="account-stats"><div><strong id="followCount">0</strong><span>Siguiendo</span></div><div><strong id="subCount">0</strong><span>Suscripciones</span></div></div></div></section>
-<section class="section" id="creators"><div class="section-head"><div><div class="eyebrow">DESCUBRE</div><h2>Creadores destacados</h2></div><button class="text-btn" id="allBtn">Ver todos</button></div><div class="grid" id="creatorGrid"></div></section></main><div class="auth-modal" id="authModal" style="display:none"><div class="auth-box"><button class="profile-close" id="authClose" type="button">×</button><div class="eyebrow">AFTER SHIFT</div><h2 id="authTitle">Crear cuenta</h2><p id="authHint">Crea tu cuenta para continuar.</p><form id="authForm"><label id="authUserLabel">Nombre de usuario<input id="authUsername" autocomplete="username" maxlength="24" required></label><label>Correo electrónico<input id="authEmail" type="email" autocomplete="email" required></label><label>Contraseña<input id="authPassword" type="password" autocomplete="new-password" minlength="6" required></label><div id="authMsg" class="form-msg"></div><button class="action-btn action-primary" type="submit" id="authSubmit">CREAR CUENTA</button></form><button class="text-btn" type="button" id="authSwitch">Ya tengo una cuenta → Ingresar</button></div></div><footer>AFTER SHIFT · V0</footer><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="app.js?v=20261008-watermark-anon-3"></script></body></html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#faf9f7">
+<meta name="description" content="AFTER SHIFT: descubre creadores, conecta con su comunidad y disfruta contenido exclusivo.">
+<title>AFTER SHIFT · Tu mundo. Sin filtros.</title>
+<link rel="stylesheet" href="style.css?v=20261008-editorial-real-v1">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#inicio" aria-label="AFTER SHIFT inicio">AFTER<span>SHIFT</span></a>
+    <nav class="main-nav" aria-label="Navegación principal">
+      <a href="#inicio" class="nav-active" id="navHome">Inicio</a>
+      <a href="#creators" id="navExplore">Explorar</a>
+      <button id="navSubscriptions" type="button">Suscripciones</button>
+    </nav>
+    <label class="search-field" for="creatorSearch"><span aria-hidden="true">⌕</span><input id="creatorSearch" placeholder="Buscar creadores..." autocomplete="off" aria-label="Buscar creadores"></label>
+    <div class="top-actions">
+      <button class="ghost" id="loginBtn" type="button">Iniciar sesión</button>
+      <button class="dark-button" id="signupBtn" type="button">Registrarse</button>
+    </div>
+  </div>
+</header>
+<main id="inicio">
+  <section class="hero" aria-label="Descubre AFTER SHIFT">
+    <div class="hero-visual">
+      <div class="hero-content">
+        <h1>Tu mundo.<span>Sin filtros.</span></h1>
+        <p>Cuando cae la noche,<br>empieza todo.</p>
+        <button class="primary" id="exploreBtn" type="button">Explorar creadores <span aria-hidden="true">→</span></button>
+      </div>
+    </div>
+    <div class="trust-row">
+      <div class="trust-item"><span class="trust-icon" aria-hidden="true">♙</span><div><strong>Contenido exclusivo</strong><small>Fotos y videos para suscriptores</small></div></div>
+      <div class="trust-item"><span class="trust-icon" aria-hidden="true">♡</span><div><strong>Conexión real</strong><small>Apoya directamente a tus creadores</small></div></div>
+      <div class="trust-item"><span class="trust-icon" aria-hidden="true">☆</span><div><strong>Experiencia premium</strong><small>Tu espacio, a tu ritmo</small></div></div>
+    </div>
+  </section>
+  <section class="section account-section" id="accountSection" style="display:none">
+    <div class="section-head"><div><div class="eyebrow">MI CUENTA</div><h2 id="accountTitle">Tu cuenta</h2></div><div class="account-actions"><button class="text-btn" id="creatorBtn">Convertirme en creador</button><button class="text-btn" id="logoutBtn">Cerrar sesión</button></div></div>
+    <div class="account-card"><div id="accountEmail"></div><div id="accountRole"></div><div class="account-stats"><div><strong id="followCount">0</strong><span>Siguiendo</span></div><div><strong id="subCount">0</strong><span>Suscripciones</span></div></div></div>
+  </section>
+  <section class="section creator-section" id="creators">
+    <div class="section-head"><h2>Creadores destacados</h2><button class="text-btn see-all" id="allBtn" type="button">Ver todos <span aria-hidden="true">→</span></button></div>
+    <div class="grid" id="creatorGrid" aria-live="polite"></div>
+    <p class="demo-note">Las fotografías de ejemplo no representan perfiles verificados. Los perfiles reales se muestran con sus datos registrados.</p>
+  </section>
+</main>
+<div class="auth-modal" id="authModal" style="display:none"><div class="auth-box"><button class="profile-close" id="authClose" type="button" aria-label="Cerrar">×</button><div class="eyebrow">AFTER SHIFT</div><h2 id="authTitle">Crear cuenta</h2><p id="authHint">Crea tu cuenta para continuar.</p><form id="authForm"><label id="authUserLabel">Nombre de usuario<input id="authUsername" autocomplete="username" maxlength="24" required></label><label>Correo electrónico<input id="authEmail" type="email" autocomplete="email" required></label><label>Contraseña<input id="authPassword" type="password" autocomplete="new-password" minlength="6" required></label><div id="authMsg" class="form-msg"></div><button class="action-btn action-primary" type="submit" id="authSubmit">CREAR CUENTA</button></form><button class="text-btn" type="button" id="authSwitch">Ya tengo una cuenta → Ingresar</button></div></div>
+<footer class="site-footer"><div class="footer-inner"><div class="footer-brand">AFTER<span>SHIFT</span></div><div class="footer-links"><span>Sobre nosotros</span><span>Términos</span><span>Privacidad</span><span>Soporte</span></div><div class="footer-note">AFTER SHIFT · V0 en pruebas</div></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js?v=20261008-editorial-real-v1"></script>
+</body></html>
