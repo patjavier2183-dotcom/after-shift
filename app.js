@@ -141,7 +141,20 @@ overlay.querySelectorAll(".post-card").forEach(card=>{
   if(preview){preview.style.cursor="pointer";preview.setAttribute("role","button");preview.setAttribute("tabindex","0");preview.setAttribute("aria-label","Suscribirse para desbloquear contenido");preview.onclick=subscribe;preview.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();subscribe();}};}
   lock.style.cursor="pointer";lock.setAttribute("role","button");lock.setAttribute("tabindex","0");lock.onclick=subscribe;lock.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();subscribe();}};
 });
-overlay.querySelector("#followAction").onclick=async()=>{if(follow){const{error}=await supabaseClient.from("follows").delete().eq("follower_id",user.id).eq("creator_id",creator.id);if(error)alert(error.message);else{overlay.remove();await loadAccount();}}else{const{error}=await supabaseClient.from("follows").insert({follower_id:user.id,creator_id:creator.id});if(error)alert(error.message);else{overlay.remove();await loadAccount();}}};
+let isFollowing=!!follow;
+overlay.querySelector("#followAction").onclick=async()=>{
+  const button=overlay.querySelector("#followAction");
+  if(button.disabled)return;
+  button.disabled=true;
+  const{error}=isFollowing
+    ?await supabaseClient.from("follows").delete().eq("follower_id",user.id).eq("creator_id",creator.id)
+    :await supabaseClient.from("follows").insert({follower_id:user.id,creator_id:creator.id});
+  button.disabled=false;
+  if(error){alert("No pudimos cambiar el seguimiento: "+error.message);return;}
+  isFollowing=!isFollowing;
+  button.textContent=isFollowing?"SIGUIENDO ✓":"SEGUIR";
+  await loadAccount();
+};
 // Todas las entradas (botón superior, miniatura y candado) pasan por confirmación.
 const subscriptionAction=overlay.querySelector("#subAction");
 async function updateSubscription(){
@@ -213,7 +226,91 @@ overlay.querySelectorAll(".read-post").forEach(btn=>btn.onclick=async()=>{const 
 async function becomeCreator(){const user=await currentUser();if(!user)return;const p=await getMyProfile();if(p?.role==="creator"){openCreatorStudio();return;}const username=prompt("Elige tu nombre de usuario para AFTER SHIFT:");if(!username)return;const clean=username.trim().replace(/\s+/g,"").replace(/^@/,"").toLowerCase();if(!/^[a-z0-9_.-]{3,24}$/.test(clean)){alert("Usa 3 a 24 caracteres: letras, números, punto, guion o guion bajo.");return;}const display=prompt("Nombre público del perfil:",p?.display_name||clean);if(!display)return;const{error}=await supabaseClient.from("profiles").update({username:clean,display_name:display.trim(),role:"creator"}).eq("id",user.id);if(error){alert(error.message);return;}alert("Tu perfil de creador está listo.");await loadAccount();openCreatorStudio();}
 async function openCreatorStudio(){const user=await currentUser();if(!user)return;let p=await getMyProfile();if(!p)return;if(p.role!=="creator"){const ok=confirm("¿Quieres convertir tu cuenta en creador? Podrás publicar contenido desde AFTER SHIFT.");if(ok)await becomeCreator();return;}const posts=await authorizePostMedia(await getPosts(user.id),user.id,false,user.id);const overlay=document.createElement("div");overlay.className="profile-overlay";overlay.innerHTML=`<section class="creator-studio"><button class="profile-close" id="closeStudio" aria-label="Cerrar">×</button><div class="studio-head"><div><div class="eyebrow">AFTER SHIFT</div><h2>Creator Studio</h2><p>Publica y administra tu contenido.</p></div><button class="action-btn action-primary" id="newPostBtn">+ NUEVA PUBLICACIÓN</button></div><div class="studio-profile"><div><strong>${esc(p.display_name)}</strong><span>@${esc(p.username)}</span></div><div><strong>${Number(p.subscription_price||0).toFixed(2)}</strong><span>Precio mensual</span></div></div><div class="post-heading"><div><div class="eyebrow">MIS PUBLICACIONES</div><h3>${posts.length} publicación${posts.length===1?"":"es"}</h3></div></div><div class="posts" id="studioPosts">${posts.length?posts.map(x=>`<article class="post-card studio-post"><div>${(x.media_url||x.image_url)?(x.media_type==="video"?`<video class="post-media studio-image" src="${esc(x.display_media_url)}" controls playsinline preload="metadata"></video>`:`<img class="post-media studio-image" src="${esc(x.display_media_url)}" alt="${esc(x.title)}">`):``}<div class="post-label">${x.access==="public"?"PÚBLICO":"SOLO SUSCRIPTORES"}</div><h4>${esc(x.title)}</h4><p>${esc(x.preview)}</p></div><button class="delete-post" data-id="${x.id}">ELIMINAR</button></article>`).join(""):'<div class="empty-posts">Todavía no has publicado nada.</div>'}</div></section>`;document.body.appendChild(overlay);
 overlay.querySelector("#closeStudio").onclick=()=>overlay.remove();overlay.querySelector("#newPostBtn").onclick=()=>openNewPostForm(overlay,user.id);overlay.querySelectorAll(".delete-post").forEach(btn=>btn.onclick=async()=>{if(!confirm("¿Eliminar esta publicación?"))return;const{error}=await supabaseClient.from("posts").delete().eq("id",btn.dataset.id).eq("creator_id",user.id);if(error){alert(error.message);return;}overlay.remove();openCreatorStudio();});}
-function openNewPostForm(parent,creatorId){const formOverlay=document.createElement("div");formOverlay.className="form-overlay";formOverlay.innerHTML=`<form class="post-form" id="postForm"><button type="button" class="profile-close" id="closeForm" aria-label="Cerrar">×</button><div class="eyebrow">NUEVA PUBLICACIÓN</div><h2>Publicar contenido</h2><label>Título<input id="postTitle" maxlength="120" required placeholder="Ej. Nueva publicación"></label><label>Imagen o video<input id="postMedia" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm"></label><label>Acceso<select id="postAccess"><option value="public">Público — todos pueden verlo</option><option value="subscriber">Solo suscriptores</option></select></label><div class="form-actions"><button type="button" class="action-btn" id="cancelForm">Cancelar</button><button class="action-btn action-primary" type="submit">PUBLICAR</button></div><div id="formMsg" class="form-msg"></div></form>`;parent.appendChild(formOverlay);formOverlay.querySelector("#closeForm").onclick=()=>formOverlay.remove();formOverlay.querySelector("#cancelForm").onclick=()=>formOverlay.remove();formOverlay.querySelector("#postForm").onsubmit=async e=>{e.preventDefault();const title=document.getElementById("postTitle").value.trim(),access=document.getElementById("postAccess").value,mediaFile=document.getElementById("postMedia").files[0],msg=document.getElementById("formMsg");if(!title){msg.textContent="Escribe un título.";return;}if(!mediaFile){msg.textContent="Selecciona una imagen o video.";return;}if(!["image/jpeg","image/png","image/webp","video/mp4","video/webm"].includes(mediaFile.type)){msg.textContent="Formato no permitido.";return;}const max=mediaFile.type.startsWith("video/")?50:8;if(mediaFile.size>max*1024*1024){msg.textContent="El archivo no puede superar "+max+" MB.";return;}msg.textContent="Publicando...";const{data:post,error}=await supabaseClient.from("posts").insert({creator_id:creatorId,title,preview:title,access}).select("id").single();if(error){msg.textContent=error.message;return;}const mediaType=mediaFile.type.startsWith("video/")?"video":"image";const ext=(mediaFile.name.split(".").pop()||"bin").toLowerCase();const path=creatorId+"/"+post.id+"."+ext;const{error:uploadError}=await supabaseClient.storage.from("post-media").upload(path,mediaFile,{upsert:true,contentType:mediaFile.type});if(uploadError){await supabaseClient.from("posts").delete().eq("id",post.id).eq("creator_id",creatorId);msg.textContent=uploadError.message;return;}const mediaUrl=supabaseClient.storage.from("post-media").getPublicUrl(path).data.publicUrl; const imageUrl=mediaType==="image"?mediaUrl:null;const{error:updateError}=await supabaseClient.from("posts").update({image_url:imageUrl,media_type:mediaType,media_url:mediaUrl}).eq("id",post.id).eq("creator_id",creatorId);if(updateError){await supabaseClient.storage.from("post-media").remove([path]);await supabaseClient.from("posts").delete().eq("id",post.id).eq("creator_id",creatorId);msg.textContent=updateError.message;return;}const{error:contentError}=await supabaseClient.from("post_content").insert({post_id:post.id,body:""});if(contentError){await supabaseClient.from("posts").delete().eq("id",post.id).eq("creator_id",creatorId);msg.textContent=contentError.message;return;}alert("Publicación creada.");formOverlay.remove();parent.remove();openCreatorStudio();};}
+// Upload first with a client-generated UUID, then INSERT the complete post.
+// This avoids a posts UPDATE operation, which the existing RLS does not authorize.
+async function publishMediaPost({creatorId,title,body,access,mediaFile}){
+  const mediaTypes={
+    "image/jpeg":"jpg","image/png":"png","image/webp":"webp",
+    "video/mp4":"mp4","video/webm":"webm"
+  };
+  const extension=mediaTypes[mediaFile.type];
+  if(!extension)throw new Error("Formato no permitido.");
+  const max=mediaFile.type.startsWith("video/")?50:8;
+  if(mediaFile.size>max*1024*1024)throw new Error("El archivo supera el límite de "+max+" MB.");
+  const postId=crypto.randomUUID();
+  const storage=supabaseClient.storage.from("post-media");
+  const path=creatorId+"/"+postId+"."+extension;
+  const {error:uploadError}=await storage.upload(path,mediaFile,{upsert:false,contentType:mediaFile.type});
+  if(uploadError)throw new Error("No se pudo subir el archivo: "+uploadError.message);
+  let postInserted=false;
+  try{
+    // This is an object identifier only; it does not grant public read access
+    // while post-media remains private.
+    const mediaUrl=storage.getPublicUrl(path).data.publicUrl;
+    const mediaType=mediaFile.type.startsWith("video/")?"video":"image";
+    const {error:postError}=await supabaseClient.from("posts").insert({
+      id:postId,creator_id:creatorId,title,preview:title,access,
+      image_url:mediaType==="image"?mediaUrl:null,
+      media_type:mediaType,media_url:mediaUrl
+    });
+    if(postError)throw new Error("No se pudo guardar la publicación: "+postError.message);
+    postInserted=true;
+    const {error:contentError}=await supabaseClient.from("post_content").insert({
+      post_id:postId,body:body||""
+    });
+    if(contentError)throw new Error("No se pudo guardar el texto: "+contentError.message);
+    return postId;
+  }catch(error){
+    if(postInserted)await supabaseClient.from("posts").delete().eq("id",postId).eq("creator_id",creatorId);
+    await storage.remove([path]);
+    throw error;
+  }
+}
+function openNewPostForm(parent,creatorId){
+  const formOverlay=document.createElement("div");
+  formOverlay.className="form-overlay";
+  formOverlay.innerHTML=`<form class="post-form" id="postForm">
+    <button type="button" class="profile-close" id="closeForm" aria-label="Cerrar">×</button>
+    <div class="eyebrow">NUEVA PUBLICACIÓN</div><h2>Publicar contenido</h2>
+    <label>Título<input id="postTitle" maxlength="120" required placeholder="Ej. Nueva publicación"></label>
+    <label>Descripción o texto (opcional)<textarea id="postBody" maxlength="3000" placeholder="Escribe algo para tus suscriptores..."></textarea></label>
+    <label>Imagen o video<input id="postMedia" type="file" required accept="image/jpeg,image/png,image/webp,video/mp4,video/webm"></label>
+    <label>Acceso<select id="postAccess"><option value="subscriber" selected>Solo suscriptores</option><option value="public">Público — todos pueden verlo</option></select></label>
+    <div class="form-actions"><button type="button" class="action-btn" id="cancelForm">Cancelar</button>
+    <button class="action-btn action-primary" id="publishPostButton" type="submit">PUBLICAR</button></div>
+    <div id="formMsg" class="form-msg" role="status" aria-live="polite"></div>
+  </form>`;
+  parent.appendChild(formOverlay);
+  formOverlay.querySelector("#closeForm").onclick=()=>formOverlay.remove();
+  formOverlay.querySelector("#cancelForm").onclick=()=>formOverlay.remove();
+  formOverlay.querySelector("#postForm").onsubmit=async e=>{
+    e.preventDefault();
+    const title=formOverlay.querySelector("#postTitle").value.trim();
+    const body=formOverlay.querySelector("#postBody").value.trim();
+    const access=formOverlay.querySelector("#postAccess").value;
+    const mediaFile=formOverlay.querySelector("#postMedia").files[0];
+    const msg=formOverlay.querySelector("#formMsg");
+    const button=formOverlay.querySelector("#publishPostButton");
+    if(!title){msg.textContent="Escribe un título.";return;}
+    if(!mediaFile){msg.textContent="Selecciona una imagen o video.";return;}
+    if(button.disabled)return;
+    button.disabled=true;
+    button.textContent="PUBLICANDO...";
+    msg.textContent="Subiendo archivo y guardando publicación...";
+    try{
+      await publishMediaPost({creatorId,title,body,access,mediaFile});
+      formOverlay.remove();
+      parent.remove();
+      await render();
+      await openCreatorStudio();
+    }catch(err){
+      msg.textContent=err?.message||"No se pudo publicar. Inténtalo de nuevo.";
+    }finally{
+      button.disabled=false;
+      button.textContent="PUBLICAR";
+    }
+  };
+}
 document.getElementById("creatorSearch").addEventListener("input",e=>drawCreatorGrid(e.target.value));
 document.getElementById("navSubscriptions").onclick=async()=>{
   const user=await currentUser();
@@ -237,9 +334,11 @@ async function ensureProfile(user){
 async function finishLogin(user){
   if(!user)return;
   await ensureProfile(user);
+  // Make the account controls available immediately on mobile after logging in.
+  const accountSection=document.getElementById("accountSection");
+  accountSection.dataset.open="true";
   await loadAccount();
-  document.getElementById("accountSection").scrollIntoView({behavior:"smooth"});
-  alert("Sesión iniciada correctamente. Bienvenido a AFTER SHIFT.");
+  accountSection.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
 document.getElementById("signupBtn").onclick=async()=>{
