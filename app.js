@@ -306,6 +306,7 @@ if(options.notice){
   setTimeout(()=>toast.remove(),4000);
 }
 overlay.querySelector("#closeProfile").onclick=()=>overlay.remove();
+ if(window.AfterShiftLiveLab)window.AfterShiftLiveLab.mount(overlay,{creatorName:creator.display_name,subscribed,owner:user.id===creator.id});
 if(c.cover){
   try{const coverUrl=new URL(c.cover);if(coverUrl.protocol==="https:")overlay.querySelector(".profile-cover").style.backgroundImage='linear-gradient(90deg,#00000035,#00000012),url("'+coverUrl.href.replaceAll('"',"%22")+'")';}catch{}
 }else if(c.portrait){
