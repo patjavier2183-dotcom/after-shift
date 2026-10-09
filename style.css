@@ -11,3 +11,16 @@ footer{border-top:1px solid var(--line);padding:28px 20px;color:#706c65;font-siz
 /* Confirmation after a test subscription is non-blocking and stays in the profile. */
 .profile-feedback{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10005;width:min(92vw,500px);padding:14px 18px;border-radius:14px;border:1px solid #856a36;background:#201c17;color:#fff;box-shadow:0 8px 35px #0009;text-align:center;font-size:14px;line-height:1.5;pointer-events:none}
 .profile-actions button:disabled{opacity:.7;cursor:wait}
+
+/* Confirmación obligatoria antes de activar el acceso exclusivo de prueba. */
+.subscription-confirm-overlay{position:fixed;inset:0;z-index:10020;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.85);overflow-y:auto}
+.subscription-confirm-card{position:relative;width:min(100%,460px);padding:28px 22px 22px;border:1px solid #6d5830;border-radius:20px;background:#181612;color:#f8f4ec;box-shadow:0 18px 70px #000c}
+.subscription-confirm-card h2{margin:12px 0 10px;font-size:25px;line-height:1.2}
+.subscription-confirm-card p{line-height:1.5}
+.subscription-confirm-close{position:absolute;top:12px;right:12px;background:transparent;color:#eee;border:0;font-size:32px;cursor:pointer;padding:0 8px}
+.subscription-confirm-price{display:flex;flex-direction:column;gap:5px;background:#272117;padding:14px 16px;border:1px solid #67532f;border-radius:12px;margin:18px 0}
+.subscription-confirm-price span{color:#cfc4af;font-size:13px}
+.subscription-confirm-price strong{color:#f4d488;font-size:24px}
+.subscription-confirm-note{color:#e4dccb;font-size:14px}
+.subscription-confirm-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.subscription-confirm-actions button{flex:1;min-width:130px;min-height:48px}
