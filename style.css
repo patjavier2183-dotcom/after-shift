@@ -680,3 +680,63 @@ html,body{background-color:#faf9f7!important}
 .coin-lab-vip-success{border:1px solid #bdcbb6;background:#f5f9ef;padding:10px;border-radius:8px;color:#315b37;font-weight:700}
 .coin-lab-vip-success[hidden]{display:none!important}
 @media(max-width:680px){.coin-lab-vip-panel{padding:12px}}
+
+
+/* AFTER SHIFT V33 · VIP private publishing + subscriber-facing locked catalog */
+.vip-studio-section{margin:22px 0;padding:16px;border:1px solid #e8ddc5;background:#fffcf6;border-radius:12px}
+.vip-studio-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.vip-studio-header h3{font:600 22px/1.2 Georgia,serif;color:#2a3139;margin:0}
+.vip-studio-header p{font-size:12px;color:#53616b;margin:7px 0;line-height:1.5;max-width:470px}
+.vip-studio-create,.vip-studio-preview{background:#273641;color:white;border:0;border-radius:8px;min-height:42px;padding:9px 13px;font-weight:750;font-size:11px}
+.vip-studio-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.vip-studio-status{font-size:12px;color:#6d7881}
+.vip-studio-item{display:flex;flex-direction:column;gap:12px;padding:13px;background:#fff;border:1px solid #e6e2d9;border-radius:10px}
+.vip-studio-item strong{color:#25313b;font-size:14px;line-height:1.4;overflow-wrap:anywhere}
+.vip-studio-item p{margin:8px 0;font-size:12px;line-height:1.45;color:#64717c;overflow-wrap:anywhere}
+.vip-studio-item-price{display:block;font-size:13px;font-weight:850;color:#806227}
+.vip-studio-owner-tag{display:block;font-size:10px;font-weight:750;margin:5px 0;color:#69747b}
+.vip-studio-item-actions{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap}
+.vip-studio-remove{border:1px solid #e6b4a8;background:#fffafa;color:#994b3a;border-radius:8px;min-height:39px;padding:8px 12px;font-size:11px;font-weight:750}
+.vip-upload-overlay,.vip-preview-overlay{position:fixed;inset:0;z-index:10400;padding:12px;display:flex;align-items:flex-start;justify-content:center;background:#111923df;overflow-y:auto}
+.vip-upload-form,.vip-preview-dialog{position:relative;margin:auto 0;width:min(100%,570px);background:#fff;color:#202d37;border-radius:15px;padding:26px;box-shadow:0 22px 65px #0006;display:grid;gap:13px}
+.vip-upload-close,.vip-preview-close{position:absolute;top:9px;right:9px;width:40px;height:40px;border:0;border-radius:50%;background:#f1f0ef;font-size:28px}
+.vip-upload-eyebrow{color:#957322;font-size:11px;font-weight:850;letter-spacing:.07em}
+.vip-upload-heading{font:500 27px/1.25 Georgia,serif;margin:2px 38px 3px 0}
+.vip-upload-info{background:#fff9e8;border:1px solid #eee0bb;border-radius:8px;color:#5d532f;padding:12px;font-size:12px;line-height:1.5;margin:0}
+.vip-upload-form label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:720}
+.vip-upload-form input,.vip-upload-form textarea{width:100%;min-height:43px;box-sizing:border-box;padding:10px;border-radius:8px;border:1px solid #d9dedf;background:white;color:#202e38;font-size:13px}
+.vip-upload-form textarea{min-height:70px;resize:vertical}
+.vip-upload-hint{font-size:11px;color:#6b777d;margin:0}
+.vip-upload-actions{display:flex;justify-content:flex-end;gap:9px}
+.vip-upload-actions button{min-height:43px;border-radius:8px;padding:10px 12px;font-size:12px;font-weight:800}
+.vip-upload-cancel{background:#f6f6f5;border:1px solid #dfe0df;color:#47535b}
+.vip-upload-submit{background:#21303b;color:white;border:0}
+.vip-upload-feedback{font-size:12px;line-height:1.5;color:#8c6025;min-height:16px}
+.vip-profile-section{margin:14px 0 27px;padding:16px;border:1px solid #e5dcc9;background:#fdfaf4;border-radius:12px}
+.vip-profile-heading{font:500 25px/1.2 Georgia,serif;color:#302d27;margin:0 0 9px}
+.vip-profile-desc{font-size:12px;color:#59646b;margin:0 0 15px;line-height:1.5}
+.vip-profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.vip-profile-card{overflow:hidden;border-radius:10px;border:1px solid #e1dbce;background:white;display:flex;flex-direction:column}
+.vip-profile-lock{display:flex;align-items:center;justify-content:center;flex-direction:column;min-height:125px;background:linear-gradient(140deg,#403b44,#171f2a 70%,#5b4643);color:white;gap:8px}
+.vip-profile-lock-icon{font-size:28px}
+.vip-profile-lock small{font-size:11px;font-weight:740;letter-spacing:.04em}
+.vip-profile-card-body{padding:13px;display:flex;flex-direction:column;gap:8px;flex:1}
+.vip-profile-kicker{color:#8b6b27;font-weight:800;font-size:10px}
+.vip-profile-card h4{font-size:15px;color:#25313b;line-height:1.4;margin:0}
+.vip-profile-card p{color:#64717d;font-size:11px;line-height:1.5;margin:0}
+.vip-profile-cost{font-size:14px;color:#4c3b21}
+.vip-profile-buy{border:0;border-radius:8px;background:#243440;color:white;padding:10px;font-weight:780;font-size:11px;min-height:43px}
+.vip-profile-buy:disabled{opacity:.56}
+.vip-profile-feedback{font-size:11px!important;color:#355c37!important}
+.vip-preview-dialog{max-height:95vh}
+.vip-preview-dialog h2{font-size:20px;margin:0 40px 0 0}
+.vip-preview-warning,.vip-preview-status{font-size:12px;line-height:1.5;color:#5e6c73}
+.vip-preview-media{display:block;max-width:100%;max-height:70vh;object-fit:contain;border-radius:8px;background:#1c2024;margin:0 auto}
+@media(max-width:680px){
+ .vip-studio-section,.vip-profile-section{padding:12px}
+ .vip-studio-header{flex-wrap:wrap}
+ .vip-studio-header h3,.vip-profile-heading{font-size:21px}
+ .vip-studio-create{width:100%}
+ .vip-studio-list,.vip-profile-grid{grid-template-columns:1fr}
+ .vip-upload-form,.vip-preview-dialog{padding:20px 13px}
+}
