@@ -603,14 +603,25 @@ loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
   const username=document.getElementById("authUsername");
   const email=document.getElementById("authEmail");
   const password=document.getElementById("authPassword");
+  const passwordToggle=document.getElementById("authPasswordToggle");
   const msg=document.getElementById("authMsg");
   const submit=document.getElementById("authSubmit");
   const close=document.getElementById("authClose");
   const sw=document.getElementById("authSwitch");
   const forgot=document.getElementById("authForgot");
-  if(!modal||!form||!emailLabel||!passwordLabel||!forgot)return;
+  if(!modal||!form||!emailLabel||!passwordLabel||!forgot||!passwordToggle)return;
   let mode="signup";
   let recoveryAuthorized=false;
+
+  function setPasswordVisibility(visible){
+    password.type=visible?"text":"password";
+    const action=visible?"Ocultar contraseña":"Mostrar contraseña";
+    passwordToggle.setAttribute("aria-label",action);
+    passwordToggle.setAttribute("title",action);
+    passwordToggle.setAttribute("aria-pressed",String(visible));
+    passwordToggle.classList.toggle("is-visible",visible);
+  }
+  passwordToggle.onclick=()=>setPasswordVisibility(password.type==="password");
 
   function open(nextMode){
     mode=nextMode;
@@ -639,6 +650,7 @@ loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
       :"← Volver a ingresar";
     msg.textContent="";
     password.value="";
+    setPasswordVisibility(false);
     modal.style.display="flex";
     if(recovering)password.focus();
     else email.focus();
@@ -647,6 +659,7 @@ loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
   function closeModal(){
     modal.style.display="none";
     form.reset();
+    setPasswordVisibility(false);
     msg.textContent="";
   }
   close.onclick=closeModal;

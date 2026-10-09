@@ -69,3 +69,13 @@ html,body{background-color:#faf9f7!important}
 .auth-recovery-link{display:block;margin:13px 0 0 auto;border:0;background:transparent;color:#45505c;font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:3px;padding:4px 0}
 .auth-recovery-link:hover{color:#9c7423}
 .auth-box #authMsg:not(:empty){line-height:1.45;margin:12px 0;color:#654d1d;background:#fff8e8;padding:11px 13px;border-radius:8px}
+
+/* Show/hide password control. Password stays concealed by default. */
+.auth-password-field{width:100%}
+.auth-password-control{position:relative;margin-top:7px}
+.auth-password-control input{width:100%;margin-top:0!important;padding-right:55px!important;min-height:47px}
+.auth-password-toggle{position:absolute;right:5px;top:50%;transform:translateY(-50%);display:flex;justify-content:center;align-items:center;width:42px;height:42px;color:#48535f;border:0;border-radius:8px;background:transparent;padding:0;cursor:pointer}
+.auth-password-toggle:hover{background:#eeeeec;color:#19222b}
+.auth-password-toggle:focus-visible{outline:2px solid #edbf48;outline-offset:-1px}
+.auth-password-toggle .eye-hidden-line{display:none}
+.auth-password-toggle.is-visible .eye-hidden-line{display:block}
