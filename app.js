@@ -182,6 +182,74 @@ function renderViewerMedia(post, viewerMark){
   const stamp=esc(viewerMark);
   return `<div class="secured-media-frame">${media}<div class="secured-watermark" aria-hidden="true"><span class="secured-watermark-viewer">${stamp}</span></div></div>`;
 }
+// Open the full publication in AFTER SHIFT instead of a native browser alert.
+// Fetch a new signed URL after checking the CURRENT subscription state.
+async function openPostDetail(post,creator,viewerMark){
+  const detail=document.createElement("div");
+  detail.className="post-detail-overlay";
+  detail.innerHTML=`<section class="post-detail-card" role="dialog" aria-modal="true" aria-labelledby="postDetailHeading">
+    <button class="post-detail-close" type="button" aria-label="Cerrar publicación">×</button>
+    <div class="post-detail-loading" role="status">Cargando publicación...</div>
+  </section>`;
+  document.body.appendChild(detail);
+  let isOpen=true;
+  const close=()=>{
+    if(!isOpen)return;
+    isOpen=false;
+    document.removeEventListener("keydown",handleEscape);
+    detail.remove();
+  };
+  const handleEscape=e=>{if(e.key==="Escape"){e.preventDefault();close();}};
+  document.addEventListener("keydown",handleEscape);
+  detail.querySelector(".post-detail-close").onclick=close;
+  detail.addEventListener("click",e=>{if(e.target===detail)close();});
+  const showFailure=msg=>{
+    if(!isOpen)return;
+    const loading=detail.querySelector(".post-detail-loading");
+    if(loading){loading.textContent=msg;loading.setAttribute("role","alert");}
+  };
+  try{
+    const viewer=await currentUser();
+    if(!viewer){showFailure("Inicia sesión para ver esta publicación.");return;}
+    if(post.access==="subscriber"&&viewer.id!==creator.id){
+      const{data:active,error:subscriptionError}=await supabaseClient.from("subscriptions")
+        .select("status").eq("subscriber_id",viewer.id).eq("creator_id",creator.id)
+        .eq("status","active").maybeSingle();
+      if(subscriptionError)throw subscriptionError;
+      if(!active){
+        showFailure("Tu suscripción no está activa. Vuelve al perfil para actualizar el acceso.");
+        return;
+      }
+    }
+    const hasMedia=!!(post.media_url||post.image_url);
+    // Original media is in private Storage. Never reuse a cached access URL.
+    const signedUrl=hasMedia?await secureMediaUrl(post):"";
+    if(hasMedia&&!signedUrl){
+      showFailure("No se pudo autorizar el archivo protegido. Inténtalo nuevamente.");
+      return;
+    }
+    const{data:content,error:contentError}=await supabaseClient.from("post_content")
+      .select("body").eq("post_id",post.id).maybeSingle();
+    if(contentError)throw contentError;
+    if(!isOpen)return;
+    const body=(content?.body||"").trim();
+    const description=body||(post.preview&&post.preview!==post.title?post.preview:"");
+    const authorizedPost={...post,display_media_url:signedUrl};
+    const media=hasMedia?renderViewerMedia(authorizedPost,viewerMark):"";
+    const card=detail.querySelector(".post-detail-card");
+    card.innerHTML=`<button class="post-detail-close" type="button" aria-label="Cerrar publicación">×</button>
+      <div class="post-detail-head"><span class="post-detail-eyebrow">${post.access==="subscriber"?"CONTENIDO EXCLUSIVO":"PUBLICACIÓN"}</span>
+        <h2 id="postDetailHeading">${esc(post.title||"Publicación")}</h2>
+        <p>Por ${esc(creator.display_name||"Creador")}</p></div>
+      ${media?'<div class="post-detail-media">'+media+'</div>':""}
+      ${description?'<p class="post-detail-description">'+esc(description)+'</p>':!media?'<p class="post-detail-description">Sin contenido adicional.</p>':""}
+    `;
+    card.querySelector(".post-detail-close").onclick=close;
+  }catch(error){
+    console.error("No se pudo abrir la publicación:",error);
+    showFailure("No se pudo abrir la publicación. Comprueba tu conexión e inténtalo nuevamente.");
+  }
+}
 async function getPosts(creatorId){const{data,error}=await supabaseClient.from("posts").select("id,title,preview,access,image_url,media_type,media_url,created_at").eq("creator_id",creatorId).order("created_at",{ascending:false});return error?[]:(data||[]);}
 async function openProfile(i,list=creators,options={}){const c=list[i];if(!c.db){openDemoProfile(c);return;}const user=await currentUser();if(!user){alert("Primero debes ingresar a AFTER SHIFT.");return;}const creator=c.db?{id:c.id,display_name:c.name,username:c.handle.replace("@",""),bio:c.bio,subscription_price:Number(String(c.sub).replace("US$",""))}:await (async()=>{const{data}=await supabaseClient.from("profiles").select("id,display_name,username,bio,subscription_price").eq("username",c.handle.replace("@","")).maybeSingle();return data;})();if(!creator){alert("Este creador todavía no está registrado en la base de datos V0.");return;}const{data:follow}=await supabaseClient.from("follows").select("creator_id").eq("follower_id",user.id).eq("creator_id",creator.id).maybeSingle();const{data:sub}=await supabaseClient.from("subscriptions").select("creator_id,status").eq("subscriber_id",user.id).eq("creator_id",creator.id).maybeSingle();const subscribed=sub?.status==="active";const canViewExclusive=subscribed||user.id===creator.id;const posts=await authorizePostMedia(await getPosts(creator.id),creator.id,subscribed,user.id);const viewerMark=`ID ${user.id.replace(/-/g,"").slice(0,16).toUpperCase()}`;const overlay=document.createElement("div");overlay.className="profile-overlay";overlay.innerHTML=`<section class="creator-profile">
 <button class="profile-close" id="closeProfile" aria-label="Cerrar">×</button>
@@ -319,7 +387,10 @@ function showSubscriptionConfirmation(){
   dialog.querySelector(".subscription-confirm-cancel").focus();
 }
 subscriptionAction.onclick=()=>subscribed?updateSubscription():showSubscriptionConfirmation();
-overlay.querySelectorAll(".read-post").forEach(btn=>btn.onclick=async()=>{const id=btn.dataset.post;const{data:content,error}=await supabaseClient.from("post_content").select("body").eq("post_id",id).maybeSingle();if(error){alert(error.message);return;}const post=posts.find(p=>p.id===id);alert((post?.title||"Publicación")+"\n\n"+(content?.body||post?.preview||"Sin contenido."));});}
+overlay.querySelectorAll(".read-post").forEach(btn=>btn.onclick=()=>{
+  const post=posts.find(p=>p.id===btn.dataset.post);
+  if(post)openPostDetail(post,creator,viewerMark);
+});}
 async function becomeCreator(){const user=await currentUser();if(!user)return;const p=await getMyProfile();if(p?.role==="creator"){openCreatorStudio();return;}const username=prompt("Elige tu nombre de usuario para AFTER SHIFT:");if(!username)return;const clean=username.trim().replace(/\s+/g,"").replace(/^@/,"").toLowerCase();if(!/^[a-z0-9_.-]{3,24}$/.test(clean)){alert("Usa 3 a 24 caracteres: letras, números, punto, guion o guion bajo.");return;}const display=prompt("Nombre público del perfil:",p?.display_name||clean);if(!display)return;const{error}=await supabaseClient.from("profiles").update({username:clean,display_name:display.trim(),role:"creator"}).eq("id",user.id);if(error){alert(error.message);return;}alert("Tu perfil de creador está listo.");await loadAccount();openCreatorStudio();}
 async function openCreatorStudio(){const user=await currentUser();if(!user)return;let p=await getMyProfile();if(!p)return;if(p.role!=="creator"){const ok=confirm("¿Quieres convertir tu cuenta en creador? Podrás publicar contenido desde AFTER SHIFT.");if(ok)await becomeCreator();return;}const posts=await authorizePostMedia(await getPosts(user.id),user.id,false,user.id);const overlay=document.createElement("div");overlay.className="profile-overlay";overlay.innerHTML=`<section class="creator-studio"><button class="profile-close" id="closeStudio" aria-label="Cerrar">×</button><div class="studio-head"><div><div class="eyebrow">AFTER SHIFT</div><h2>Creator Studio</h2><p>Publica y administra tu contenido.</p></div><button class="action-btn action-primary" id="newPostBtn">+ NUEVA PUBLICACIÓN</button></div><div class="studio-profile"><div><strong>${esc(p.display_name)}</strong><span>@${esc(p.username)}</span></div><div><strong>${Number(p.subscription_price||0).toFixed(2)}</strong><span>Precio mensual</span></div></div><div class="post-heading"><div><div class="eyebrow">MIS PUBLICACIONES</div><h3>${posts.length} publicación${posts.length===1?"":"es"}</h3></div></div><div class="posts" id="studioPosts">${posts.length?posts.map(x=>`<article class="post-card studio-post"><div>${(x.media_url||x.image_url)?(x.media_type==="video"?`<video class="post-media studio-image" src="${esc(x.display_media_url)}" controls playsinline preload="metadata"></video>`:`<img class="post-media studio-image" src="${esc(x.display_media_url)}" alt="${esc(x.title)}">`):``}<div class="post-label">${x.access==="public"?"PÚBLICO":"SOLO SUSCRIPTORES"}</div><h4>${esc(x.title)}</h4><p>${esc(x.preview)}</p></div><button class="delete-post" data-id="${x.id}">ELIMINAR</button></article>`).join(""):'<div class="empty-posts">Todavía no has publicado nada.</div>'}</div></section>`;document.body.appendChild(overlay);
 overlay.querySelector("#closeStudio").onclick=()=>overlay.remove();overlay.querySelector("#newPostBtn").onclick=()=>openNewPostForm(overlay,user.id);overlay.querySelectorAll(".delete-post").forEach(btn=>btn.onclick=async()=>{if(!confirm("¿Eliminar esta publicación?"))return;const{error}=await supabaseClient.from("posts").delete().eq("id",btn.dataset.id).eq("creator_id",user.id);if(error){alert(error.message);return;}overlay.remove();openCreatorStudio();});}
