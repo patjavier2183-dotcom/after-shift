@@ -106,3 +106,11 @@ html,body{background-color:#faf9f7!important}
 .studio-profile .studio-live-price{color:#77828a;font-size:11px;font-weight:400;line-height:1.45;margin-top:4px}
 #studioDraftPrice{overflow-wrap:anywhere}
 @media(max-width:680px){.studio-profile{gap:10px}.studio-profile>div:last-child{max-width:60%}}
+
+/* Creator Studio offer durations: local draft validity, no live checkout. */
+.as-pricing .as-offer-duration{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:11px 0 8px;padding:2px 0;color:#35414c;font-size:12px;font-weight:650}
+.as-offer-duration select{width:auto;min-width:175px;max-width:55%;margin:0;background:#fff;border:1px solid #d9dddf;border-radius:9px;color:#1b2731;padding:11px 8px;cursor:pointer;font-size:13px}
+.as-offer-status{padding:11px 13px;font-size:12px;line-height:1.45;color:#485865;background:#f6f7f8;border:1px solid #e2e4e5;border-radius:9px;margin:7px 0}
+.as-restart-offer{font-size:12px;margin:5px 0 10px}
+.as-restart-offer[hidden]{display:none!important}
+@media(max-width:680px){.as-pricing .as-offer-duration{display:block;line-height:1.5}.as-offer-duration select{display:block;width:100%;max-width:none;margin-top:7px}.as-offer-status{font-size:11px}}
