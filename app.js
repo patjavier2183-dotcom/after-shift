@@ -6,7 +6,17 @@ const grid=document.getElementById("creatorGrid");
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 async function currentUser(){const{data}=await supabaseClient.auth.getUser();return data.user;}
 async function getMyProfile(){const user=await currentUser();if(!user)return null;const{data}=await supabaseClient.from("profiles").select("id,username,display_name,role,bio,subscription_price").eq("id",user.id).maybeSingle();return data||null;}
-async function loadAccount(){const user=await currentUser();if(!user)return;const p=await getMyProfile();const{count:fc}=await supabaseClient.from("follows").select("*",{count:"exact",head:true}).eq("follower_id",user.id);const{count:sc}=await supabaseClient.from("subscriptions").select("*",{count:"exact",head:true}).eq("subscriber_id",user.id).eq("status","active");const accountBox=document.getElementById("accountSection");accountBox.style.display=accountBox.dataset.open==="true"?"block":"none";document.getElementById("accountTitle").textContent="Hola, "+(p?.display_name||user.email);document.getElementById("accountEmail").textContent=user.email;document.getElementById("accountRole").textContent="Rol: "+(p?.role||"user")+" · @"+(p?.username||"usuario");document.getElementById("followCount").textContent=fc||0;document.getElementById("subCount").textContent=sc||0;document.getElementById("loginBtn").textContent="Mi cuenta";document.getElementById("signupBtn").style.display="none";const cb=document.getElementById("creatorBtn");cb.style.display="inline-block";cb.textContent=p?.role==="creator"?"Creator Studio":"Convertirme en creador";cb.onclick=()=>p?.role==="creator"?openCreatorStudio():becomeCreator();}
+async function loadAccount(userOverride){
+  const user=userOverride||await currentUser();
+  if(!user){
+    const panel=document.getElementById("accountSection");
+    panel.dataset.open="false";
+    panel.style.display="none";
+    const loginButton=document.getElementById("loginBtn");
+    loginButton.textContent="Iniciar sesión";
+    document.getElementById("signupBtn").style.display="inline-block";
+    return;
+  }const p=await getMyProfile();const{count:fc}=await supabaseClient.from("follows").select("*",{count:"exact",head:true}).eq("follower_id",user.id);const{count:sc}=await supabaseClient.from("subscriptions").select("*",{count:"exact",head:true}).eq("subscriber_id",user.id).eq("status","active");const accountBox=document.getElementById("accountSection");accountBox.style.display=accountBox.dataset.open==="true"?"block":"none";document.getElementById("accountTitle").textContent="Hola, "+(p?.display_name||user.email);document.getElementById("accountEmail").textContent=user.email;document.getElementById("accountRole").textContent="Rol: "+(p?.role||"user")+" · @"+(p?.username||"usuario");document.getElementById("followCount").textContent=fc||0;document.getElementById("subCount").textContent=sc||0;document.getElementById("loginBtn").textContent="Mi cuenta";document.getElementById("signupBtn").style.display="none";const cb=document.getElementById("creatorBtn");cb.style.display="inline-block";cb.textContent=p?.role==="creator"?"Creator Studio":"Convertirme en creador";cb.onclick=()=>p?.role==="creator"?openCreatorStudio():becomeCreator();}
 
 let visibleCreatorList=[];
 function drawCreatorGrid(search=""){
@@ -331,14 +341,23 @@ async function ensureProfile(user){
   return error?null:data;
 }
 
+// Open the panel synchronously: never wait for a network request to reveal "Mi cuenta".
+function showAccountPanel(){
+  const panel=document.getElementById("accountSection");
+  panel.dataset.open="true";
+  panel.style.display="block";
+  panel.scrollIntoView({behavior:"smooth",block:"start"});
+}
 async function finishLogin(user){
   if(!user)return;
-  await ensureProfile(user);
-  // Make the account controls available immediately on mobile after logging in.
-  const accountSection=document.getElementById("accountSection");
-  accountSection.dataset.open="true";
-  await loadAccount();
-  accountSection.scrollIntoView({behavior:"smooth",block:"start"});
+  showAccountPanel();
+  try{
+    await ensureProfile(user);
+    await loadAccount(user);
+  }catch(error){
+    console.error("Error al cargar Mi cuenta:",error);
+    document.getElementById("accountRole").textContent="No pudimos cargar tus datos. Inténtalo nuevamente.";
+  }
 }
 
 document.getElementById("signupBtn").onclick=async()=>{
@@ -394,12 +413,24 @@ function handleVerificationReturn(){
 }
 handleVerificationReturn();
 
-supabaseClient.auth.onAuthStateChange(async(event,session)=>{
-  if(session?.user) await ensureProfile(session.user);
-  await loadAccount();
+// Supabase warns against awaiting other auth calls inside onAuthStateChange.
+// Defer account loading until the auth callback has returned.
+supabaseClient.auth.onAuthStateChange((event,session)=>{
+  setTimeout(async()=>{
+    try{
+      if(session?.user){
+        await ensureProfile(session.user);
+        await loadAccount(session.user);
+      }else{
+        await loadAccount();
+      }
+    }catch(error){
+      console.error("No se pudo actualizar la sesión:",error);
+    }
+  },0);
 });
 render();
-loadAccount();
+loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
 
 // Auth UI V0: visible form instead of browser prompts.
 (function(){
@@ -435,10 +466,17 @@ loadAccount();
   sw.onclick=()=>open(mode==="signup"?"login":"signup");
   modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});
   document.getElementById("signupBtn").onclick=()=>open("signup");
-  document.getElementById("loginBtn").onclick=async()=>{
-    const existing=await currentUser();
-    if(existing){await finishLogin(existing);return;}
-    open("login");
+  document.getElementById("loginBtn").onclick=()=>{
+    // The button is "Mi cuenta" for signed-in users and must react immediately.
+    if(document.getElementById("loginBtn").textContent.trim()==="Mi cuenta"){
+      showAccountPanel();
+      loadAccount().catch(error=>{
+        console.error("No se pudo actualizar Mi cuenta:",error);
+        document.getElementById("accountRole").textContent="No se pudo actualizar la cuenta.";
+      });
+    }else{
+      open("login");
+    }
   };
   form.onsubmit=async e=>{
     e.preventDefault();
