@@ -206,23 +206,58 @@ html,body{background-color:#faf9f7!important}
 @media(max-width:400px){.payment-lab-demo-button{font-size:11px;padding:10px 4px}.payment-lab-demo-dialog{padding:19px}}
 
 
-/* AFTER SHIFT V20 · Account actions should look and behave like tappable buttons. */
-.account-section .account-actions{display:flex;align-items:stretch;justify-content:flex-end;flex-wrap:wrap;gap:10px}
-.account-section .account-actions .text-btn{display:inline-flex;align-items:center;justify-content:center;min-width:140px;min-height:46px;padding:12px 16px;border:1px solid #d7dcdf;border-radius:10px;background:#fff;color:#24313b;font-size:13px;font-weight:750;line-height:1.25;text-align:center;box-shadow:0 2px 5px rgba(27,38,47,.06);transition:background-color .15s ease,transform .15s ease}
-.account-section #creatorBtn{background:#17212b;border-color:#17212b;color:#fff}
-.account-section #creatorBtn:hover{background:#2b3a47}
-.account-section #logoutBtn:hover{background:#f3f4f4;border-color:#bfc6cb}
-.account-section .account-actions .text-btn:active{transform:scale(.98)}
-.top-actions #loginBtn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;border:1px solid #dce0e3;border-radius:10px;background:#fff;padding:9px 12px;font-weight:750}
-.top-actions #loginBtn:hover{background:#f4f5f4}
-.account-section .account-subscriptions-button{min-height:61px;padding:8px 13px;border:1px solid #e0e4e5;background:#f9faf9;border-radius:11px}
-.account-section .account-subscriptions-button:hover,.account-section .account-subscriptions-button[aria-expanded="true"]{border-color:#e2bb47;background:#fff8e8}
-.account-section #hideSubscriptions{padding:9px 13px;border:1px solid #d7dcdf;border-radius:8px;background:#fff}
-.creator-section .see-all{padding:10px 13px;border:1px solid #d9dddf;border-radius:10px;background:#fff;min-height:42px}
-.creator-section .see-all:hover{background:#fff8e8;border-color:#e0c05c}
+/* AFTER SHIFT V21 · Subtle editorial account actions. Functional, not bulky. */
+.account-section .account-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:10px}
+.account-section .account-actions .text-btn{
+  display:inline-flex;align-items:center;justify-content:center;min-height:42px;
+  padding:9px 13px;border:1px solid transparent;border-radius:9px;
+  background:transparent;color:#4d5962;box-shadow:none;
+  font-size:12px;font-weight:600;line-height:1.25;text-align:center;
+  transition:background .15s ease,border-color .15s ease
+}
+.account-section #creatorBtn{
+  color:#293640;background:#f8f6f0;border-color:#e6e2d7;
+  font-weight:650
+}
+.account-section #creatorBtn::before{
+  content:"";display:inline-block;flex:none;width:5px;height:5px;
+  margin-right:8px;border-radius:50%;background:#daa927
+}
+.account-section #creatorBtn:hover{background:#f4f0e5;border-color:#d9d0bd}
+.account-section #logoutBtn{color:#777f86;font-weight:550}
+.account-section #logoutBtn:hover{color:#26333e;background:#f6f6f5}
+.account-section .account-actions .text-btn:focus-visible{outline:2px solid #e4af32;outline-offset:2px}
+.top-actions #loginBtn{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:38px;padding:8px 12px;border:1px solid #e9e7e1;
+  border-radius:9px;background:#fbfaf8;color:#25323c;box-shadow:none;
+  font-size:12px;font-weight:600
+}
+.top-actions #loginBtn:hover{background:#f4f1e9}
+.account-section .account-subscriptions-button{
+  min-height:56px;padding:5px 8px;border:0;border-bottom:1px solid #e8e2d7;
+  border-radius:0;background:transparent;box-shadow:none
+}
+.account-section .account-subscriptions-button:hover,
+.account-section .account-subscriptions-button[aria-expanded="true"]{
+  border-bottom-color:#d5ae42;background:#fdfbf7
+}
+.account-section #hideSubscriptions{min-height:36px;padding:7px 10px;border:0;background:transparent;color:#69747c;border-radius:7px}
+.account-section #hideSubscriptions:hover{background:#f5f3ed}
+.creator-section .see-all{
+  min-height:38px;padding:8px 4px;border:0;border-radius:0;
+  background:transparent;color:#404c57;font-size:12px;font-weight:600;box-shadow:none
+}
+.creator-section .see-all:hover{color:#946c0b;text-decoration:underline;text-underline-offset:4px}
 @media(max-width:680px){
-  .account-section .account-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;justify-content:stretch;margin-top:15px;gap:9px}
-  .account-section .account-actions .text-btn{min-width:0;min-height:48px;width:100%;padding:10px 7px;font-size:12px;white-space:normal}
-  .creator-section .see-all{font-size:12px;padding:10px 11px}
+  .account-section .account-actions{
+    display:flex;justify-content:flex-start;align-items:center;flex-wrap:wrap;
+    width:100%;margin-top:12px;gap:6px
+  }
+  .account-section .account-actions .text-btn{
+    width:auto;min-width:0;min-height:42px;padding:9px 11px;
+    font-size:12px;white-space:normal
+  }
+  .creator-section .see-all{min-width:0;padding:8px 2px;font-size:12px}
 }
 @media(prefers-reduced-motion:reduce){.account-section .account-actions .text-btn{transition:none}}
