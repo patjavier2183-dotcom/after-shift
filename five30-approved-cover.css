@@ -1,0 +1,38 @@
+
+/* Portada exacta aprobada: no se reinterpretan las cifras, la foto ni el arco. */
+html{scroll-behavior:smooth}
+body{background:#080706}
+.topbar{display:none!important} /* Controles de autenticación originales presentes para app.js */
+main#inicio>.hero{display:none!important} /* Evita duplicar la portada y los beneficios */
+.approved-cover{width:100%;background:#080706;margin:0;padding:0;color:#e6c49d}
+.approved-cover-frame{position:relative;width:100%;max-width:1536px;margin:0 auto;aspect-ratio:1536/651;overflow:hidden}
+.approved-cover-art{display:block;width:100%;height:100%;object-fit:fill;user-select:none;pointer-events:none}
+.approved-cover-hits{position:absolute;inset:0;z-index:2}
+.approved-hit{position:absolute;display:block;padding:0;background:transparent!important;border:0!important;box-shadow:none!important;cursor:pointer;color:transparent}
+.approved-hit:focus-visible{outline:2px solid #dfb987!important;outline-offset:0;border-radius:5px;background:rgba(213,173,113,.1)!important}
+.approved-home{left:5.5%;top:1.2%;width:9%;height:10%}
+.approved-creators{left:33%;top:2%;width:8%;height:10%}
+.approved-explore{left:42%;top:2%;width:8%;height:10%}
+.approved-subscriptions{left:50%;top:2%;width:12%;height:10%}
+.approved-about{left:62%;top:2%;width:7%;height:10%}
+.approved-search-hit{left:79%;top:2%;width:4%;height:10%}
+.approved-login{left:83%;top:2%;width:7%;height:10%}
+.approved-join{left:90%;top:2%;width:8%;height:10%}
+.approved-cta{left:33.5%;top:62%;width:17%;height:11%}
+.approved-how{left:51%;top:62%;width:17%;height:11%}
+.approved-search-panel[hidden]{display:none!important}
+.approved-search-panel{max-width:680px;margin:0 auto 16px;padding:14px 18px;background:#19130f;border:1px solid #9d7754;border-radius:12px;display:flex;align-items:center;gap:12px;color:#e5c49f}
+.approved-search-panel label{font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.approved-search-panel input{min-width:100px;flex:1;background:#2a211b;border:1px solid #7f6045;padding:11px 12px;color:#fff;border-radius:6px}
+.approved-search-panel button{background:#d8b18a;border:0;color:#1b1310;padding:11px;border-radius:7px;cursor:pointer}
+.approved-mobile-actions{display:none}
+@media(max-width:800px){
+ .approved-cover-frame{aspect-ratio:1536/651}
+ .approved-cover-hits{display:none}
+ .approved-mobile-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;padding:11px 9px 15px;border-top:1px solid #231911;border-bottom:1px solid #4b3423}
+ .approved-mobile-actions button{background:#17110e;border:1px solid #816044;color:#e1c5a1;border-radius:22px;padding:11px 12px;font-size:10px;font-weight:700;letter-spacing:.05em;min-height:40px}
+ .approved-mobile-actions .approved-mobile-join{background:#d6ab78;color:#160f0b}
+ .approved-search-panel{flex-wrap:wrap;margin:10px;gap:8px}
+ .approved-search-panel label{width:100%}
+ .approved-search-panel input{flex-basis:56%}
+}

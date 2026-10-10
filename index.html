@@ -6,8 +6,42 @@
 <meta name="description" content="5:30: descubre creadores, conecta con su comunidad y disfruta contenido exclusivo.">
 <title>5:30 · Tu mundo. Sin filtros.</title>
 <link rel="stylesheet" href="style.css?v=five30-layout-v7">
+<link rel="stylesheet" href="five30-approved-cover.css?v=1">
 </head>
 <body>
+
+<!-- La portada mantiene exactamente los pixeles de la imagen aprobada; los botones son controles reales de la aplicación. -->
+<section class="approved-cover" id="portada" aria-label="Portada 5:30 YOUR WAY">
+  <div class="approved-cover-frame">
+    <img class="approved-cover-art" src="assets/five30-approved-cover.webp" width="1536" height="651" alt="Portada original 5:30 YOUR WAY con figura iluminada, arco dorado y beneficios de la plataforma" fetchpriority="high">
+    <div class="approved-cover-hits">
+      <button type="button" class="approved-hit approved-home" aria-label="Volver al inicio" data-cover-action="home"></button>
+      <button type="button" class="approved-hit approved-creators" aria-label="Ir a creadores" data-cover-action="explore"></button>
+      <button type="button" class="approved-hit approved-explore" aria-label="Explorar creadores" data-cover-action="explore"></button>
+      <button type="button" class="approved-hit approved-subscriptions" aria-label="Mis suscripciones" data-cover-action="subscriptions"></button>
+      <button type="button" class="approved-hit approved-about" aria-label="Acerca de 5:30" data-cover-action="about"></button>
+      <button type="button" class="approved-hit approved-search-hit" aria-label="Buscar creadores" data-cover-action="search"></button>
+      <button type="button" class="approved-hit approved-login" aria-label="Iniciar sesión o ver mi cuenta" data-cover-action="login"></button>
+      <button type="button" class="approved-hit approved-join" aria-label="Unirse a 5:30" data-cover-action="join"></button>
+      <button type="button" class="approved-hit approved-cta" aria-label="Explorar creadores" data-cover-action="explore"></button>
+      <button type="button" class="approved-hit approved-how" aria-label="Ver cómo funciona" data-cover-action="about"></button>
+    </div>
+  </div>
+  <div class="approved-search-panel" id="approvedSearchPanel" hidden>
+    <label for="approvedSearchInput">Buscar creadores</label>
+    <input type="search" id="approvedSearchInput" autocomplete="off" placeholder="Nombre del creador…">
+    <button type="button" data-cover-action="search-go">Buscar</button>
+    <button type="button" data-cover-action="search-close" aria-label="Cerrar búsqueda">✕</button>
+  </div>
+  <nav class="approved-mobile-actions" aria-label="Acciones de 5:30 en celular">
+    <button type="button" data-cover-action="explore">EXPLORE</button>
+    <button type="button" data-cover-action="search">SEARCH</button>
+    <button type="button" data-cover-action="subscriptions">SUBSCRIPTIONS</button>
+    <button type="button" data-cover-action="login">LOG IN</button>
+    <button type="button" class="approved-mobile-join" data-cover-action="join">JOIN</button>
+  </nav>
+</section>
+
 <header class="topbar">
   <div class="topbar-inner">
     <a class="brand" href="#inicio" aria-label="5:30 inicio">5:30 <span>YOUR WAY</span></a>
@@ -79,4 +113,5 @@
 <script src="live-lab.js?v=20261009-live-local-draft-v27"></script>
 <script src="vip-posts.js?v=20261009-vip-upload-v33"></script>
 <script src="i18n.js?v=20261009-es-en-pt-bios-v24c"></script>
+<script src="five30-approved-cover.js?v=1"></script>
 </body></html>
