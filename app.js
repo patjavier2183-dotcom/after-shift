@@ -1,6 +1,11 @@
-const SUPABASE_URL="https://heqjyafaxjzisddmgvob.supabase.co";
-const SUPABASE_KEY="sb_publishable_u8E7mHoZgYnUw02fmkAKUQ_8l1vnuJy";
-const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+// 5:30 preview: NEVER connect this branch to AFTER SHIFT production data.
+const FIVE30_CONFIG=window.FIVE30_CONFIG||{};
+const SUPABASE_URL=FIVE30_CONFIG.supabaseUrl||"";
+const SUPABASE_KEY=FIVE30_CONFIG.supabaseAnonKey||"";
+const FIVE30_BACKEND_READY=Boolean(SUPABASE_URL&&SUPABASE_KEY&&!SUPABASE_URL.includes("heqjyafaxjzisddmgvob"));
+const five30NoBackend=()=>{const error={message:"La base de datos independiente de 5:30 aún no está configurada."};const value={data:{user:null,session:null},error,count:0};const chain=new Proxy(function(){return chain},{get(_t,k){if(k==="then")return (resolve,reject)=>Promise.resolve(value).then(resolve,reject);return chain},apply(){return chain}});return chain};
+const supabaseClient=FIVE30_BACKEND_READY?supabase.createClient(SUPABASE_URL,SUPABASE_KEY):five30NoBackend();
+if(!FIVE30_BACKEND_READY)document.addEventListener("DOMContentLoaded",()=>{const note=document.createElement("div");note.setAttribute("role","status");note.style.cssText="background:#30220f;color:#f4d8a4;text-align:center;padding:12px;font:13px system-ui";note.textContent="Vista previa 5:30: cuentas, publicaciones y pagos no disponibles hasta conectar una base de datos independiente.";document.body.prepend(note);});
 // Trial signups are closed. Paid access requires server-verified payment.
 const AFTER_SHIFT_NEW_SUBSCRIPTIONS_PAUSED=true;
 const creators=[{name:"Valentina",handle:"@valentina",sub:"US$9.99",tag:"DEMO",bio:"Contenido exclusivo y comunidad."},{name:"Sofía",handle:"@sofia",sub:"US$12.00",tag:"DEMO",bio:"Contenido premium para suscriptores."},{name:"Isabella",handle:"@isabella",sub:"US$8.99",tag:"DEMO",bio:"Nuevas publicaciones cada semana."},{name:"Camila",handle:"@camila",sub:"US$14.99",tag:"DEMO",bio:"Perfil ilustrativo de AFTER SHIFT."}];
