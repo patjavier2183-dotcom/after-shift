@@ -791,31 +791,14 @@ img,video,iframe{max-width:100%}
 }
 @media(max-width:380px){.brand{font-size:25px}.top-actions .dark-button{padding:9px 10px}.trust-item small{font-size:10px}}
 
-/* Approved 5:30 art direction v2: black canvas, four benefits, golden arc */
-html,body,main,.section,.creator-section{background:#090807!important;color:#eadac3}
-.hero-visual{position:relative;isolation:isolate;background-image:linear-gradient(90deg,rgba(6,5,4,.88),rgba(7,6,5,.64) 49%,rgba(9,7,6,.16)),url("assets/after-shift-approved-editorial.webp");background-position:center,right center;background-size:cover,auto 130%}
-.hero-visual:after{content:"";position:absolute;z-index:0;pointer-events:none;left:-27%;top:4%;width:72%;height:135%;border-radius:50%;border:2px solid transparent;border-top-color:rgba(232,171,93,.82);border-right-color:rgba(232,171,93,.28);transform:rotate(-27deg);box-shadow:0 -7px 32px -12px rgba(241,164,76,.75),inset 0 9px 28px -22px rgba(241,164,76,.75)}
-.hero-content{position:relative;z-index:1}.hero-actions{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:14px}
-.hero-secondary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border:1px solid #b8986d;border-radius:28px;color:#f2e1c9;text-decoration:none;padding:12px 24px;font-size:11px;letter-spacing:.14em}
-.trust-row{grid-template-columns:repeat(4,minmax(0,1fr));padding:25px 4% 27px;background:#090807!important}
-.trust-icon{font-size:26px;line-height:1.2}.trust-item{min-width:0;padding:6px 10px}
-.creator-section{background:#090807!important}.creator-section>.section-head h2{color:#e7c99d}.creator-section .card{background:#17120f}
-@media(max-width:700px){.hero-visual{background-size:cover,auto 100%;background-position:center,70% center}.hero-visual:after{left:-80%;top:10%;width:120%;height:100%}.hero-actions{gap:10px}.hero-secondary{padding:11px 16px;font-size:9px}.trust-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:0;padding:18px 12px}.trust-item{padding:12px 7px;border-bottom:1px solid #33271c}.trust-item:nth-child(2){border-right:0}.trust-item:nth-child(n+3){border-bottom:0}.trust-item strong{font-size:9px}.trust-item small{font-size:11px}.creator-section>.section-head{background:#090807}}
 
-/* 5:30 v3: remove collage from hero; reserve imagery for creator cards below */
-.hero-visual{background:#090807!important;min-height:540px;overflow:hidden;isolation:isolate}
-.hero-visual::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 77% 32%,rgba(142,90,42,.2),transparent 48%),linear-gradient(90deg,#080706,#15100d 75%,#090807);pointer-events:none;z-index:0}
-.hero-visual::after{content:"";position:absolute;left:-32%;top:-48%;width:95%;height:190%;border:2px solid rgba(232,174,98,.7);border-radius:50%;transform:rotate(-18deg);box-shadow:0 0 32px rgba(210,138,54,.22);pointer-events:none;z-index:0}
-.hero-content{z-index:1;position:relative;margin:0 auto;max-width:760px;background:transparent!important}
-.hero h1{font-size:clamp(92px,12vw,174px)}
-.trust-row{position:relative;z-index:2}
-@media(max-width:700px){.hero-visual{min-height:470px}.hero-visual::after{left:-108%;top:-24%;width:145%;height:125%}.hero-content{padding:42px 17px 30px}.hero h1{font-size:clamp(78px,19vw,118px)}.hero p{font-size:16px}.hero-actions{gap:12px}.hero-actions .primary{padding:14px 22px}.hero-secondary{min-height:40px}}
-
-/* 5:30 approved layout v4: dedicated right-side portrait treatment */
-.hero-visual{min-height:510px;background:#080706!important;position:relative}
-.hero-visual::before{content:"";position:absolute;z-index:0;inset:0 0 0 auto;width:47%;background:linear-gradient(90deg,#080706 0%,rgba(8,7,6,.12) 37%,rgba(8,7,6,.06) 100%),url("assets/after-shift-approved-editorial.webp") center 29%/auto 190% no-repeat;opacity:.9;pointer-events:none}
-.hero-visual::after{left:-36%;top:-36%;width:95%;height:172%;border-color:rgba(235,170,89,.65);transform:rotate(-21deg)}
-.hero-content{margin:0 auto;transform:translateX(-7%);max-width:700px}
-.hero h1{font-size:clamp(94px,11vw,170px)}
-@media(min-width:900px){.hero-visual{min-height:510px}.hero-actions{flex-wrap:nowrap}.hero-content{padding-top:45px;padding-bottom:35px}}
-@media(max-width:700px){.hero-visual{min-height:505px}.hero-visual::before{inset:0 0 0 auto;width:56%;background:linear-gradient(90deg,#080706 0%,rgba(8,7,6,.45) 55%,rgba(8,7,6,.2)),url("assets/after-shift-approved-editorial.webp") 68% 18%/auto 120% no-repeat;opacity:.72}.hero-visual::after{left:-115%;top:-28%;width:150%;height:125%}.hero-content{transform:none;max-width:100%;padding:38px 17px 30px}.hero h1{font-size:clamp(82px,20vw,116px)}.hero p{max-width:330px;font-size:15px}.hero-actions{display:flex;flex-direction:row;gap:8px}.hero-actions .primary{padding:12px 14px;font-size:9px;letter-spacing:.07em}.hero-secondary{padding:10px 12px;font-size:9px;letter-spacing:.05em}.trust-row{grid-template-columns:repeat(4,minmax(0,1fr));padding:12px 6px}.trust-item{border-bottom:0!important;padding:9px 3px}.trust-item:nth-child(2){border-right:1px solid #33271c}.trust-item strong{font-size:8px;letter-spacing:0}.trust-item small{font-size:9px;line-height:1.25}.trust-icon{font-size:22px}}
+/* 5:30 stable visual baseline while approved art is prepared */
+html,body,main,.creator-section{background:#090807;color:#eadac3}
+.hero-visual{background:#090807!important;min-height:440px}
+.hero-visual::before,.hero-visual::after{content:none!important}
+.hero-content{margin:0 auto;max-width:720px;transform:none;background:transparent}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;align-items:center}
+.hero-secondary{color:#f3dbb8;text-decoration:none;border:1px solid #b89562;border-radius:25px;padding:13px 22px;font-size:11px;letter-spacing:.08em}
+.trust-row{grid-template-columns:repeat(4,minmax(0,1fr));background:#090807}
+.creator-section{background:#090807}
+@media(max-width:700px){.hero-visual{min-height:380px}.hero-content{padding:36px 18px}.hero h1{font-size:clamp(72px,19vw,104px)}.hero-actions{gap:8px}.hero-actions .primary,.hero-secondary{font-size:9px;padding:11px 12px}.trust-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.trust-item{padding:10px 5px}}
