@@ -112,3 +112,19 @@ main#inicio>.hero{display:none!important}
 .footer-links a:focus-visible{outline:2px solid #e2b88a;outline-offset:3px}
 .footer-note{white-space:normal}
 @media(max-width:800px){.site-footer .footer-inner{flex-wrap:wrap;justify-content:center;text-align:center;gap:12px}.site-footer .footer-links{margin:0;width:100%;justify-content:center}}
+
+/* En móvil, la fotografía de la modelo conserva su visibilidad sin mover
+   los números ni duplicar los botones: ambos recortes provienen del MISMO archivo. */
+.approved-mobile-portrait{display:none}
+.approved-copy-intro{box-shadow:0 0 12px 6px rgba(8,7,5,.82)}
+@media(max-width:800px){
+ .approved-mobile-portrait{display:block;position:absolute;z-index:1;
+   left:calc(50vw + 372px);top:55px;width:110px;height:252px;
+   background-image:url("assets/five30-approved-cover.webp");
+   background-size:900px 381.445px;background-position:-655px -55px;background-repeat:no-repeat;
+   -webkit-mask-image:linear-gradient(to right,transparent 0%,black 75%);
+   mask-image:linear-gradient(to right,transparent 0%,black 75%);
+   pointer-events:none}
+ .approved-cover-hits{z-index:4}
+ .approved-cover-localization{z-index:3}
+}
