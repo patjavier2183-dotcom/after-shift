@@ -810,3 +810,12 @@ html,body,main,.section,.creator-section{background:#090807!important;color:#ead
 .hero h1{font-size:clamp(92px,12vw,174px)}
 .trust-row{position:relative;z-index:2}
 @media(max-width:700px){.hero-visual{min-height:470px}.hero-visual::after{left:-108%;top:-24%;width:145%;height:125%}.hero-content{padding:42px 17px 30px}.hero h1{font-size:clamp(78px,19vw,118px)}.hero p{font-size:16px}.hero-actions{gap:12px}.hero-actions .primary{padding:14px 22px}.hero-secondary{min-height:40px}}
+
+/* 5:30 approved layout v4: dedicated right-side portrait treatment */
+.hero-visual{min-height:510px;background:#080706!important;position:relative}
+.hero-visual::before{content:"";position:absolute;z-index:0;inset:0 0 0 auto;width:47%;background:linear-gradient(90deg,#080706 0%,rgba(8,7,6,.12) 37%,rgba(8,7,6,.06) 100%),url("assets/after-shift-approved-editorial.webp") center 29%/auto 190% no-repeat;opacity:.9;pointer-events:none}
+.hero-visual::after{left:-36%;top:-36%;width:95%;height:172%;border-color:rgba(235,170,89,.65);transform:rotate(-21deg)}
+.hero-content{margin:0 auto;transform:translateX(-7%);max-width:700px}
+.hero h1{font-size:clamp(94px,11vw,170px)}
+@media(min-width:900px){.hero-visual{min-height:510px}.hero-actions{flex-wrap:nowrap}.hero-content{padding-top:45px;padding-bottom:35px}}
+@media(max-width:700px){.hero-visual{min-height:505px}.hero-visual::before{inset:0 0 0 auto;width:56%;background:linear-gradient(90deg,#080706 0%,rgba(8,7,6,.45) 55%,rgba(8,7,6,.2)),url("assets/after-shift-approved-editorial.webp") 68% 18%/auto 120% no-repeat;opacity:.72}.hero-visual::after{left:-115%;top:-28%;width:150%;height:125%}.hero-content{transform:none;max-width:100%;padding:38px 17px 30px}.hero h1{font-size:clamp(82px,20vw,116px)}.hero p{max-width:330px;font-size:15px}.hero-actions{display:flex;flex-direction:row;gap:8px}.hero-actions .primary{padding:12px 14px;font-size:9px;letter-spacing:.07em}.hero-secondary{padding:10px 12px;font-size:9px;letter-spacing:.05em}.trust-row{grid-template-columns:repeat(4,minmax(0,1fr));padding:12px 6px}.trust-item{border-bottom:0!important;padding:9px 3px}.trust-item:nth-child(2){border-right:1px solid #33271c}.trust-item strong{font-size:8px;letter-spacing:0}.trust-item small{font-size:9px;line-height:1.25}.trust-icon{font-size:22px}}
