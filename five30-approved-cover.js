@@ -63,7 +63,7 @@ function route(action){
  case "creators":case "explore":scrollToId("creators");break;
  case "about":scrollToId("about");break;
  case "how":scrollToId("howItWorks");break;
- case "subscriptions":document.getElementById("navSubscriptions")?.click();break;
+ case "subscriptions":if(!isLoggedIn())showAuth("login");else document.getElementById("navSubscriptions")?.click();break;
  case "login":showAuth("login");break;
  case "join":showAuth("signup");break;
  case "search":
