@@ -132,3 +132,14 @@ main#inicio>.hero{display:none!important}
  .approved-cover[data-cover-lang="en"][data-cover-logged-in="true"] .approved-join{display:none!important}
 }
 .approved-cover [hidden]{display:none!important}
+
+/* No mostrar enlaces decorativos sin función en el pie de página. */
+.footer-links a,.footer-links button{background:transparent;border:0;padding:0;color:inherit;cursor:pointer;font:inherit;text-decoration:none}
+.footer-links a:hover,.footer-links button:hover{text-decoration:underline;color:#e8c89b}
+.footer-links a:focus-visible,.footer-links button:focus-visible{outline:2px solid #d5ac7d;outline-offset:3px}
+.footer-note{white-space:normal;line-height:1.5}
+@media(max-width:800px){
+ .site-footer .footer-inner{flex-wrap:wrap;justify-content:center;text-align:center;gap:13px}
+ .site-footer .footer-links{width:100%;margin:0;justify-content:center}
+ .site-footer .footer-note{font-size:11px}
+}
