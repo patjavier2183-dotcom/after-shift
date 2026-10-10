@@ -801,3 +801,12 @@ html,body,main,.section,.creator-section{background:#090807!important;color:#ead
 .trust-icon{font-size:26px;line-height:1.2}.trust-item{min-width:0;padding:6px 10px}
 .creator-section{background:#090807!important}.creator-section>.section-head h2{color:#e7c99d}.creator-section .card{background:#17120f}
 @media(max-width:700px){.hero-visual{background-size:cover,auto 100%;background-position:center,70% center}.hero-visual:after{left:-80%;top:10%;width:120%;height:100%}.hero-actions{gap:10px}.hero-secondary{padding:11px 16px;font-size:9px}.trust-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:0;padding:18px 12px}.trust-item{padding:12px 7px;border-bottom:1px solid #33271c}.trust-item:nth-child(2){border-right:0}.trust-item:nth-child(n+3){border-bottom:0}.trust-item strong{font-size:9px}.trust-item small{font-size:11px}.creator-section>.section-head{background:#090807}}
+
+/* 5:30 v3: remove collage from hero; reserve imagery for creator cards below */
+.hero-visual{background:#090807!important;min-height:540px;overflow:hidden;isolation:isolate}
+.hero-visual::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 77% 32%,rgba(142,90,42,.2),transparent 48%),linear-gradient(90deg,#080706,#15100d 75%,#090807);pointer-events:none;z-index:0}
+.hero-visual::after{content:"";position:absolute;left:-32%;top:-48%;width:95%;height:190%;border:2px solid rgba(232,174,98,.7);border-radius:50%;transform:rotate(-18deg);box-shadow:0 0 32px rgba(210,138,54,.22);pointer-events:none;z-index:0}
+.hero-content{z-index:1;position:relative;margin:0 auto;max-width:760px;background:transparent!important}
+.hero h1{font-size:clamp(92px,12vw,174px)}
+.trust-row{position:relative;z-index:2}
+@media(max-width:700px){.hero-visual{min-height:470px}.hero-visual::after{left:-108%;top:-24%;width:145%;height:125%}.hero-content{padding:42px 17px 30px}.hero h1{font-size:clamp(78px,19vw,118px)}.hero p{font-size:16px}.hero-actions{gap:12px}.hero-actions .primary{padding:14px 22px}.hero-secondary{min-height:40px}}
