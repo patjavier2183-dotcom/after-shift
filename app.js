@@ -710,6 +710,16 @@ loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
     setPasswordVisibility(false);
     msg.textContent="";
   }
+  // Puente de interfaz para botones visibles de la portada. Nunca concede permisos.
+  window.Five30Auth={
+    openLogin:()=>open("login"),
+    openSignup:()=>open("signup"),
+    openAccount:()=>document.getElementById("loginBtn").click(),
+    signedIn:()=>document.getElementById("signupBtn")?.style.display==="none"
+  };
+  document.addEventListener("keydown",event=>{
+    if(event.key==="Escape"&&modal.style.display!=="none"){closeModal();}
+  });
   close.onclick=closeModal;
   sw.onclick=()=>open(mode==="signup"?"login":mode==="login"?"signup":"login");
   forgot.onclick=()=>open("request-reset");
