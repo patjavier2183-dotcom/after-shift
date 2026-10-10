@@ -91,8 +91,8 @@ main#inicio>.hero{display:none!important}
    En inglés sigue viéndose intacta la tipografía de la imagen aprobada. */
 .approved-hit{font:700 10px system-ui,sans-serif;letter-spacing:.12em;color:transparent}
 .approved-hit span{opacity:0;pointer-events:none}
-.approved-cover[data-cover-lang="es"] .approved-hit:not(.approved-home):not(.approved-search-hit):not(.approved-cta):not(.approved-how),
-.approved-cover[data-cover-lang="pt"] .approved-hit:not(.approved-home):not(.approved-search-hit):not(.approved-cta):not(.approved-how){display:flex;justify-content:center;align-items:center;background:#080706f5!important;border-radius:0;color:#e2c5a4}
+.approved-cover[data-cover-lang="es"] .approved-hit:not(.approved-home):not(.approved-search-hit):not(.approved-join):not(.approved-cta):not(.approved-how),
+.approved-cover[data-cover-lang="pt"] .approved-hit:not(.approved-home):not(.approved-search-hit):not(.approved-join):not(.approved-cta):not(.approved-how){display:flex;justify-content:center;align-items:center;background:#080706f5!important;border-radius:0;color:#e2c5a4}
 .approved-cover[data-cover-lang="es"] .approved-hit:not(.approved-home):not(.approved-search-hit) span,
 .approved-cover[data-cover-lang="pt"] .approved-hit:not(.approved-home):not(.approved-search-hit) span{opacity:1}
 .approved-cover[data-cover-lang="es"] .approved-join,.approved-cover[data-cover-lang="pt"] .approved-join{top:2.8%;left:90.5%;width:7.1%;height:6.7%;background:#d9b58a!important;border-radius:28px!important;color:#23160b!important;font-size:10px}
