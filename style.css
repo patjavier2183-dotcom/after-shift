@@ -858,3 +858,14 @@ html,body{overflow-x:hidden;max-width:100%;width:100%}
  .editorial-shot{width:100%;min-width:0;aspect-ratio:1;flex:none}
 }
 @media(max-width:380px){.hero h1{font-size:19vw!important}.main-nav{gap:6px}}
+
+/* v7: remove the rejected circular border and tiled photo background entirely */
+.hero-visual::before{content:none!important;display:none!important;border:0!important;box-shadow:none!important}
+.hero-visual::after{content:none!important;display:none!important;background:none!important}
+.hero-visual{background:linear-gradient(105deg,#080706 0%,#100b09 58%,#080706 100%)!important}
+.hero-content{transform:none!important}
+@media(max-width:800px){
+ .hero-visual::before,.hero-visual::after{content:none!important;display:none!important}
+ .hero-visual{background:linear-gradient(105deg,#080706,#120c09 65%,#080706)!important}
+ .hero-content{padding:48px 14px 28px!important}
+}
