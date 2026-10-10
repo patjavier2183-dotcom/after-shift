@@ -6,48 +6,66 @@
 <meta name="description" content="5:30: descubre creadores, conecta con su comunidad y disfruta contenido exclusivo.">
 <title>5:30 — YOUR WAY.</title>
 <link rel="stylesheet" href="style.css?v=five30-layout-v7">
-<link rel="stylesheet" href="five30-approved-cover.css?v=restored-1">
+<link rel="stylesheet" href="five30-approved-cover.css?v=20261010-lang-fix-1">
 </head>
 <body>
 
 <!-- La portada mantiene exactamente los pixeles de la imagen aprobada; los botones son controles reales de la aplicación. -->
-<section class="approved-cover" id="portada" aria-label="Portada 5:30 YOUR WAY">
+<section class="approved-cover" id="portada" aria-label="Portada original 5:30 YOUR WAY" data-cover-lang="es">
+  <!-- Navegación móvil: los controles son botones HTML, no texto dentro de la fotografía. -->
+  <header class="approved-mobile-header">
+    <div class="approved-mobile-top">
+      <button type="button" class="approved-mobile-logo" data-cover-action="home" aria-label="5:30 — inicio"></button>
+      <label class="approved-mobile-lang" for="approvedMobileLanguage"><span class="approved-screenreader">Idioma / Language / Idioma</span><select id="approvedMobileLanguage" aria-label="Elegir idioma"><option value="es">ES</option><option value="en">EN</option><option value="pt">PT</option></select></label>
+      <button type="button" class="approved-mobile-login" data-cover-action="login" data-cover-copy="login">INGRESAR</button>
+      <button type="button" class="approved-mobile-join" data-cover-action="join" data-cover-copy="join">CREAR CUENTA</button>
+    </div>
+    <nav class="approved-mobile-nav" aria-label="Navegación 5:30">
+      <button type="button" data-cover-action="explore" data-cover-copy="creators">CREADORES</button>
+      <button type="button" data-cover-action="explore" data-cover-copy="explore">EXPLORAR</button>
+      <button type="button" data-cover-action="subscriptions" data-cover-copy="subscriptions">SUSCRIPCIONES</button>
+      <button type="button" data-cover-action="search" data-cover-copy="search">BUSCAR</button>
+    </nav>
+  </header>
   <div class="approved-cover-frame">
-    <img class="approved-cover-art" src="assets/five30-approved-cover.webp" width="1536" height="651" alt="Portada original 5:30 YOUR WAY con figura iluminada, arco dorado y beneficios de la plataforma" fetchpriority="high">
-    <div class="approved-cover-hits">
-      <button type="button" class="approved-hit approved-home" aria-label="Volver al inicio" data-cover-action="home"></button>
-      <button type="button" class="approved-hit approved-creators" aria-label="Ir a creadores" data-cover-action="explore"></button>
-      <button type="button" class="approved-hit approved-explore" aria-label="Explorar creadores" data-cover-action="explore"></button>
-      <button type="button" class="approved-hit approved-subscriptions" aria-label="Mis suscripciones" data-cover-action="subscriptions"></button>
-      <button type="button" class="approved-hit approved-about" aria-label="Acerca de 5:30" data-cover-action="about"></button>
-      <button type="button" class="approved-hit approved-search-hit" aria-label="Buscar creadores" data-cover-action="search"></button>
-      <button type="button" class="approved-hit approved-login" aria-label="Iniciar sesión o ver mi cuenta" data-cover-action="login"></button>
-      <button type="button" class="approved-hit approved-join" aria-label="Unirse a 5:30" data-cover-action="join"></button>
-      <button type="button" class="approved-hit approved-cta" aria-label="Explorar creadores" data-cover-action="explore"></button>
-      <button type="button" class="approved-hit approved-how" aria-label="Ver cómo funciona" data-cover-action="about"></button>
+    <div class="approved-cover-stage">
+      <img class="approved-cover-art" src="assets/five30-approved-cover.webp" width="1536" height="651" alt="Diseño original 5:30 YOUR WAY, arco dorado y fotografía editorial" fetchpriority="high">
+      <!-- Traducciones: sólo cubren las palabras que ya vienen impresas en inglés. -->
+      <div class="approved-cover-localization" aria-hidden="true">
+        <div class="approved-copy-intro" data-cover-copy="intro">Una plataforma premium para conexiones auténticas.</div>
+        <div class="approved-copy-benefit approved-copy-benefit-1"><strong data-cover-copy="exclusive">CONTENIDO EXCLUSIVO</strong><span data-cover-copy="exclusiveDesc">Directamente de tus creadores favoritos</span></div>
+        <div class="approved-copy-benefit approved-copy-benefit-2"><strong data-cover-copy="topCreators">MEJORES CREADORES</strong><span data-cover-copy="topCreatorsDesc">Personas reales. Historias únicas.</span></div>
+        <div class="approved-copy-benefit approved-copy-benefit-3"><strong data-cover-copy="flexible">SUSCRIPCIONES FLEXIBLES</strong><span data-cover-copy="flexibleDesc">A tu manera. Sin compromisos.</span></div>
+        <div class="approved-copy-benefit approved-copy-benefit-4"><strong data-cover-copy="discover">DESCUBRE</strong><span data-cover-copy="discoverDesc">Nuevos creadores, nuevas perspectivas.</span></div>
+      </div>
+      <div class="approved-cover-hits">
+        <button type="button" class="approved-hit approved-home" data-cover-action="home" aria-label="Ir al inicio"></button>
+        <button type="button" class="approved-hit approved-creators" data-cover-action="explore" aria-label="Creadores"><span data-cover-copy="creators">CREADORES</span></button>
+        <button type="button" class="approved-hit approved-explore" data-cover-action="explore" aria-label="Explorar"><span data-cover-copy="explore">EXPLORAR</span></button>
+        <button type="button" class="approved-hit approved-subscriptions" data-cover-action="subscriptions" aria-label="Suscripciones"><span data-cover-copy="subscriptions">SUSCRIPCIONES</span></button>
+        <button type="button" class="approved-hit approved-about" data-cover-action="about" aria-label="Acerca de"><span data-cover-copy="about">ACERCA DE</span></button>
+        <label class="approved-desktop-lang" for="approvedDesktopLanguage"><span class="approved-screenreader">Idioma / Language / Idioma</span><select id="approvedDesktopLanguage" aria-label="Elegir idioma"><option value="es">ES</option><option value="en">EN</option><option value="pt">PT</option></select></label>
+        <button type="button" class="approved-hit approved-search" data-cover-action="search" aria-label="Buscar creadores"></button>
+        <button type="button" class="approved-hit approved-login" data-cover-action="login" aria-label="Ingresar"><span data-cover-copy="login">INGRESAR</span></button>
+        <button type="button" class="approved-hit approved-join" data-cover-action="join" aria-label="Crear cuenta"><span data-cover-copy="join">CREAR CUENTA</span></button>
+        <button type="button" class="approved-hit approved-cta" data-cover-action="explore" aria-label="Explorar creadores"><span data-cover-copy="cta">EXPLORAR CREADORES</span></button>
+        <button type="button" class="approved-hit approved-how" data-cover-action="how" aria-label="Cómo funciona"><span data-cover-copy="how">CÓMO FUNCIONA</span></button>
+      </div>
     </div>
   </div>
+  <div class="approved-mobile-benefits" aria-label="Beneficios de 5:30">
+    <div><span class="approved-benefit-icon" aria-hidden="true">♕</span><span data-cover-copy="exclusive">CONTENIDO EXCLUSIVO</span></div>
+    <div><span class="approved-benefit-icon" aria-hidden="true">♧</span><span data-cover-copy="topCreators">MEJORES CREADORES</span></div>
+    <div><span class="approved-benefit-icon" aria-hidden="true">▤</span><span data-cover-copy="flexible">SUSCRIPCIONES FLEXIBLES</span></div>
+    <div><span class="approved-benefit-icon" aria-hidden="true">◇</span><span data-cover-copy="discover">DESCUBRE</span></div>
+  </div>
   <div class="approved-search-panel" id="approvedSearchPanel" hidden>
-    <label for="approvedSearchInput">Buscar creadores</label>
-    <input type="search" id="approvedSearchInput" autocomplete="off" placeholder="Nombre del creador…">
-    <button type="button" data-cover-action="search-go">Buscar</button>
+    <label for="approvedSearchInput" data-cover-copy="searchLabel">Buscar creadores</label>
+    <input type="search" id="approvedSearchInput" autocomplete="off" placeholder="Nombre del creador…" aria-controls="creatorGrid">
+    <button type="button" data-cover-action="search-go" data-cover-copy="search">BUSCAR</button>
     <button type="button" data-cover-action="search-close" aria-label="Cerrar búsqueda">✕</button>
   </div>
-  <!-- Barra operativa SEPARADA de la imagen aprobada: cero recortes o cambios visuales en la portada. -->
-  <nav class="approved-function-bar" aria-label="Funciones y navegación de 5:30">
-    <button type="button" data-cover-action="creators" data-cover-label="creators">CREADORES</button>
-    <button type="button" data-cover-action="explore" data-cover-label="explore">EXPLORAR</button>
-    <button type="button" data-cover-action="subscriptions" data-cover-label="subscriptions">SUSCRIPCIONES</button>
-    <button type="button" data-cover-action="search" data-cover-label="search">BUSCAR</button>
-    <label class="approved-lang-control" for="approvedMobileLanguage">
-      <span class="visually-hidden">Idioma / Language / Idioma</span>
-      <select id="approvedMobileLanguage" aria-label="Seleccionar idioma"><option value="es">ES</option><option value="en">EN</option><option value="pt">PT</option></select>
-    </label>
-    <button type="button" class="approved-function-login" data-cover-action="login" data-cover-label="login">INGRESAR</button>
-    <button type="button" class="approved-mobile-join" data-cover-action="join" data-cover-label="join">CREAR CUENTA</button>
-  </nav>
 </section>
-
 <header class="topbar">
   <div class="topbar-inner">
     <a class="brand" href="#inicio" aria-label="5:30 inicio">5:30 <span>YOUR WAY</span></a>
@@ -107,8 +125,19 @@
 <svg class="eye-icon" viewBox="0 0 24 24" width="21" height="21" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
 <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle><path class="eye-hidden-line" d="M3.2 20.8 20.8 3.2"></path>
 </svg></button></div></div><div id="authMsg" class="form-msg"></div><button class="action-btn action-primary" type="submit" id="authSubmit">CREAR CUENTA</button></form><button class="auth-recovery-link" type="button" id="authForgot" style="display:none">¿Olvidaste tu contraseña?</button><button class="text-btn" type="button" id="authSwitch">Ya tengo una cuenta → Ingresar</button></div></div>
-<section class="five30-about" id="about" aria-label="About 5:30"><h2>ABOUT 5:30</h2><p>A premium creator platform for authentic connection.</p></section>
-<footer class="site-footer"><div class="footer-inner"><div class="footer-brand">5:30 <span>YOUR WAY</span></div><div class="footer-links"><span>Sobre nosotros</span><span>Términos</span><span>Privacidad</span><span>Soporte</span></div><div class="footer-note">5:30 · V0 en pruebas</div></div></footer>
+<section class="five30-how" id="howItWorks" aria-labelledby="howTitle">
+  <div class="five30-how-inner">
+    <div class="eyebrow">5:30 — YOUR WAY.</div>
+    <h2 id="howTitle">Cómo funciona</h2>
+    <div class="five30-how-grid">
+      <div><b>01</b><h3>Crea tu cuenta</h3><p>Regístrate gratis y explora creadores.</p></div>
+      <div><b>02</b><h3>Descubre contenido</h3><p>Sigue a tus creadores favoritos y descubre sus publicaciones.</p></div>
+      <div><b>03</b><h3>Suscríbete</h3><p>Los pagos reales aún no están activos. Las pruebas no cobran dinero.</p></div>
+    </div>
+  </div>
+</section>
+<section class="five30-about" id="about" aria-label="Acerca de 5:30"><h2>Acerca de 5:30</h2><p>Una plataforma premium para conexiones auténticas.</p></section>
+<footer class="site-footer"><div class="footer-inner"><div class="footer-brand">5:30 <span>YOUR WAY</span></div><nav class="footer-links" aria-label="Enlaces de navegación"><a href="#about">Sobre nosotros</a><a href="#howItWorks">Cómo funciona</a><a href="#creators">Explorar</a></nav><div class="footer-note">5:30 · Versión de pruebas · sin cobros reales</div></div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="five30-config.js"></script>
 <script src="pricing.js?v=20261010-five30-brand"></script>
@@ -118,6 +147,6 @@
 <script src="live-manager.js?v=20261010-five30-brand"></script>
 <script src="live-lab.js?v=20261010-five30-brand"></script>
 <script src="vip-posts.js?v=20261010-five30-brand"></script>
-<script src="i18n.js?v=20261010-five30-brand"></script>
-<script src="five30-approved-cover.js?v=restored-1"></script>
+<script src="i18n.js?v=20261010-lang-fix-1"></script>
+<script src="five30-approved-cover.js?v=20261010-lang-fix-1"></script>
 </body></html>

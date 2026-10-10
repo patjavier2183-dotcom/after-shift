@@ -2,8 +2,18 @@
    Never changes authorization, payments, prices, creators' data, or published posts. */
 (function(){
 "use strict";
-const key="aftershift_ui_language",supported=["es","en","pt"];
+const key="five30_ui_language",supported=["es","en","pt"];
 const lines=[
+"Acerca de 5:30|About 5:30|Sobre o 5:30",
+"Una plataforma premium para conexiones auténticas.|A premium platform for authentic connections.|Uma plataforma premium para conexões autênticas.",
+"5:30 · Versión de pruebas · sin cobros reales|5:30 · Test version · no real charges|5:30 · Versão de testes · sem cobranças reais",
+"Crea tu cuenta|Create your account|Crie sua conta",
+"Regístrate gratis y explora creadores.|Sign up for free and explore creators.|Cadastre-se gratuitamente e explore criadores.",
+"Descubre contenido|Discover content|Descubra conteúdo",
+"Sigue a tus creadores favoritos y descubre sus publicaciones.|Follow your favorite creators and discover their posts.|Siga seus criadores favoritos e descubra as publicações.",
+"Suscríbete|Subscribe|Assine",
+"Los pagos reales aún no están activos. Las pruebas no cobran dinero.|Real payments are not enabled yet. Tests never charge money.|Pagamentos reais ainda não estão ativos. Os testes não cobram dinheiro.",
+"Cómo funciona|How it works|Como funciona",
 "Inicio|Home|Início",
 "Explorar|Explore|Explorar",
 "Suscripciones|Subscriptions|Assinaturas",
@@ -289,7 +299,7 @@ const lines=[
 const dict=new Map(lines.map(s=>{const [es,en,pt]=s.split("|");return [es,{en,pt}]}));
 const savedText=new WeakMap(),savedAttr=new WeakMap();
 let lang="es",scheduled=false;
-const excluded="script,style,noscript,textarea,[contenteditable],.card .name,.card .handle,.post-card h4,.post-card>p,.post-card p,.post-detail-head h2,.post-detail-description,.my-subscription-info strong,#accountEmail";
+const excluded="script,style,noscript,textarea,[contenteditable],.approved-cover,.card .name,.card .handle,.post-card h4,.post-card>p,.post-card p,.post-detail-head h2,.post-detail-description,.my-subscription-info strong,#accountEmail";
 function formatVariable(value,language){
   const en=language==="en";
   let m=value.match(/^(\d+) publicaciones?$/);
@@ -396,7 +406,7 @@ function init(){
   const select=document.getElementById("uiLanguage");if(!select)return;
   let saved=null;try{saved=localStorage.getItem(key)}catch{}
   const browser=(navigator.language||"es").toLowerCase();
-  const initial=supported.includes(saved)?saved:browser.startsWith("pt")?"pt":browser.startsWith("en")?"en":"es";
+  const initial=supported.includes(saved)?saved:"es";
   select.addEventListener("change",()=>setLanguage(select.value));
   new MutationObserver(()=>schedule()).observe(document.body,{childList:true,characterData:true,attributes:true,attributeFilter:["placeholder","title","aria-label"],subtree:true});
   setLanguage(initial);

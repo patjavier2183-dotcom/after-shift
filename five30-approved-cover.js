@@ -1,91 +1,94 @@
-/* 5:30: controles REALES sobre la imagen aprobada, responsive y con idiomas. */
+/* 5:30 — Real button handlers and one consistent ES/EN/PT language state.
+   Never overlay translations on transparent buttons: CSS completely covers baked English. */
 (function(){
 "use strict";
+const root=document.getElementById("portada");
 const panel=document.getElementById("approvedSearchPanel");
-const input=document.getElementById("approvedSearchInput");
-const oldSearch=document.getElementById("creatorSearch");
-const oldLang=document.getElementById("uiLanguage");
-const loginOriginal=document.getElementById("loginBtn");
-const joinOriginal=document.getElementById("signupBtn");
-const selectors=[document.getElementById("approvedDesktopLanguage"),document.getElementById("approvedMobileLanguage")].filter(Boolean);
-const labels={
- es:{about:"ACERCA DE",cta:"EXPLORAR CREADORES",howAction:"CÓMO FUNCIONA",login:"INGRESAR",account:"MI CUENTA",join:"CREAR CUENTA",creators:"CREADORES",explore:"EXPLORAR",subscriptions:"SUSCRIPCIONES",search:"BUSCAR",searchLabel:"Buscar creadores",exclusive:"CONTENIDO EXCLUSIVO",topCreators:"CREADORES DESTACADOS",flexible:"SUSCRIPCIONES FLEXIBLES",discover:"DESCUBRIR",howTitle:"Cómo funciona",howStep1:"Crea tu cuenta",howText1:"Regístrate gratis y descubre creadores.",howStep2:"Explora perfiles",howText2:"Conoce sus publicaciones y elige a quién seguir.",howStep3:"Suscríbete cuando esté disponible",howText3:"Los pagos reales aún no están activos. Las pruebas no cobran dinero.",placeholder:"Nombre del creador…"},
- en:{about:"ABOUT",cta:"EXPLORE CREATORS",howAction:"SEE HOW IT WORKS",login:"LOG IN",account:"MY ACCOUNT",join:"JOIN",creators:"CREATORS",explore:"EXPLORE",subscriptions:"SUBSCRIPTIONS",search:"SEARCH",searchLabel:"Search creators",exclusive:"EXCLUSIVE CONTENT",topCreators:"TOP CREATORS",flexible:"FLEXIBLE SUBSCRIPTIONS",discover:"DISCOVER",howTitle:"How it works",howStep1:"Create your account",howText1:"Sign up for free and discover creators.",howStep2:"Explore profiles",howText2:"See posts and choose who to follow.",howStep3:"Subscribe when available",howText3:"Real payments are not enabled yet. Demos do not charge money.",placeholder:"Creator name…"},
- pt:{about:"SOBRE",cta:"EXPLORAR CRIADORES",howAction:"COMO FUNCIONA",login:"ENTRAR",account:"MINHA CONTA",join:"CRIAR CONTA",creators:"CRIADORES",explore:"EXPLORAR",subscriptions:"ASSINATURAS",search:"BUSCAR",searchLabel:"Buscar criadores",exclusive:"CONTEÚDO EXCLUSIVO",topCreators:"CRIADORES EM DESTAQUE",flexible:"ASSINATURAS FLEXÍVEIS",discover:"DESCUBRA",howTitle:"Como funciona",howStep1:"Crie sua conta",howText1:"Cadastre-se gratuitamente e descubra criadores.",howStep2:"Explore perfis",howText2:"Veja publicações e escolha quem seguir.",howStep3:"Assine quando disponível",howText3:"Pagamentos reais ainda não estão ativos. Testes não cobram dinheiro.",placeholder:"Nome do criador…"}
+const query=document.getElementById("approvedSearchInput");
+const originalSearch=document.getElementById("creatorSearch");
+const originalLang=document.getElementById("uiLanguage");
+const originalLogin=document.getElementById("loginBtn");
+const originalJoin=document.getElementById("signupBtn");
+const selects=[document.getElementById("approvedDesktopLanguage"),document.getElementById("approvedMobileLanguage")].filter(Boolean);
+if(!root||!panel||!query)return;
+const dictionary={
+ es:{creators:"CREADORES",explore:"EXPLORAR",subscriptions:"SUSCRIPCIONES",search:"BUSCAR",about:"ACERCA DE",login:"INGRESAR",account:"MI CUENTA",join:"CREAR CUENTA",cta:"EXPLORAR CREADORES",how:"CÓMO FUNCIONA",intro:"Una plataforma premium para conexiones auténticas.",exclusive:"CONTENIDO EXCLUSIVO",exclusiveDesc:"Directamente de tus creadores favoritos",topCreators:"MEJORES CREADORES",topCreatorsDesc:"Personas reales. Historias únicas.",flexible:"SUSCRIPCIONES FLEXIBLES",flexibleDesc:"A tu manera. Sin compromisos.",discover:"DESCUBRE",discoverDesc:"Nuevos creadores, nuevas perspectivas.",searchLabel:"Buscar creadores",placeholder:"Nombre del creador…"},
+ en:{creators:"CREATORS",explore:"EXPLORE",subscriptions:"SUBSCRIPTIONS",search:"SEARCH",about:"ABOUT",login:"LOG IN",account:"MY ACCOUNT",join:"JOIN",cta:"EXPLORE CREATORS",how:"SEE HOW IT WORKS",intro:"A premium creator platform for those who value authentic connection.",exclusive:"EXCLUSIVE CONTENT",exclusiveDesc:"Direct from your favorite creators",topCreators:"TOP CREATORS",topCreatorsDesc:"Real people. Unique stories.",flexible:"FLEXIBLE SUBSCRIPTIONS",flexibleDesc:"Your way. No commitments.",discover:"DISCOVER",discoverDesc:"New creators, new perspectives.",searchLabel:"Search creators",placeholder:"Creator name…"},
+ pt:{creators:"CRIADORES",explore:"EXPLORAR",subscriptions:"ASSINATURAS",search:"BUSCAR",about:"SOBRE",login:"ENTRAR",account:"MINHA CONTA",join:"CRIAR CONTA",cta:"EXPLORAR CRIADORES",how:"COMO FUNCIONA",intro:"Uma plataforma premium para conexões autênticas.",exclusive:"CONTEÚDO EXCLUSIVO",exclusiveDesc:"Direto dos seus criadores favoritos",topCreators:"MELHORES CRIADORES",topCreatorsDesc:"Pessoas reais. Histórias únicas.",flexible:"ASSINATURAS FLEXÍVEIS",flexibleDesc:"Do seu jeito. Sem compromissos.",discover:"DESCUBRA",discoverDesc:"Novos criadores, novas perspectivas.",searchLabel:"Buscar criadores",placeholder:"Nome do criador…"}
 };
-let lang=window.AfterShiftI18n?.getLanguage?.()||oldLang?.value||"es";
-function isLoggedIn(){return joinOriginal?.style.display==="none" || Boolean(window.Five30Auth?.signedIn?.());}
-function updateLabels(){
- const word=labels[lang]||labels.es;
- document.querySelector(".approved-cover")?.setAttribute("data-cover-lang",lang);
- document.querySelector(".approved-cover")?.setAttribute("data-cover-logged-in",String(isLoggedIn()));
- document.querySelectorAll("[data-cover-label]").forEach(el=>{
-   const key=el.getAttribute("data-cover-label");
-   const value=(key==="login"||(key==="join"&&el.classList.contains("approved-join")))&&isLoggedIn()?word.account:word[key];
-   const holder=el.classList.contains("approved-hit")?el.querySelector("span"):null;
-   const text=holder||el;
-   if(value&&text.textContent!==value)text.textContent=value;
+let lang=window.AfterShiftI18n?.getLanguage?.()||originalLang?.value||"es";
+if(!dictionary[lang])lang="es";
+const isSignedIn=()=>originalJoin?.style.display==="none" || Boolean(window.Five30Auth?.signedIn?.());
+function render(){
+ const text=dictionary[lang];
+ root.dataset.coverLang=lang;
+ root.dataset.coverLoggedIn=String(isSignedIn());
+ root.querySelectorAll("[data-cover-copy]").forEach(el=>{
+   const key=el.getAttribute("data-cover-copy");
+   const value=key==="login"&&isSignedIn()?text.account:key==="join"&&el.classList.contains("approved-hit")&&isSignedIn()?text.account:text[key];
+   if(value&&el.textContent!==value)el.textContent=value;
  });
- input.placeholder=word.placeholder;
- selectors.forEach(sel=>{if(sel.value!==lang)sel.value=lang;});
- document.querySelectorAll(".approved-desktop-lang-label,.approved-mobile-lang-label").forEach(el=>el.title=lang==="es"?"Cambiar idioma":lang==="en"?"Change language":"Mudar idioma");
- document.querySelectorAll(".approved-function-bar .approved-mobile-join").forEach(el=>{el.hidden=isLoggedIn();});
+ query.placeholder=text.placeholder;
+ selects.forEach(el=>{if(el.value!==lang)el.value=lang;});
+ root.querySelectorAll(".approved-mobile-join").forEach(el=>{el.hidden=isSignedIn();});
+ root.querySelectorAll(".approved-hit").forEach(el=>{
+  const action=el.getAttribute("data-cover-action");
+  const label=action==="login"&&isSignedIn()?text.account:action==="join"&&isSignedIn()?text.account:dictionary[lang][action]||el.getAttribute("aria-label");
+  if(label)el.setAttribute("aria-label",label);
+ });
 }
 function changeLanguage(value){
- if(!labels[value])return;
+ if(!dictionary[value])return;
  lang=value;
- if(window.AfterShiftI18n?.setLanguage)window.AfterShiftI18n.setLanguage(value);
- else if(oldLang){oldLang.value=value;oldLang.dispatchEvent(new Event("change",{bubbles:true}));}
- updateLabels();
+ if(window.AfterShiftI18n?.setLanguage)window.AfterShiftI18n.setLanguage(lang);
+ else if(originalLang){originalLang.value=lang;originalLang.dispatchEvent(new Event("change",{bubbles:true}));}
+ render();
 }
-function scrollToId(id){
- const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
-}
-function showAuth(mode){
- if(isLoggedIn()){
-   if(window.Five30Auth?.openAccount)window.Five30Auth.openAccount();
-   else loginOriginal?.click();
-   return;
+function to(id){document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"});}
+function showAuth(kind){
+ if(isSignedIn()){
+  if(window.Five30Auth?.openAccount)window.Five30Auth.openAccount();
+  else originalLogin?.click();
+  return;
  }
- const api=window.Five30Auth;
- if(mode==="signup"&&api?.openSignup){api.openSignup();return;}
- if(mode==="login"&&api?.openLogin){api.openLogin();return;}
- (mode==="signup"?joinOriginal:loginOriginal)?.click();
+ if(kind==="signup"&&window.Five30Auth?.openSignup){window.Five30Auth.openSignup();return;}
+ if(kind==="login"&&window.Five30Auth?.openLogin){window.Five30Auth.openLogin();return;}
+ (kind==="signup"?originalJoin:originalLogin)?.click();
 }
-function syncSearch(){
- if(!oldSearch)return;
- oldSearch.value=input.value;
- oldSearch.dispatchEvent(new Event("input",{bubbles:true}));
+function filter(){
+ if(!originalSearch)return;
+ originalSearch.value=query.value;
+ originalSearch.dispatchEvent(new Event("input",{bubbles:true}));
 }
 function route(action){
  switch(action){
- case "home":scrollToId("portada");break;
- case "creators":case "explore":scrollToId("creators");break;
- case "about":scrollToId("about");break;
- case "how":scrollToId("about");break;
- case "subscriptions":if(!isLoggedIn())showAuth("login");else document.getElementById("navSubscriptions")?.click();break;
+ case "home":to("portada");break;
+ case "creators":case "explore":to("creators");break;
+ case "about":to("about");break;
+ case "how":to("howItWorks");break;
+ case "subscriptions":if(isSignedIn())document.getElementById("navSubscriptions")?.click();else showAuth("login");break;
  case "login":showAuth("login");break;
  case "join":showAuth("signup");break;
- case "search":
-   panel.hidden=!panel.hidden;
-   if(!panel.hidden)input.focus();
-   break;
+ case "search":panel.hidden=!panel.hidden;if(!panel.hidden)query.focus();break;
+ case "search-go":filter();to("creators");break;
  case "search-close":panel.hidden=true;break;
- case "search-go":syncSearch();scrollToId("creators");break;
  }
 }
 document.addEventListener("click",event=>{
- const target=event.target.closest?.("[data-cover-action]");
- if(!target)return;
+ const button=event.target.closest?.("[data-cover-action]");
+ if(!button)return;
  event.preventDefault();
- route(target.getAttribute("data-cover-action"));
+ route(button.getAttribute("data-cover-action"));
 });
-selectors.forEach(select=>select.addEventListener("change",()=>changeLanguage(select.value)));
-if(oldLang)oldLang.addEventListener("change",()=>{lang=oldLang.value;updateLabels();});
-input.addEventListener("input",syncSearch);
-input.addEventListener("keydown",event=>{if(event.key==="Enter"){event.preventDefault();route("search-go");}if(event.key==="Escape"){panel.hidden=true;}});
-if(loginOriginal) new MutationObserver(updateLabels).observe(loginOriginal,{childList:true,subtree:true,characterData:true});
-if(joinOriginal) new MutationObserver(updateLabels).observe(joinOriginal,{attributes:true,attributeFilter:["style"]});
-updateLabels();
+selects.forEach(el=>el.addEventListener("change",()=>changeLanguage(el.value)));
+if(originalLang)originalLang.addEventListener("change",()=>{lang=dictionary[originalLang.value]?originalLang.value:"es";render();});
+query.addEventListener("input",filter);
+query.addEventListener("keydown",event=>{
+ if(event.key==="Enter"){event.preventDefault();route("search-go");}
+ if(event.key==="Escape"){panel.hidden=true;}
+});
+if(originalJoin)new MutationObserver(render).observe(originalJoin,{attributes:true,attributeFilter:["style"]});
+if(originalLogin)new MutationObserver(render).observe(originalLogin,{childList:true,characterData:true,subtree:true});
+render();
 window.Five30Cover={route,changeLanguage};
 })();
