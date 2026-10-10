@@ -29,7 +29,7 @@ function updateLabels(){
  input.placeholder=word.placeholder;
  selectors.forEach(sel=>{if(sel.value!==lang)sel.value=lang;});
  document.querySelectorAll(".approved-desktop-lang-label,.approved-mobile-lang-label").forEach(el=>el.title=lang==="es"?"Cambiar idioma":lang==="en"?"Change language":"Mudar idioma");
- document.querySelectorAll(".approved-mobile-join,.five30-how-actions [data-cover-action=join]").forEach(el=>{el.hidden=isLoggedIn();});
+ document.querySelectorAll(".approved-function-bar .approved-mobile-join").forEach(el=>{el.hidden=isLoggedIn();});
 }
 function changeLanguage(value){
  if(!labels[value])return;
@@ -62,7 +62,7 @@ function route(action){
  case "home":scrollToId("portada");break;
  case "creators":case "explore":scrollToId("creators");break;
  case "about":scrollToId("about");break;
- case "how":scrollToId("howItWorks");break;
+ case "how":scrollToId("about");break;
  case "subscriptions":if(!isLoggedIn())showAuth("login");else document.getElementById("navSubscriptions")?.click();break;
  case "login":showAuth("login");break;
  case "join":showAuth("signup");break;
