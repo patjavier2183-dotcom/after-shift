@@ -1,5 +1,6 @@
-// Public client configuration for the independent 5:30 development database.
+// 5:30 is the visual rebrand of AFTER SHIFT. Shared original accounts and data.
+// Public Supabase publishable key only; never place secret or service-role keys here.
 window.FIVE30_CONFIG = {
-  supabaseUrl: "https://hldhehpyecdkngwvxcoz.supabase.co",
-  supabaseAnonKey: "sb_publishable_pO2Jut66gJlRWh2Ubw18YQ_58YV7rmW"
+  supabaseUrl: "https://heqjyafaxjzisddmgvob.supabase.co",
+  supabaseAnonKey: "sb_publishable_u8E7mHoZgYnUw02fmkAKUQ_8l1vnuJy"
 };
