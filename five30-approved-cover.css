@@ -115,3 +115,20 @@ main#inicio>.hero{display:none!important}
  .approved-how,.approved-cover[data-cover-lang="es"] .approved-how,.approved-cover[data-cover-lang="pt"] .approved-how{left:141px;width:135px}
  .approved-cta span,.approved-how span{letter-spacing:0;font-size:9px}
 }
+
+/* Prioridad de capas: navegación de escritorio nunca debe tapar el héroe móvil. */
+@media(max-width:800px){
+ .approved-cover[data-cover-lang] .approved-cover-hits .approved-hit:not(.approved-cta):not(.approved-how){display:none!important}
+}
+/* Después del acceso, el JOIN impreso mantiene un área viva de «Mi cuenta». */
+.approved-cover[data-cover-lang="en"][data-cover-logged-in="true"] .approved-join{
+ top:2.8%;left:90.5%;width:7.1%;height:6.7%;
+ display:flex;align-items:center;justify-content:center;
+ background:#d9b58a!important;border-radius:28px!important;
+ color:#23160b!important;font:700 9px system-ui,sans-serif;letter-spacing:.03em
+}
+.approved-cover[data-cover-lang="en"][data-cover-logged-in="true"] .approved-join span{opacity:1}
+@media(max-width:800px){
+ .approved-cover[data-cover-lang="en"][data-cover-logged-in="true"] .approved-join{display:none!important}
+}
+.approved-cover [hidden]{display:none!important}
