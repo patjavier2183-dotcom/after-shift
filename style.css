@@ -740,3 +740,26 @@ html,body{background-color:#faf9f7!important}
  .vip-studio-list,.vip-profile-grid{grid-template-columns:1fr}
  .vip-upload-form,.vip-preview-dialog{padding:20px 13px}
 }
+
+/* 5:30 YOUR WAY — isolated development branch premium theme */
+:root{color-scheme:dark;--ink:#f4eee2;--muted:#b8aa96;--paper:#0c0b0a;--sun:#d9b46b;--border:#3b3024;--shadow:0 10px 35px rgba(0,0,0,.34)}
+body{color:var(--ink);background:var(--paper)}
+.topbar{background:rgba(12,11,10,.96);border-bottom:1px solid #3b3024}
+.brand,.footer-brand{color:#f7ead3;letter-spacing:-.04em}.brand span,.footer-brand span{color:#d9b46b;font-size:.57em;letter-spacing:.11em;vertical-align:middle}
+.main-nav a,.main-nav button,.ghost,.text-btn{color:#f0e3cd}
+.search-field{background:#231e18;color:#c7bda9;border:1px solid #403326}.search-field input{color:#fff}
+.dark-button,.action-primary{background:#c9a15a;color:#120f0b;border-color:#c9a15a}
+.hero-visual{background-color:#110e0c;background-image:linear-gradient(90deg,rgba(10,8,7,.97) 0%,rgba(13,10,8,.84) 47%,rgba(20,14,9,.36) 100%),url("assets/after-shift-approved-editorial.webp");border-bottom:1px solid #564026}
+.hero h1{font-family:Georgia,serif;letter-spacing:-.07em;font-size:clamp(66px,10vw,132px);font-weight:500}
+.hero h1 span{font-family:Inter,Arial,sans-serif;font-size:clamp(18px,2.4vw,31px);font-weight:650;letter-spacing:.28em;color:#d9b46b;margin-top:12px}
+.hero p{font-family:Inter,Arial,sans-serif;font-size:clamp(17px,2vw,23px);line-height:1.5;color:#dfd0b9;letter-spacing:.01em}
+.primary{background:linear-gradient(120deg,#e5c482,#b88d45);color:#17110a;border-radius:6px}
+.trust-row,.card,.account-section,.creator-profile,.creator-studio,.auth-box{background:#181511;color:#f1e8d8;border-color:#3b3024}
+.trust-item strong,.section-head h2,.name,.profile-main h2,.account-card,.vip-profile-heading{color:#f2e7d6}
+.trust-item small,.handle,.demo-note{color:#b5a995}
+.trust-icon{color:#d9b46b}.card .cover{background:linear-gradient(130deg,#463a29,#13110f)}
+.profile-open,.action-btn{background:#2b241b;color:#f4e9d7;border-color:#665035}
+.card-footer,.profile-tabs{border-color:#49392a}.site-footer{background:#090807;border-top:1px solid #403020}
+.footer-links,.footer-note{color:#b8a68c}
+input,select,textarea{accent-color:#d9b46b}
+@media(max-width:680px){.hero-content{padding:42px 25px}.hero-visual{min-height:370px}.hero h1{font-size:clamp(64px,17vw,95px)}.hero h1 span{font-size:17px;letter-spacing:.2em}}
