@@ -802,3 +802,26 @@ html,body,main,.creator-section{background:#090807;color:#eadac3}
 .trust-row{grid-template-columns:repeat(4,minmax(0,1fr));background:#090807}
 .creator-section{background:#090807}
 @media(max-width:700px){.hero-visual{min-height:380px}.hero-content{padding:36px 18px}.hero h1{font-size:clamp(72px,19vw,104px)}.hero-actions{gap:8px}.hero-actions .primary,.hero-secondary{font-size:9px;padding:11px 12px}.trust-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.trust-item{padding:10px 5px}}
+
+/* 5:30 reference template applied to existing functional application */
+.topbar{background:#080706!important;border-bottom:0!important}
+.topbar-inner{min-height:76px;max-width:1500px}
+.hero{background:#070605!important}
+.hero-visual{min-height:455px!important;isolation:isolate;overflow:hidden;position:relative;background:linear-gradient(90deg,#080706 0%,#110d0a 70%,#070605 100%)!important}
+.hero-visual::before{content:""!important;display:block!important;position:absolute;inset:-48% auto auto -40%;width:95%;height:165%;border:2px solid rgba(244,172,90,.8);border-radius:50%;transform:rotate(-19deg);box-shadow:0 0 24px rgba(243,145,54,.25);pointer-events:none;z-index:0;background:transparent}
+.hero-visual::after{content:""!important;display:block!important;position:absolute;inset:0 0 0 auto;width:40%;background:linear-gradient(90deg,#090807 0%,rgba(9,8,7,.2) 48%,rgba(9,8,7,.15)),url("assets/after-shift-approved-editorial.webp") center center/cover no-repeat;opacity:.85;pointer-events:none;z-index:0}
+.hero-content{position:relative;z-index:1;max-width:670px;margin:0 auto!important;transform:translateX(-7%);padding:54px 18px 32px;text-align:center}
+.hero h1{font-family:Georgia,serif;font-size:clamp(95px,11vw,166px);font-weight:400;letter-spacing:-.075em;line-height:.88;background:linear-gradient(130deg,#fff0d9 10%,#dca86a 45%,#fff3d6 65%,#ad6b35 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero h1 span{display:block;-webkit-text-fill-color:#e6d5c3;letter-spacing:.42em;font:400 clamp(15px,1.8vw,24px) Georgia,serif;margin-top:19px}
+.hero p{font:400 clamp(16px,1.5vw,21px)/1.45 Georgia,serif;color:#dfcbb6}
+.trust-row{position:relative;z-index:1;grid-template-columns:repeat(4,minmax(0,1fr))!important;padding:20px 4% 23px;background:#080706!important}
+.trust-item{border-right:1px solid #33251c;text-align:center;flex-direction:column;gap:6px;align-items:center}
+.trust-item:last-child{border:0}
+.trust-icon{color:#e5b56e;font-size:30px}
+.trust-item strong{font-size:10px;letter-spacing:.12em}
+.trust-item small{font:13px Georgia,serif}
+.editorial-strip{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:13px;padding:8px 3.5% 22px;background:#080706}
+.editorial-shot{min-width:0;aspect-ratio:1.18;border-radius:8px;background-image:url("assets/after-shift-approved-editorial.webp");background-repeat:no-repeat;background-size:600% auto;background-color:#21170f;box-shadow:0 0 0 1px rgba(208,149,80,.1)}
+.shot-one{background-position:0% center}.shot-two{background-position:20% center}.shot-three{background-position:40% center}.shot-four{background-position:60% center}.shot-five{background-position:80% center}.shot-six{background-position:100% center}
+.creator-section>.section-head{padding-top:32px}
+@media(max-width:700px){.hero-visual{min-height:465px!important}.hero-visual::before{left:-120%;top:-22%;width:150%;height:130%}.hero-visual::after{width:55%;opacity:.62}.hero-content{transform:none;margin:0!important;padding:74px 15px 24px}.hero h1{font-size:clamp(80px,21vw,118px)}.hero h1 span{font-size:15px}.hero p{font-size:15px}.hero-actions{gap:9px}.trust-row{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:0;padding:10px 8px 16px}.trust-item{padding:14px 4px;border-bottom:1px solid #33251c}.trust-item:nth-child(2){border-right:0}.trust-item:nth-child(n+3){border-bottom:0}.editorial-strip{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:8px;padding:8px 12px 20px}.editorial-shot{flex:0 0 32%;aspect-ratio:.85;scroll-snap-align:start;background-size:600% auto}.topbar-inner{min-height:60px}}
