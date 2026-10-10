@@ -21,13 +21,15 @@ function updateLabels(){
  document.querySelector(".approved-cover")?.setAttribute("data-cover-logged-in",String(isLoggedIn()));
  document.querySelectorAll("[data-cover-label]").forEach(el=>{
    const key=el.getAttribute("data-cover-label");
-   const value=key==="login"&&isLoggedIn()?word.account:word[key];
-   if(value&&el.textContent!==value)el.textContent=value;
+   const value=(key==="login"||(key==="join"&&el.classList.contains("approved-join")))&&isLoggedIn()?word.account:word[key];
+   const holder=el.classList.contains("approved-hit")?el.querySelector("span"):null;
+   const text=holder||el;
+   if(value&&text.textContent!==value)text.textContent=value;
  });
  input.placeholder=word.placeholder;
  selectors.forEach(sel=>{if(sel.value!==lang)sel.value=lang;});
  document.querySelectorAll(".approved-desktop-lang-label,.approved-mobile-lang-label").forEach(el=>el.title=lang==="es"?"Cambiar idioma":lang==="en"?"Change language":"Mudar idioma");
- document.querySelectorAll('[data-cover-action="join"]').forEach(el=>{el.hidden=isLoggedIn();});
+ document.querySelectorAll(".approved-mobile-join,.five30-how-actions [data-cover-action=join]").forEach(el=>{el.hidden=isLoggedIn();});
 }
 function changeLanguage(value){
  if(!labels[value])return;
@@ -40,7 +42,11 @@ function scrollToId(id){
  const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function showAuth(mode){
- if(isLoggedIn()){window.Five30Auth?.openAccount?.()||loginOriginal?.click();return;}
+ if(isLoggedIn()){
+   if(window.Five30Auth?.openAccount)window.Five30Auth.openAccount();
+   else loginOriginal?.click();
+   return;
+ }
  const api=window.Five30Auth;
  if(mode==="signup"&&api?.openSignup){api.openSignup();return;}
  if(mode==="login"&&api?.openLogin){api.openLogin();return;}
