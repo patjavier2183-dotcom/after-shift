@@ -1,4 +1,4 @@
-/* AFTER SHIFT V24 / phase 1: ES, EN, PT-BR. Display-only UI translations.
+/* 5:30 V24 / phase 1: ES, EN, PT-BR. Display-only UI translations.
    Never changes authorization, payments, prices, creators' data, or published posts. */
 (function(){
 "use strict";
@@ -104,7 +104,7 @@ const lines=[
 "Contenido exclusivo y comunidad.|Exclusive content and community.|Conteúdo exclusivo e comunidade.",
 "Contenido premium para suscriptores.|Premium content for subscribers.|Conteúdo premium para assinantes.",
 "Nuevas publicaciones cada semana.|New posts every week.|Novas publicações toda semana.",
-"Perfil ilustrativo de AFTER SHIFT.|Sample AFTER SHIFT profile.|Perfil ilustrativo do AFTER SHIFT.",
+"Perfil ilustrativo de 5:30.|Sample 5:30 profile.|Perfil ilustrativo do 5:30.",
 "PRUEBA · SOLO SUSCRIPTORES|DEMO · SUBSCRIBERS ONLY|TESTE · APENAS ASSINANTES",
 "Cada LIVE requiere entrada adicional a la suscripción. Los regalos son voluntarios.|Each LIVE requires a separate ticket beyond the subscription. Gifts are optional.|Cada LIVE exige ingresso adicional à assinatura. Os presentes são opcionais.",
 "PROBAR LIVE PREMIUM|TRY PREMIUM LIVE|TESTAR LIVE PREMIUM",
@@ -113,7 +113,7 @@ const lines=[
 "INGRESAR|LOG IN|ENTRAR",
 "No tengo cuenta → Crear cuenta|No account? → Create one|Não tem conta? → Criar conta",
 "← Volver a ingresar|← Back to log in|← Voltar para entrar",
-"Ingresa con tu cuenta de AFTER SHIFT.|Log in with your AFTER SHIFT account.|Entre com sua conta AFTER SHIFT.",
+"Ingresa con tu cuenta de 5:30.|Log in with your 5:30 account.|Entre com sua conta 5:30.",
 "Ingresa el correo con el que registraste tu cuenta. Te enviaremos un enlace para recuperar el acceso.|Enter the email used to register your account. We’ll send you a recovery link.|Digite o e-mail usado para criar sua conta. Enviaremos um link de recuperação.",
 "Escribe una contraseña nueva para recuperar tu cuenta.|Enter a new password to recover your account.|Digite uma nova senha para recuperar sua conta.",
 "Recuperar contraseña|Reset password|Recuperar senha",
@@ -219,7 +219,7 @@ const lines=[
 "Revisa los valores antes de guardar.|Check the values before saving.|Confira os valores antes de salvar.",
 "Borrador guardado. Se actualizó el precio propuesto y la vigencia de la oferta. No se realizó ningún cobro.|Draft saved. Proposed price and offer validity were updated. No charge was made.|Rascunho salvo. O preço proposto e a validade da oferta foram atualizados. Nenhuma cobrança foi feita.",
 "No se pudo guardar en este navegador.|Couldn't save in this browser.|Não foi possível salvar neste navegador.",
-"AFTER SHIFT · LABORATORIO V0|AFTER SHIFT · TEST LAB V0|AFTER SHIFT · LABORATÓRIO V0",
+"5:30 · LABORATORIO V0|5:30 · TEST LAB V0|5:30 · LABORATÓRIO V0",
 "Simulación de pagos|Payment simulation|Simulação de pagamentos",
 "Selecciona el plazo|Select a term|Selecione um período",
 "Aplicar oferta de bienvenida al primer mes|Apply first-month welcome offer|Aplicar oferta de boas-vindas no primeiro mês",
@@ -236,11 +236,11 @@ const lines=[
 "Video de prueba|Sample video|Vídeo de teste",
 "Publicación de prueba|Sample post|Publicação de teste",
 "Cerrar publicación de prueba|Close sample post|Fechar publicação de teste",
-"AFTER SHIFT · CONTENIDO DEMO|AFTER SHIFT · DEMO CONTENT|AFTER SHIFT · CONTEÚDO DEMO",
-"Fotografía editorial ilustrativa utilizada en AFTER SHIFT|Illustrative editorial photograph used in AFTER SHIFT|Fotografia editorial ilustrativa usada no AFTER SHIFT",
+"5:30 · CONTENIDO DEMO|5:30 · DEMO CONTENT|5:30 · CONTEÚDO DEMO",
+"Fotografía editorial ilustrativa utilizada en 5:30|Illustrative editorial photograph used in 5:30|Fotografia editorial ilustrativa usada no 5:30",
 "Imagen editorial de ejemplo. No es una publicación privada ni corresponde a una compra real.|Sample editorial image. This is not a private post or a real purchase.|Imagem editorial de exemplo. Não é uma publicação privada nem uma compra real.",
 "Video público de muestra para comprobar el reproductor. No pertenece al creador. Si tu conexión bloquea el video externo, la prueba de navegación sigue disponible.|Public sample video for testing playback. It doesn't belong to the creator. If your connection blocks this external video, you can still test navigation.|Vídeo público de exemplo para testar o player. Não pertence ao criador. Se sua conexão bloquear esse vídeo externo, ainda será possível testar a navegação.",
-"Esta es una publicación ficticia de AFTER SHIFT. Sirve para comprobar que, después de aprobar un pago simulado, el botón permite abrir y cerrar una publicación. Ninguna fotografía, video o archivo privado se desbloquea.|This is a fictional AFTER SHIFT post. It checks whether you can open and close a post after a simulated payment. No private photo, video or file is unlocked.|Esta é uma publicação fictícia do AFTER SHIFT. Ela serve para testar a abertura e o fechamento de publicações após o pagamento simulado. Nenhuma foto, vídeo ou arquivo privado é liberado.",
+"Esta es una publicación ficticia de 5:30. Sirve para comprobar que, después de aprobar un pago simulado, el botón permite abrir y cerrar una publicación. Ninguna fotografía, video o archivo privado se desbloquea.|This is a fictional 5:30 post. It checks whether you can open and close a post after a simulated payment. No private photo, video or file is unlocked.|Esta é uma publicação fictícia do 5:30. Ela serve para testar a abertura e o fechamento de publicações após o pagamento simulado. Nenhuma foto, vídeo ou arquivo privado é liberado.",
 "Cerrar y volver a la prueba|Close and return to test|Fechar e voltar ao teste",
 "SIN COBROS: solo para @aftershift y @pat, una aprobación de PRUEBA pedirá a Supabase una autorización temporal de 2 horas. No es un pago real.|NO CHARGES: only for @aftershift and @pat. Approving this TEST asks Supabase for two hours of temporary access. It is not a real payment.|SEM COBRANÇAS: apenas para @aftershift e @pat. Aprovar este TESTE solicita ao Supabase duas horas de acesso temporário. Não é um pagamento real.",
 "Esta pantalla simula pagos y acceso sobre datos ficticios. NO cobra, no activa una suscripción real ni desbloquea archivos privados.|This screen simulates payments and access with fictional data. It does NOT charge, activate a real subscription or unlock private files.|Esta tela simula pagamentos e acesso com dados fictícios. NÃO cobra, não ativa uma assinatura real nem desbloqueia arquivos privados.",

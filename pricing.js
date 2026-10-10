@@ -1,4 +1,4 @@
-/* AFTER SHIFT V0: pricing drafts only, no real payments or subscriptions. */
+/* 5:30 V0: pricing drafts only, no real payments or subscriptions. */
 (function(){
 "use strict";
 const MIN_COMMERCIAL_PRICE=4.99;

@@ -8,7 +8,7 @@ const supabaseClient=FIVE30_BACKEND_READY?supabase.createClient(SUPABASE_URL,SUP
 if(!FIVE30_BACKEND_READY)document.addEventListener("DOMContentLoaded",()=>{const note=document.createElement("div");note.setAttribute("role","status");note.style.cssText="background:#30220f;color:#f4d8a4;text-align:center;padding:12px;font:13px system-ui";note.textContent="Vista previa 5:30: cuentas, publicaciones y pagos no disponibles hasta conectar una base de datos independiente.";document.body.prepend(note);});
 // Trial signups are closed. Paid access requires server-verified payment.
 const AFTER_SHIFT_NEW_SUBSCRIPTIONS_PAUSED=true;
-const creators=[{name:"Valentina",handle:"@valentina",sub:"US$9.99",tag:"DEMO",bio:"Contenido exclusivo y comunidad."},{name:"Sofía",handle:"@sofia",sub:"US$12.00",tag:"DEMO",bio:"Contenido premium para suscriptores."},{name:"Isabella",handle:"@isabella",sub:"US$8.99",tag:"DEMO",bio:"Nuevas publicaciones cada semana."},{name:"Camila",handle:"@camila",sub:"US$14.99",tag:"DEMO",bio:"Perfil ilustrativo de AFTER SHIFT."}];
+const creators=[{name:"Valentina",handle:"@valentina",sub:"US$9.99",tag:"DEMO",bio:"Contenido exclusivo y comunidad."},{name:"Sofía",handle:"@sofia",sub:"US$12.00",tag:"DEMO",bio:"Contenido premium para suscriptores."},{name:"Isabella",handle:"@isabella",sub:"US$8.99",tag:"DEMO",bio:"Nuevas publicaciones cada semana."},{name:"Camila",handle:"@camila",sub:"US$14.99",tag:"DEMO",bio:"Perfil ilustrativo de 5:30."}];
 const grid=document.getElementById("creatorGrid");
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 async function currentUser(){const{data}=await supabaseClient.auth.getUser();return data.user;}
@@ -171,7 +171,7 @@ function openDemoProfile(c){
       <div class="profile-actions"><button class="action-btn action-primary" type="button" disabled>PERFIL DE EJEMPLO</button></div>
     </div>
     <div class="profile-tabs"><span class="profile-tab active">Contenido</span><span class="profile-tab">Sobre mí</span><span class="profile-tab">Suscripción</span></div>
-    <div class="profile-panel-extra"><h3>Perfil de demostración</h3><p>Esta imagen representa solamente una vista de ejemplo del diseño de AFTER SHIFT. No corresponde a una cuenta verificada ni permite suscripciones reales.</p></div>
+    <div class="profile-panel-extra"><h3>Perfil de demostración</h3><p>Esta imagen representa solamente una vista de ejemplo del diseño de 5:30. No corresponde a una cuenta verificada ni permite suscripciones reales.</p></div>
   </section>`;
   document.body.appendChild(overlay);
   overlay.querySelector(".profile-close").onclick=()=>overlay.remove();
@@ -207,7 +207,7 @@ function renderViewerMedia(post, viewerMark){
   const stamp=esc(viewerMark);
   return `<div class="secured-media-frame">${media}<div class="secured-watermark" aria-hidden="true"><span class="secured-watermark-viewer">${stamp}</span></div></div>`;
 }
-// Open the full publication in AFTER SHIFT instead of a native browser alert.
+// Open the full publication in 5:30 instead of a native browser alert.
 // Fetch a new signed URL after checking the CURRENT subscription state.
 async function openPostDetail(post,creator,viewerMark){
   const detail=document.createElement("div");
@@ -276,7 +276,7 @@ async function openPostDetail(post,creator,viewerMark){
   }
 }
 async function getPosts(creatorId){const{data,error}=await supabaseClient.from("posts").select("id,title,preview,access,image_url,media_type,media_url,created_at").eq("creator_id",creatorId).order("created_at",{ascending:false});return error?[]:(data||[]);}
-async function openProfile(i,list=creators,options={}){const c=list[i];if(!c.db){openDemoProfile(c);return;}const user=await currentUser();if(!user){alert("Primero debes ingresar a AFTER SHIFT.");return;}const testViewer=await getMyProfile();const canUsePaymentLab=["aftershift","pat"].includes(String(testViewer?.username||"").toLowerCase());const creator=c.db?{id:c.id,display_name:c.name,username:c.handle.replace("@",""),bio:c.bio,subscription_price:Number(String(c.sub).replace("US$",""))}:await (async()=>{const{data}=await supabaseClient.from("profiles").select("id,display_name,username,bio,subscription_price").eq("username",c.handle.replace("@","")).maybeSingle();return data;})();if(!creator){alert("Este creador todavía no está registrado en la base de datos V0.");return;}const{data:follow}=await supabaseClient.from("follows").select("creator_id").eq("follower_id",user.id).eq("creator_id",creator.id).maybeSingle();const{data:sub}=await supabaseClient.from("subscriptions").select("creator_id,status").eq("subscriber_id",user.id).eq("creator_id",creator.id).maybeSingle();const subscribed=sub?.status==="active";const displayPrice=Number(creator.subscription_price||0)>0?"US$"+Number(creator.subscription_price).toFixed(2)+"/mes":"Precio por definir";const canViewExclusive=subscribed||user.id===creator.id;const posts=await authorizePostMedia(await getPosts(creator.id),creator.id,subscribed,user.id);const viewerMark=`ID ${user.id.replace(/-/g,"").slice(0,16).toUpperCase()}`;const overlay=document.createElement("div");overlay.className="profile-overlay";overlay.innerHTML=`<section class="creator-profile">
+async function openProfile(i,list=creators,options={}){const c=list[i];if(!c.db){openDemoProfile(c);return;}const user=await currentUser();if(!user){alert("Primero debes ingresar a 5:30.");return;}const testViewer=await getMyProfile();const canUsePaymentLab=["aftershift","pat"].includes(String(testViewer?.username||"").toLowerCase());const creator=c.db?{id:c.id,display_name:c.name,username:c.handle.replace("@",""),bio:c.bio,subscription_price:Number(String(c.sub).replace("US$",""))}:await (async()=>{const{data}=await supabaseClient.from("profiles").select("id,display_name,username,bio,subscription_price").eq("username",c.handle.replace("@","")).maybeSingle();return data;})();if(!creator){alert("Este creador todavía no está registrado en la base de datos V0.");return;}const{data:follow}=await supabaseClient.from("follows").select("creator_id").eq("follower_id",user.id).eq("creator_id",creator.id).maybeSingle();const{data:sub}=await supabaseClient.from("subscriptions").select("creator_id,status").eq("subscriber_id",user.id).eq("creator_id",creator.id).maybeSingle();const subscribed=sub?.status==="active";const displayPrice=Number(creator.subscription_price||0)>0?"US$"+Number(creator.subscription_price).toFixed(2)+"/mes":"Precio por definir";const canViewExclusive=subscribed||user.id===creator.id;const posts=await authorizePostMedia(await getPosts(creator.id),creator.id,subscribed,user.id);const viewerMark=`ID ${user.id.replace(/-/g,"").slice(0,16).toUpperCase()}`;const overlay=document.createElement("div");overlay.className="profile-overlay";overlay.innerHTML=`<section class="creator-profile">
 <button class="profile-close" id="closeProfile" aria-label="Cerrar">×</button>
 <div class="profile-cover"></div>
 <div class="profile-head">
@@ -383,7 +383,7 @@ function showSubscriptionUnavailable(){
   const displayedPrice=esc(displayPrice);
   dialog.innerHTML='<section class="subscription-confirm-card" role="dialog" aria-modal="true" aria-labelledby="subscriptionConfirmTitle" aria-describedby="subscriptionConfirmDesc">'+
     '<button type="button" class="subscription-confirm-close" aria-label="Cerrar">×</button>'+
-    '<div class="eyebrow">AFTER SHIFT · SUSCRIPCIONES</div>'+
+    '<div class="eyebrow">5:30 · SUSCRIPCIONES</div>'+
     '<h2 id="subscriptionConfirmTitle">Acceso exclusivo</h2>'+
     '<p id="subscriptionConfirmDesc">Suscripción a <strong>'+esc(creator.display_name)+'</strong>.</p>'+
     '<div class="subscription-confirm-price"><span>Precio comercial pendiente de habilitación</span><strong>'+displayedPrice+'</strong></div>'+
@@ -423,7 +423,7 @@ function showSubscriptionUnavailable(){
       }:null;
       window.AfterShiftPaymentLab.open({creatorId:creator.id,creatorName:creator.display_name,testAccess});
     }
-    else alert("El laboratorio todavía se está cargando. Actualiza AFTER SHIFT e inténtalo otra vez.");
+    else alert("El laboratorio todavía se está cargando. Actualiza 5:30 e inténtalo otra vez.");
   };
   dialog.addEventListener("click",e=>{if(e.target===dialog)close();});
   dialog.addEventListener("keydown",e=>{if(e.key==="Escape"){e.preventDefault();close();}});
@@ -434,8 +434,8 @@ overlay.querySelectorAll(".read-post").forEach(btn=>btn.onclick=()=>{
   const post=posts.find(p=>p.id===btn.dataset.post);
   if(post)openPostDetail(post,creator,viewerMark);
 });}
-async function becomeCreator(){const user=await currentUser();if(!user)return;const p=await getMyProfile();if(p?.role==="creator"){openCreatorStudio();return;}const username=prompt("Elige tu nombre de usuario para AFTER SHIFT:");if(!username)return;const clean=username.trim().replace(/\s+/g,"").replace(/^@/,"").toLowerCase();if(!/^[a-z0-9_.-]{3,24}$/.test(clean)){alert("Usa 3 a 24 caracteres: letras, números, punto, guion o guion bajo.");return;}const display=prompt("Nombre público del perfil:",p?.display_name||clean);if(!display)return;const{error}=await supabaseClient.from("profiles").update({username:clean,display_name:display.trim(),role:"creator"}).eq("id",user.id);if(error){alert(error.message);return;}alert("Tu perfil de creador está listo.");await loadAccount();openCreatorStudio();}
-async function openCreatorStudio(){const user=await currentUser();if(!user)return;let p=await getMyProfile();if(!p)return;if(p.role!=="creator"){const ok=confirm("¿Quieres convertir tu cuenta en creador? Podrás publicar contenido desde AFTER SHIFT.");if(ok)await becomeCreator();return;}const posts=await authorizePostMedia(await getPosts(user.id),user.id,false,user.id);const overlay=document.createElement("div");overlay.className="profile-overlay";overlay.innerHTML=`<section class="creator-studio"><button class="profile-close" id="closeStudio" aria-label="Cerrar">×</button><div class="studio-head"><div><div class="eyebrow">AFTER SHIFT</div><h2>Creator Studio</h2><p>Publica y administra tu contenido.</p></div><div class="studio-actions"><button class="action-btn" id="studioPricingBtn" type="button">Planes y promociones</button><button class="action-btn action-primary" id="newPostBtn" type="button">+ NUEVA PUBLICACIÓN</button></div></div><div class="studio-profile"><div><strong>${esc(p.display_name)}</strong><span>@${esc(p.username)}</span></div><div><strong id="studioDraftPrice">${window.AfterShiftPricing.hasSaved(user.id)?"US$"+window.AfterShiftPricing.get(user.id).price.toFixed(2).replace(".",","):"Sin configurar"}</strong><span>Precio comercial propuesto (borrador)</span><small class="studio-live-price">Precio activo de prueba: US$${Number(p.subscription_price||0).toFixed(2).replace(".",",")}</small></div></div><div class="post-heading"><div><div class="eyebrow">MIS PUBLICACIONES</div><h3>${posts.length} publicación${posts.length===1?"":"es"}</h3></div></div><div class="posts" id="studioPosts">${posts.length?posts.map(x=>`<article class="post-card studio-post"><div>${(x.media_url||x.image_url)?(x.media_type==="video"?`<video class="post-media studio-image" src="${esc(x.display_media_url)}" controls playsinline preload="metadata"></video>`:`<img class="post-media studio-image" src="${esc(x.display_media_url)}" alt="${esc(x.title)}">`):``}<div class="post-label">${x.access==="public"?"PÚBLICO":"SOLO SUSCRIPTORES"}</div><h4>${esc(x.title)}</h4><p>${esc(x.preview)}</p></div><button class="delete-post" data-id="${x.id}">ELIMINAR</button></article>`).join(""):'<div class="empty-posts">Todavía no has publicado nada.</div>'}</div></section>`;document.body.appendChild(overlay);
+async function becomeCreator(){const user=await currentUser();if(!user)return;const p=await getMyProfile();if(p?.role==="creator"){openCreatorStudio();return;}const username=prompt("Elige tu nombre de usuario para 5:30:");if(!username)return;const clean=username.trim().replace(/\s+/g,"").replace(/^@/,"").toLowerCase();if(!/^[a-z0-9_.-]{3,24}$/.test(clean)){alert("Usa 3 a 24 caracteres: letras, números, punto, guion o guion bajo.");return;}const display=prompt("Nombre público del perfil:",p?.display_name||clean);if(!display)return;const{error}=await supabaseClient.from("profiles").update({username:clean,display_name:display.trim(),role:"creator"}).eq("id",user.id);if(error){alert(error.message);return;}alert("Tu perfil de creador está listo.");await loadAccount();openCreatorStudio();}
+async function openCreatorStudio(){const user=await currentUser();if(!user)return;let p=await getMyProfile();if(!p)return;if(p.role!=="creator"){const ok=confirm("¿Quieres convertir tu cuenta en creador? Podrás publicar contenido desde 5:30.");if(ok)await becomeCreator();return;}const posts=await authorizePostMedia(await getPosts(user.id),user.id,false,user.id);const overlay=document.createElement("div");overlay.className="profile-overlay";overlay.innerHTML=`<section class="creator-studio"><button class="profile-close" id="closeStudio" aria-label="Cerrar">×</button><div class="studio-head"><div><div class="eyebrow">5:30</div><h2>Creator Studio</h2><p>Publica y administra tu contenido.</p></div><div class="studio-actions"><button class="action-btn" id="studioPricingBtn" type="button">Planes y promociones</button><button class="action-btn action-primary" id="newPostBtn" type="button">+ NUEVA PUBLICACIÓN</button></div></div><div class="studio-profile"><div><strong>${esc(p.display_name)}</strong><span>@${esc(p.username)}</span></div><div><strong id="studioDraftPrice">${window.AfterShiftPricing.hasSaved(user.id)?"US$"+window.AfterShiftPricing.get(user.id).price.toFixed(2).replace(".",","):"Sin configurar"}</strong><span>Precio comercial propuesto (borrador)</span><small class="studio-live-price">Precio activo de prueba: US$${Number(p.subscription_price||0).toFixed(2).replace(".",",")}</small></div></div><div class="post-heading"><div><div class="eyebrow">MIS PUBLICACIONES</div><h3>${posts.length} publicación${posts.length===1?"":"es"}</h3></div></div><div class="posts" id="studioPosts">${posts.length?posts.map(x=>`<article class="post-card studio-post"><div>${(x.media_url||x.image_url)?(x.media_type==="video"?`<video class="post-media studio-image" src="${esc(x.display_media_url)}" controls playsinline preload="metadata"></video>`:`<img class="post-media studio-image" src="${esc(x.display_media_url)}" alt="${esc(x.title)}">`):``}<div class="post-label">${x.access==="public"?"PÚBLICO":"SOLO SUSCRIPTORES"}</div><h4>${esc(x.title)}</h4><p>${esc(x.preview)}</p></div><button class="delete-post" data-id="${x.id}">ELIMINAR</button></article>`).join(""):'<div class="empty-posts">Todavía no has publicado nada.</div>'}</div></section>`;document.body.appendChild(overlay);
 if(window.AfterShiftLiveManager)window.AfterShiftLiveManager.mount(overlay,{creatorId:user.id,creatorName:p.display_name});
 if(window.AfterShiftVIP)window.AfterShiftVIP.mountStudio(overlay,{creatorId:user.id,creatorName:p.display_name});
  overlay.querySelector("#closeStudio").onclick=()=>overlay.remove();overlay.querySelector("#newPostBtn").onclick=()=>openNewPostForm(overlay,user.id);overlay.querySelector("#studioPricingBtn").onclick=()=>window.AfterShiftPricing.open(overlay,user.id);overlay.querySelectorAll(".delete-post").forEach(btn=>btn.onclick=async()=>{if(!confirm("¿Eliminar esta publicación?"))return;const{error}=await supabaseClient.from("posts").delete().eq("id",btn.dataset.id).eq("creator_id",user.id);if(error){alert(error.message);return;}overlay.remove();openCreatorStudio();});}
@@ -612,7 +612,7 @@ function handleVerificationReturn(){
     setTimeout(async()=>{
       const user=await currentUser();
       if(user) await finishLogin(user);
-      else alert("Correo confirmado. Ahora pulsa «Ingresar» para entrar a AFTER SHIFT.");
+      else alert("Correo confirmado. Ahora pulsa «Ingresar» para entrar a 5:30.");
     },400);
   }
 }
@@ -639,7 +639,7 @@ supabaseClient.auth.onAuthStateChange((event,session)=>{
 render();
 loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
 
-// AFTER SHIFT: reusable sign-up, login and email-based password recovery.
+// 5:30: reusable sign-up, login and email-based password recovery.
 (function(){
   const modal=document.getElementById("authModal");
   const form=document.getElementById("authForm");
@@ -679,7 +679,7 @@ loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
     const recovering=mode==="new-password";
     title.textContent=signingUp?"Crear cuenta":loggingIn?"Ingresar":requesting?"Recuperar contraseña":"Nueva contraseña";
     hint.textContent=signingUp?"Crea tu cuenta para continuar."
-      :loggingIn?"Ingresa con tu cuenta de AFTER SHIFT."
+      :loggingIn?"Ingresa con tu cuenta de 5:30."
       :requesting?"Ingresa el correo con el que registraste tu cuenta. Te enviaremos un enlace para recuperar el acceso."
       :"Escribe una contraseña nueva para recuperar tu cuenta.";
     userLabel.style.display=signingUp?"block":"none";

@@ -1,4 +1,4 @@
-/* AFTER SHIFT · V23 payment simulator + tightly allowlisted test authorization.
+/* 5:30 · V23 payment simulator + tightly allowlisted test authorization.
    No real payments. For the preauthorized @aftershift -> @pat pair only, a
    separately validated Supabase RPC grants short-lived test access.
    Every other user and creator remains in the isolated fake simulation.
@@ -107,7 +107,7 @@ function open({creatorId,creatorName,testAccess=null}={}){
   dialog.setAttribute("aria-modal","true");
   dialog.setAttribute("aria-labelledby","paymentLabTitle");
   const header=buildElement("div","payment-lab-header");
-  const caption=buildElement("div","payment-lab-eyebrow","AFTER SHIFT · LABORATORIO V0");
+  const caption=buildElement("div","payment-lab-eyebrow","5:30 · LABORATORIO V0");
   const title=buildElement("h2","payment-lab-title","Simulación de pagos");
   title.id="paymentLabTitle";
   const closeButton=buildElement("button","payment-lab-close","×");
@@ -195,12 +195,12 @@ function open({creatorId,creatorName,testAccess=null}={}){
     closeBtn.type="button";
     closeBtn.setAttribute("aria-label","Cerrar publicación de prueba");
     pane.appendChild(closeBtn);
-    pane.appendChild(buildElement("div","payment-lab-demo-eyebrow","AFTER SHIFT · CONTENIDO DEMO"));
+    pane.appendChild(buildElement("div","payment-lab-demo-eyebrow","5:30 · CONTENIDO DEMO"));
     pane.appendChild(buildElement("h2","",labels[kind]));
     if(kind==="photo"){
       const photo=buildElement("div","creator-photo-sprite sprite-0 payment-lab-demo-photo");
       photo.setAttribute("role","img");
-      photo.setAttribute("aria-label","Fotografía editorial ilustrativa utilizada en AFTER SHIFT");
+      photo.setAttribute("aria-label","Fotografía editorial ilustrativa utilizada en 5:30");
       pane.appendChild(photo);
       pane.appendChild(buildElement("p","","Imagen editorial de ejemplo. No es una publicación privada ni corresponde a una compra real."));
     }else if(kind==="video"){
@@ -215,7 +215,7 @@ function open({creatorId,creatorName,testAccess=null}={}){
       pane.appendChild(player);
       pane.appendChild(buildElement("p","","Video público de muestra para comprobar el reproductor. No pertenece al creador. Si tu conexión bloquea el video externo, la prueba de navegación sigue disponible."));
     }else{
-      pane.appendChild(buildElement("p","payment-lab-demo-story","Esta es una publicación ficticia de AFTER SHIFT. Sirve para comprobar que, después de aprobar un pago simulado, el botón permite abrir y cerrar una publicación. Ninguna fotografía, video o archivo privado se desbloquea."));
+      pane.appendChild(buildElement("p","payment-lab-demo-story","Esta es una publicación ficticia de 5:30. Sirve para comprobar que, después de aprobar un pago simulado, el botón permite abrir y cerrar una publicación. Ninguna fotografía, video o archivo privado se desbloquea."));
     }
     const closeAction=buildElement("button","action-btn","Cerrar y volver a la prueba");
     closeAction.type="button";
@@ -251,7 +251,7 @@ function open({creatorId,creatorName,testAccess=null}={}){
       showActionFeedback(text);
       if(!parent.isConnected&&testAccess.onClose)await testAccess.onClose();
     }catch(error){
-      console.error("AFTER SHIFT · Autorización controlada:",error);
+      console.error("5:30 · Autorización controlada:",error);
       if(action==="grant")serverStatus="failed";
       showActionFeedback("El simulador funcionó, pero Supabase NO "+(action==="grant"?"habilitó":"revocó")+" el acceso real: "+(error?.message||"Error inesperado"));
     }finally{
@@ -349,7 +349,7 @@ function open({creatorId,creatorName,testAccess=null}={}){
       };
       showActionFeedback(feedback[action]||text);
     }catch(error){
-      console.error("AFTER SHIFT · Error en la simulación de pago:",error);
+      console.error("5:30 · Error en la simulación de pago:",error);
       showActionFeedback("No se pudo actualizar la simulación: "+(error?.message||"error inesperado")+". Prueba «Reiniciar prueba».");
     }
   }

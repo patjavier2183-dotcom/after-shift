@@ -1,4 +1,4 @@
-/* AFTER SHIFT V26: Premium LIVE DEMO only.
+/* 5:30 V26: Premium LIVE DEMO only.
    No live video, no payment requests, no subscription writes, no real content unlocks.
    Any subscriber simulation is isolated to this modal and disappears on close. */
 (function(){
@@ -9,7 +9,7 @@ const langs={
   teaserTitle:"LIVE PREMIUM",tag:"PRUEBA · SOLO SUSCRIPTORES",
   teaserDesc:"Cada LIVE requiere entrada adicional a la suscripción. Los regalos son voluntarios.",
   teaserBtn:"PROBAR LIVE PREMIUM",
-  eyebrow:"AFTER SHIFT · DEMOSTRACIÓN",title:"LIVE PREMIUM · Entrada y regalos",
+  eyebrow:"5:30 · DEMOSTRACIÓN",title:"LIVE PREMIUM · Entrada y regalos",
   disclaimer:"PRUEBA SIN COBROS. No hay transmisión real. La entrada, la suscripción simulada y los regalos NO activan permisos, no cobran dinero ni abren contenido privado.",
   creator:"Creador",status:"Estado de la suscripción",
   active:"Suscripción activa verificada en el perfil",owner:"Vista de prueba del propio creador",
@@ -28,7 +28,7 @@ const langs={
   giftLabel:(label,n)=>label+" · "+n+" 🪙",
   wallet:"Monedas disponibles",sent:"Regalos enviados",paid:"Entradas simuladas",
   rechargeFees:"Tarifas de recarga simuladas",creatorCut:"Para el creador (80%)",
-  platformCut:"AFTER SHIFT (20% + tarifa)",pending:"Valor de monedas sin gastar",
+  platformCut:"5:30 (20% + tarifa)",pending:"Valor de monedas sin gastar",
   history:"Actividad simulada",empty:"Sin movimientos todavía.",
   ticketMsg:"✓ Entrada de US$5 simulada. No se cobró dinero.",
   rechargeMsg:(n,total)=>"✓ Recarga ficticia de "+n+" monedas. Cargo simulado: "+total+".",
@@ -41,7 +41,7 @@ const langs={
   teaserTitle:"PREMIUM LIVE",tag:"DEMO · SUBSCRIBERS ONLY",
   teaserDesc:"Each LIVE requires a separate ticket beyond the subscription. Gifts are optional.",
   teaserBtn:"TRY PREMIUM LIVE",
-  eyebrow:"AFTER SHIFT · DEMO",title:"PREMIUM LIVE · Tickets & gifts",
+  eyebrow:"5:30 · DEMO",title:"PREMIUM LIVE · Tickets & gifts",
   disclaimer:"NO-CHARGE DEMO. There is no real stream. Test tickets, simulated subscription and gifts do NOT grant permissions, charge money or unlock private content.",
   creator:"Creator",status:"Subscription status",active:"Active subscription verified on this profile",
   owner:"Creator's own test view",simulated:"SIMULATED subscription in this window only",
@@ -60,7 +60,7 @@ const langs={
   giftLabel:(label,n)=>label+" · "+n+" 🪙",
   wallet:"Available demo coins",sent:"Gifts sent",paid:"Simulated tickets",
   rechargeFees:"Simulated top-up fees",creatorCut:"Creator share (80%)",
-  platformCut:"AFTER SHIFT (20% + fee)",pending:"Unspent coin value",
+  platformCut:"5:30 (20% + fee)",pending:"Unspent coin value",
   history:"Demo activity",empty:"No activity yet.",
   ticketMsg:"✓ US$5 ticket simulated. No money was charged.",
   rechargeMsg:(n,total)=>"✓ Fictional top-up of "+n+" coins. Simulated charge: "+total+".",
@@ -73,7 +73,7 @@ const langs={
   teaserTitle:"LIVE PREMIUM",tag:"TESTE · APENAS ASSINANTES",
   teaserDesc:"Cada LIVE exige ingresso adicional à assinatura. Os presentes são opcionais.",
   teaserBtn:"TESTAR LIVE PREMIUM",
-  eyebrow:"AFTER SHIFT · DEMONSTRAÇÃO",title:"LIVE PREMIUM · Ingressos e presentes",
+  eyebrow:"5:30 · DEMONSTRAÇÃO",title:"LIVE PREMIUM · Ingressos e presentes",
   disclaimer:"TESTE SEM COBRANÇAS. Não há transmissão real. Ingressos, assinatura simulada e presentes NÃO liberam conteúdo privado, não cobram nem criam permissões.",
   creator:"Criador",status:"Status da assinatura",active:"Assinatura ativa verificada neste perfil",
   owner:"Vista de teste do próprio criador",simulated:"Assinatura simulada SOMENTE nesta janela",
@@ -92,7 +92,7 @@ const langs={
   giftLabel:(label,n)=>label+" · "+n+" 🪙",
   wallet:"Moedas disponíveis",sent:"Presentes enviados",paid:"Ingressos simulados",
   rechargeFees:"Taxas de recarga simuladas",creatorCut:"Para o criador (80%)",
-  platformCut:"AFTER SHIFT (20% + taxa)",pending:"Valor das moedas não usadas",
+  platformCut:"5:30 (20% + taxa)",pending:"Valor das moedas não usadas",
   history:"Atividades simuladas",empty:"Ainda sem movimentos.",
   ticketMsg:"✓ Ingresso de US$ 5 simulado. Nenhuma cobrança foi feita.",
   rechargeMsg:(n,total)=>"✓ Recarga fictícia de "+n+" moedas. Cobrança simulada: "+total+".",
