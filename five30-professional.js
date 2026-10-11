@@ -66,11 +66,16 @@ document.addEventListener("DOMContentLoaded",async()=>{
   if(seq!==loadSeq||view!=="chat")return;
   thread.replaceChildren();
   if(error){bubble("No pudimos cargar los mensajes. Intenta abrir nuevamente el chat.",false);return;}
-  for(const m of data||[])bubble(m.body,m.sender_id===user.id,m.created_at);
-  // Visual acknowledgement only; do not impersonate a human agent or insert a fake staff message.
-  const messages=data||[];
-  if(messages.length&&messages[messages.length-1].sender_id===user.id){
-   bubble("¡Recibimos tu consulta! ✓\nGracias por escribir a Soporte 5:30. Nuestro equipo revisará tu mensaje y te responderá lo antes posible por este mismo chat. No necesitas mantener esta ventana abierta.",false);
+  // Show the automatic receipt once, directly after the first user message.
+  // It is UI-only: never save it as a staff reply or move it to the end.
+  let acknowledged=false;
+  for(const m of data||[]){
+   const mine=m.sender_id===user.id;
+   bubble(m.body,mine,m.created_at);
+   if(mine&&!acknowledged){
+    acknowledged=true;
+    bubble("¡Recibimos tu consulta! ✓\nGracias por escribir a Soporte 5:30. Nuestro equipo revisará tu mensaje y te responderá lo antes posible por este mismo chat. No necesitas mantener esta ventana abierta.",false);
+   }
   }
   thread.scrollTop=thread.scrollHeight;
  }
