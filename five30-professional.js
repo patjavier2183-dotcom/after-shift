@@ -39,8 +39,13 @@ document.addEventListener("DOMContentLoaded",async()=>{
  tools.append(historyBtn,close);header.append(heading,tools);
  const thread=document.createElement("div");thread.className="five30-help-thread";thread.setAttribute("aria-live","polite");
  const composer=document.createElement("div");composer.className="five30-help-composer";
- const category=document.createElement("select");category.setAttribute("aria-label","Motivo de consulta");
- for(const name of Object.keys(categories)){const o=document.createElement("option");o.textContent=name;category.append(o);}
+ const category=document.createElement("div");category.className="five30-help-category";
+ const categoryButton=document.createElement("button");categoryButton.type="button";categoryButton.className="five30-help-category-button";categoryButton.textContent="No puedo iniciar sesión ▾";categoryButton.setAttribute("aria-expanded","false");
+ const categoryOptions=document.createElement("div");categoryOptions.className="five30-help-category-options";categoryOptions.hidden=true;
+ let selectedCategory="No puedo iniciar sesión";
+ for(const name of Object.keys(categories)){const b=document.createElement("button");b.type="button";b.textContent=name;b.onclick=()=>{selectedCategory=name;categoryButton.textContent=name+" ▾";categoryOptions.hidden=true;categoryButton.setAttribute("aria-expanded","false");};categoryOptions.append(b);}
+ categoryButton.onclick=()=>{categoryOptions.hidden=!categoryOptions.hidden;categoryButton.setAttribute("aria-expanded",String(!categoryOptions.hidden));};
+ category.append(categoryButton,categoryOptions);
  const input=document.createElement("textarea");input.rows=1;input.maxLength=4000;input.placeholder="Escribe tu mensaje…";
  const send=document.createElement("button");send.type="button";send.textContent="➤";send.setAttribute("aria-label","Enviar mensaje");
  const feedback=document.createElement("p");feedback.className="five30-help-feedback";feedback.setAttribute("role","status");
@@ -53,7 +58,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
   const body=document.createElement("p");body.textContent=message;
   wrap.append(label,body);if(createdAt){const time=document.createElement("time");time.textContent=new Date(createdAt).toLocaleTimeString("es-CL",{hour:"2-digit",minute:"2-digit"});wrap.append(time);}thread.append(wrap);
  }
- function setActive(t){active=t;view="chat";category.hidden=!!t;title.textContent="Soporte 5:30";subtitle.textContent=t?(statuses[t.status]||t.status)+" · Te responderemos por este chat":"Estamos aquí para ayudarte";historyBtn.textContent="Mis chats";feedback.textContent="";renderThread();}
+ function setActive(t){categoryOptions.hidden=true;categoryButton.setAttribute("aria-expanded","false");active=t;view="chat";category.hidden=!!t;title.textContent="Soporte 5:30";subtitle.textContent=t?(statuses[t.status]||t.status)+" · Te responderemos por este chat":"Estamos aquí para ayudarte";historyBtn.textContent="Mis chats";feedback.textContent="";renderThread();}
  async function renderThread(){
   const seq=++loadSeq;thread.replaceChildren();
   if(!active){bubble("¡Hola! 👋 Somos Soporte 5:30. Cuéntanos en qué podemos ayudarte.",false);thread.scrollTop=thread.scrollHeight;return;}
@@ -82,11 +87,11 @@ document.addEventListener("DOMContentLoaded",async()=>{
   if(!panel.hidden&&view==="chat"&&!active)setActive(data?.[0]||null);
  }
  send.onclick=async()=>{
-  const typed=input.value.trim();const message=typed||(active?"":category.value);if(!message)return;
+  const typed=input.value.trim();const message=typed||(active?"":selectedCategory);if(!message)return;
   send.disabled=true;feedback.textContent="Enviando…";
   let ticket=active;
   if(!ticket){
-   const {data,error}=await supabaseClient.from("five30_support_tickets").insert({user_id:user.id,category:categories[category.value],subject:category.value}).select("id,subject,status").single();
+   const {data,error}=await supabaseClient.from("five30_support_tickets").insert({user_id:user.id,category:categories[selectedCategory],subject:category.value}).select("id,subject,status").single();
    if(error){feedback.textContent="No se pudo iniciar el chat. Intenta nuevamente.";send.disabled=false;return;}
    ticket=data;
   }
@@ -95,10 +100,10 @@ document.addEventListener("DOMContentLoaded",async()=>{
   if(error){feedback.textContent="No se pudo enviar. Intenta nuevamente.";if(!active)setActive(ticket);return;}
   input.value="";setActive(ticket);feedback.textContent="";
  };
- function toggle(open){panel.hidden=!open;launcher.hidden=open;launcher.setAttribute("aria-expanded",String(open));if(open){if(view==="history"){historyBtn.onclick=showHistory;input.hidden=false;send.hidden=false;view="chat";}renderThread();startLatest();}else launcher.focus();}
+ function toggle(open){panel.hidden=!open;backdrop.hidden=!open;launcher.hidden=open;launcher.setAttribute("aria-expanded",String(open));if(open){if(view==="history"){historyBtn.onclick=showHistory;input.hidden=false;send.hidden=false;view="chat";}renderThread();startLatest();}else launcher.focus();}
  launcher.onclick=()=>toggle(panel.hidden);close.onclick=()=>toggle(false);
  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!panel.hidden)toggle(false);});
- document.body.append(launcher,panel);
+ const backdrop=document.createElement("div");backdrop.className="five30-help-backdrop";backdrop.hidden=true;backdrop.onclick=()=>toggle(false);document.body.append(launcher,backdrop,panel);
 });
 /* Private review workspace. Supabase RLS and RPC enforce staff rights independently of this UI. */
 document.addEventListener("DOMContentLoaded",async()=>{
