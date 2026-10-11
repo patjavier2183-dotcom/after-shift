@@ -33,9 +33,9 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const select=document.createElement("select");select.setAttribute("aria-label","Motivo de ayuda");
  for(const name of ["No puedo iniciar sesión","Recuperación de contraseña","Cuenta de creador o agencia","Suscripciones y pagos","Reportar un problema","Otra consulta"]){const o=document.createElement("option");o.textContent=name;select.append(o);}
  const details=document.createElement("textarea");details.rows=3;details.placeholder="Describe tu problema. Nunca compartas contraseñas ni códigos de verificación.";
- const send=document.createElement("button");send.type="button";send.textContent="Contactar soporte";
- const notice=document.createElement("p");notice.textContent="Por ahora se abrirá tu aplicación de correo. El seguimiento de solicitudes dentro de 5:30 está en desarrollo.";
- send.onclick=()=>{if(!details.value.trim()){notice.textContent="Describe primero el problema para poder ayudarte.";return;}const subject=encodeURIComponent("Ayuda 5:30 · "+select.value);const body=encodeURIComponent("Cuenta: "+(user.email||"")+"\\nMotivo: "+select.value+"\\n\\n"+details.value.trim());window.location.href="mailto:five30chile@gmail.com?subject="+subject+"&body="+body;};
+ const send=document.createElement("button");send.type="button";send.textContent="Enviar solicitud (próximamente)";send.disabled=true;
+ const notice=document.createElement("p");notice.textContent="El formulario de ayuda ya está diseñado. El envío y seguimiento se habilitarán cuando conectemos la bandeja de tickets segura.";
+
  panel.append(title,info,select,details,send,notice);section.append(panel);
 });
 
