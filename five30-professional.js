@@ -73,7 +73,18 @@ document.addEventListener("DOMContentLoaded",async()=>{
   details.value="";notice.textContent="Consulta recibida. Podrás revisar aquí la respuesta.";await loadHistory();
  };
 
- panel.append(title,info,select,details,send,notice,history);section.append(panel);loadHistory();
+ const launcher=document.createElement("button");launcher.type="button";launcher.className="five30-help-launcher";launcher.textContent="✦ Ayuda";launcher.setAttribute("aria-label","Abrir chat de ayuda 5:30");launcher.setAttribute("aria-expanded","false");
+ const header=document.createElement("div");header.className="five30-help-header";
+ const heading=document.createElement("strong");heading.textContent="Soporte 5:30";
+ const close=document.createElement("button");close.type="button";close.className="five30-help-close";close.textContent="×";close.setAttribute("aria-label","Cerrar chat");
+ header.append(heading,close);
+ const body=document.createElement("div");body.className="five30-help-body";
+ panel.append(header,body);body.append(info,select,details,send,notice,history);
+ panel.setAttribute("role","dialog");panel.setAttribute("aria-label","Chat de ayuda 5:30");panel.hidden=true;
+ function toggle(open){panel.hidden=!open;launcher.setAttribute("aria-expanded",String(open));if(open){loadHistory();}else{launcher.focus();}}
+ launcher.onclick=()=>toggle(panel.hidden);close.onclick=()=>toggle(false);
+ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!panel.hidden)toggle(false);});
+ document.body.append(launcher,panel);
 });
 
 /* Private review workspace. Supabase RLS and RPC enforce staff rights independently of this UI. */
