@@ -158,3 +158,6 @@ body.five30-staff-workspace .five30-admin-detail>.five30-admin-users{margin-top:
 .five30-self-help .five30-help-composer [hidden]{display:none!important}
 .five30-self-help .five30-help-feedback:empty{display:none}
 @media(max-width:600px){.five30-self-help{height:min(510px,calc(100dvh - 120px))!important}.five30-help-launcher{bottom:calc(16px + env(safe-area-inset-bottom,0px))!important}}
+
+/* Floating launcher must disappear while messenger is open */
+body .five30-help-launcher[hidden]{display:none!important;visibility:hidden!important}
