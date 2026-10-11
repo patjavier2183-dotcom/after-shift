@@ -100,7 +100,17 @@
   </section>
   <section class="section account-section" id="accountSection" style="display:none">
     <div class="section-head"><div><div class="eyebrow">MI CUENTA</div><h2 id="accountTitle">Tu cuenta</h2></div><div class="account-actions"><button class="text-btn" id="creatorBtn" type="button">Convertirme en creador</button><button class="text-btn" id="logoutBtn" type="button">Cerrar sesión</button><button class="text-btn coin-lab-trigger" id="coinLabTrigger" type="button">🪙 Comprar monedas</button></div></div>
-    <div class="account-card"><div id="accountEmail"></div><div id="accountRole"></div><div class="account-stats">
+    <div class="five30-professional" id="professionalOptions">
+  <details class="five30-professional-details">
+    <summary>Opciones profesionales <span aria-hidden="true">⌄</span></summary>
+    <div class="five30-professional-items">
+      <button type="button" id="professionalCreator">Conviértete en creador <small>Verificación obligatoria antes de publicar</small></button>
+      <button type="button" id="professionalAgency">Registrar agencia o estudio <small>Administración de creadores autorizados</small></button>
+    </div>
+    <p id="professionalNotice" role="status" aria-live="polite" hidden></p>
+  </details>
+</div>
+<div class="account-card"><div id="accountEmail"></div><div id="accountRole"></div><div class="account-stats">
   <div><strong id="followCount">0</strong><span>Siguiendo</span></div>
   <button class="account-subscriptions-button" id="mySubscriptionsTrigger" type="button"
     aria-controls="mySubscriptionsPanel" aria-expanded="false" aria-label="Ver mis suscripciones">
@@ -144,6 +154,7 @@
 <script src="pricing.js?v=20261010-five30-brand"></script>
 <script src="payment-lab.js?v=20261010-five30-brand"></script>
 <script src="app.js?v=20261010-five30-buttons-v2"></script>
+<script src="five30-professional.js?v=20261011-professional-1"></script>
 <script src="wallet-lab.js?v=20261010-five30-brand"></script>
 <script src="live-manager.js?v=20261010-five30-brand"></script>
 <script src="live-lab.js?v=20261010-five30-brand"></script>
