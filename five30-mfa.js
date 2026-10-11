@@ -3,8 +3,11 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const section=document.getElementById("accountSection");
  if(!section||typeof currentUser!=="function")return;
  const user=await currentUser();if(!user)return;
- const panel=document.createElement("section");panel.className="five30-professional";
+ const panel=document.createElement("section");panel.className="five30-professional five30-mfa-panel";
  const title=document.createElement("h3");title.textContent="Seguridad de la cuenta";
+ const expand=document.createElement("button");expand.type="button";expand.className="five30-mfa-expand";expand.textContent="Mostrar opciones de seguridad";expand.setAttribute("aria-expanded","false");
+ const content=document.createElement("div");content.hidden=true;
+ expand.onclick=()=>{content.hidden=!content.hidden;expand.setAttribute("aria-expanded",String(!content.hidden));expand.textContent=content.hidden?"Mostrar opciones de seguridad":"Ocultar opciones de seguridad";};
  const status=document.createElement("p");status.setAttribute("role","status");
  const start=document.createElement("button");start.type="button";start.textContent="Activar verificación en dos pasos";
  const setup=document.createElement("div");setup.hidden=true;
@@ -13,7 +16,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const input=document.createElement("input");input.inputMode="numeric";input.autocomplete="one-time-code";input.placeholder="Código de 6 dígitos";input.maxLength=6;
  const confirm=document.createElement("button");confirm.type="button";confirm.textContent="Confirmar código";
  const reset=document.createElement("button");reset.type="button";reset.textContent="Reiniciar vinculación del autenticador";reset.hidden=true;
- setup.append(qr,secret,input,confirm);panel.append(title,status,start,setup,reset);section.append(panel);
+ setup.append(qr,secret,input,confirm);content.append(status,start,setup,reset);panel.append(title,expand,content);section.append(panel);
  let factorId=null;
  async function refresh(){
   const {data,error}=await supabaseClient.auth.mfa.listFactors();
