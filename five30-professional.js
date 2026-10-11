@@ -49,12 +49,18 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const access=document.createElement("p");access.className="five30-admin-intro";
  access.textContent=role==="superadmin"?"Superadministrador · control propietario":"Administración operativa · sin acceso a finanzas ni permisos";
  const navigation=document.createElement("div");navigation.className="five30-admin-modules";
+ const usersArea=document.createElement("section");usersArea.className="five30-admin-users";usersArea.hidden=true;
  for(const [key,name,description] of modules){
   if(!permissions[role].includes(key))continue;
   const item=document.createElement("div");item.className="five30-admin-module";
   const heading=document.createElement("strong");heading.textContent=name;
   const detail=document.createElement("small");detail.textContent=description;
   const state=document.createElement("span");state.textContent=key==="creators"?"Solicitudes disponibles abajo":"Próximamente · requiere conexión segura";
+  if(key==="users"&&role==="superadmin"){
+   item.setAttribute("role","button");item.tabIndex=0;state.textContent="Abrir directorio de usuarios";
+   const open=()=>{usersArea.hidden=!usersArea.hidden;if(!usersArea.hidden)loadUsers();};
+   item.addEventListener("click",open);item.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open();}});
+  }
   item.append(heading,detail,state);navigation.append(item);
  }
  const stats=document.createElement("div");stats.className="five30-admin-stats";stats.setAttribute("aria-label","Resumen de solicitudes");
@@ -70,7 +76,31 @@ document.addEventListener("DOMContentLoaded",async()=>{
  toolbar.append(brand);
  const logout=document.getElementById("logoutBtn");
  if(logout){logout.classList.add("five30-admin-logout");toolbar.append(logout);}
- panel.append(toolbar,title,access,navigation,intro,stats,filter,refresh,list);
+ const usersHeading=document.createElement("h3");usersHeading.textContent="Usuarios registrados";
+ const search=document.createElement("input");search.type="search";search.placeholder="Buscar por correo";search.setAttribute("aria-label","Buscar usuario por correo");search.maxLength=100;
+ const searchButton=document.createElement("button");searchButton.type="button";searchButton.textContent="Buscar";
+ const usersResults=document.createElement("div");usersResults.setAttribute("aria-live","polite");
+ usersArea.append(usersHeading,search,searchButton,usersResults);
+ async function loadUsers(){
+  usersResults.textContent="Consultando usuarios…";searchButton.disabled=true;
+  const {data,error}=await supabaseClient.rpc("five30_admin_users",{p_search:search.value.trim(),p_limit:30});
+  searchButton.disabled=false;usersResults.replaceChildren();
+  if(error){usersResults.textContent="No se pudo consultar el directorio. Comprueba tu sesión de seguridad.";return;}
+  if(!data?.length){usersResults.textContent="No se encontraron usuarios.";return;}
+  const count=document.createElement("p");count.textContent="Mostrando "+data.length+" cuenta(s), máximo 30 por búsqueda.";usersResults.append(count);
+  for(const u of data){
+   const card=document.createElement("article");card.className="five30-review-item";
+   const name=document.createElement("strong");name.textContent=u.email||"Sin correo";
+   const details=document.createElement("p");
+   const created=u.created_at?new Date(u.created_at).toLocaleDateString("es-CL"):"Sin fecha";
+   const last=u.last_sign_in_at?new Date(u.last_sign_in_at).toLocaleDateString("es-CL"):"Sin registro";
+   details.textContent="Perfil: "+u.profile_role+" · Registro: "+created+" · Último acceso: "+last+(u.is_staff?" · Personal 5:30":"");
+   card.append(name,details);usersResults.append(card);
+  }
+ }
+ searchButton.onclick=loadUsers;
+ search.addEventListener("keydown",e=>{if(e.key==="Enter")loadUsers();});
+ panel.append(toolbar,title,access,navigation,usersArea,intro,stats,filter,refresh,list);
  section.append(panel);
  supabaseClient.auth.onAuthStateChange((event,session)=>{
   if(event==="SIGNED_OUT"||!session)document.body.classList.remove("five30-staff-workspace");
