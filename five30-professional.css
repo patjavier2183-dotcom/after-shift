@@ -53,3 +53,13 @@ body.five30-staff-workspace .five30-admin-back[hidden],body.five30-staff-workspa
 body.five30-staff-workspace .five30-admin-detail-title{margin:6px 0 16px;color:#f5eee3}
 body.five30-staff-workspace .five30-admin-detail>.five30-admin-users{margin-top:0}
 @media(min-width:780px){body.five30-staff-workspace .five30-admin-modules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}body.five30-staff-workspace .five30-admin-detail{max-width:900px}body.five30-staff-workspace .five30-admin-module-button{min-height:135px}}
+
+/* User detail navigation and support */
+.five30-user-detail[hidden],.five30-admin-users>[hidden]{display:none!important}
+.five30-admin-users .five30-user-open{display:block;margin-top:12px;padding:10px 14px;background:#342c27;color:#e1c18a;border:1px solid #78623e;border-radius:8px;cursor:pointer;font-size:14px}
+.five30-user-detail{min-width:0;overflow-wrap:anywhere}
+.five30-user-detail h3{font-size:22px;margin:14px 0}
+.five30-user-detail h4{margin:24px 0 8px;color:#e1c18a}
+.five30-user-detail p{line-height:1.6}
+.five30-user-detail .five30-user-id{font-size:12px;color:#b3a799}
+.five30-user-detail>.five30-admin-back{background:transparent;color:#e1c18a;border:1px solid #78623e}
