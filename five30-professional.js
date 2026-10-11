@@ -119,22 +119,40 @@ document.addEventListener("DOMContentLoaded",async()=>{
  usersArea.append(usersHeading,search,searchButton,usersResults,userDetail);
  function openUser(u){
   userDetail.replaceChildren(userBack);
-  const heading=document.createElement("h3");heading.textContent="Ficha de usuario";
-  const email=document.createElement("strong");email.textContent=u.email||"Sin correo";
-  const info=document.createElement("p");
   const fmt=v=>v?new Date(v).toLocaleString("es-CL"):"Sin registro";
-  info.textContent="Perfil: "+u.profile_role+" · Registro: "+fmt(u.created_at)+" · Último acceso: "+fmt(u.last_sign_in_at)+(u.is_staff?" · Personal 5:30":"");
-  const id=document.createElement("p");id.className="five30-user-id";id.textContent="ID de cuenta: "+u.user_id;
-  const help=document.createElement("h4");help.textContent="Herramientas de ayuda";
-  const explain=document.createElement("p");explain.textContent="Puedes contactar al usuario para orientarlo. El restablecimiento de contraseñas, bloqueo de cuentas y cambios de permisos aún no están habilitados.";
-  const contact=document.createElement("button");contact.type="button";contact.textContent="Redactar correo de ayuda";
-  contact.disabled=!u.email;
-  contact.onclick=()=>{
-   const subject=encodeURIComponent("Ayuda con tu cuenta 5:30");
-   const body=encodeURIComponent("Hola,\n\nTe contactamos desde el equipo de soporte de 5:30 respecto de tu cuenta.\n\n");
-   window.location.href="mailto:"+encodeURIComponent(u.email)+"?subject="+subject+"&body="+body;
-  };
-  userDetail.append(heading,email,info,id,help,explain,contact);
+  const heading=document.createElement("h3");heading.textContent="Centro de atención · Usuario";
+  const email=document.createElement("strong");email.textContent=u.email||"Sin correo";
+  const summary=document.createElement("p");summary.textContent="Perfil: "+u.profile_role+(u.is_staff?" · Personal 5:30":"")+" · Último acceso: "+fmt(u.last_sign_in_at);
+  const tabs=document.createElement("div");tabs.className="five30-support-tabs";
+  const content=document.createElement("div");content.className="five30-support-content";
+  const sections=[
+   ["Resumen",()=>{const p=document.createElement("p");p.textContent="Registro: "+fmt(u.created_at);const id=document.createElement("p");id.className="five30-user-id";id.textContent="ID de cuenta: "+u.user_id;const status=document.createElement("p");status.textContent="Estado de bloqueo y verificación: pendiente de integración con el servicio de autenticación.";content.append(p,id,status);}],
+   ["Acceso y seguridad",()=>{const h=document.createElement("h4");h.textContent="Recuperación de acceso";const p=document.createElement("p");p.textContent="Por seguridad, nunca solicites contraseñas ni códigos del autenticador. El envío de enlaces de recuperación desde el panel todavía no está habilitado.";const note=document.createElement("p");note.textContent="Las funciones de suspender, desbloquear o cambiar permisos requieren un servicio seguro con autorización y auditoría.";content.append(h,p,note);}],
+   ["Atención y soporte",()=>{
+    const label=document.createElement("label");label.textContent="Motivo de la consulta";
+    const type=document.createElement("select");
+    for(const [value,name] of [["access","Problema para iniciar sesión"],["password","Recuperar contraseña"],["creator","Consulta sobre cuenta de creador"],["billing","Consulta de pagos"],["other","Consulta general"]]){const opt=document.createElement("option");opt.value=value;opt.textContent=name;type.append(opt);}
+    const notesLabel=document.createElement("label");notesLabel.textContent="Detalle de la consulta";
+    const notes=document.createElement("textarea");notes.rows=4;notes.placeholder="Describe el problema o los pasos que debe seguir el usuario";
+    const message=document.createElement("p");message.className="five30-support-note";message.textContent="Esta es una herramienta para preparar respuestas. Los casos aún no se guardan en la plataforma.";
+    const contact=document.createElement("button");contact.type="button";contact.textContent="Preparar respuesta por correo";contact.disabled=!u.email;
+    contact.onclick=()=>{
+     const templates={
+      access:"Hola,\\n\\nPara ayudarte a ingresar a tu cuenta 5:30, cuéntanos qué mensaje aparece al intentar acceder. Nunca nos envíes tu contraseña ni códigos de verificación.",
+      password:"Hola,\\n\\nPara recuperar tu contraseña, utiliza la opción de recuperación de acceso disponible en el inicio de sesión de 5:30. No compartas contraseñas ni códigos con nadie.",
+      creator:"Hola,\\n\\nRecibimos tu consulta sobre tu cuenta de creador en 5:30. Indícanos qué paso necesitas completar.",
+      billing:"Hola,\\n\\nRecibimos tu consulta sobre pagos. Los pagos reales de 5:30 aún no están habilitados. No realices transferencias ni compartas datos bancarios por correo.",
+      other:"Hola,\\n\\nGracias por contactar al equipo de soporte de 5:30. Cuéntanos en qué podemos ayudarte."
+     };
+     const body=templates[type.value].replace(/\\n/g,"\n")+(notes.value.trim()?"\n\nDetalle: "+notes.value.trim():"")+"\n\nEquipo de soporte 5:30";
+     window.location.href="mailto:"+encodeURIComponent(u.email)+"?subject="+encodeURIComponent("Soporte 5:30 · "+type.options[type.selectedIndex].text)+"&body="+encodeURIComponent(body);
+    };
+    content.append(label,type,notesLabel,notes,message,contact);
+   }]
+  ];
+  function activate(index){content.replaceChildren();for(let i=0;i<tabs.children.length;i++)tabs.children[i].setAttribute("aria-pressed",String(i===index));sections[index][1]();}
+  for(const [i,section] of sections.entries()){const btn=document.createElement("button");btn.type="button";btn.textContent=section[0];btn.onclick=()=>activate(i);tabs.append(btn);}
+  userDetail.append(heading,email,summary,tabs,content);activate(0);
   usersHeading.hidden=true;search.hidden=true;searchButton.hidden=true;usersResults.hidden=true;userDetail.hidden=false;
   window.scrollTo({top:0,behavior:"instant"});
  }
