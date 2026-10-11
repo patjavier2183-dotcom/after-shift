@@ -1,10 +1,10 @@
 .five30-professional{margin:12px 0 20px;max-width:600px}.five30-professional-details{border:1px solid #6e5933;border-radius:12px;background:#151419;color:#f7f1e6;overflow:hidden}.five30-professional-details summary{cursor:pointer;list-style:none;padding:15px 17px;font-weight:700;display:flex;justify-content:space-between}.five30-professional-details summary::-webkit-details-marker{display:none}.five30-professional-details[open] summary{border-bottom:1px solid #51432e}.five30-professional-items{padding:12px;display:grid;gap:10px}.five30-professional-items button{background:#29262d;color:#e1c18a;border:1px solid #4d4030;text-align:left;padding:13px;border-radius:9px;font-weight:700}.five30-professional-items small{display:block;color:#c8c0bd;font-weight:400;margin-top:4px}#professionalNotice{margin:0 12px 12px;padding:12px;border-radius:8px;background:#29262d;color:#eee3d4;font-size:13px}
 /* Private administration dashboard */
 .five30-admin-intro{color:#c6b8a0;font-size:14px;line-height:1.5;margin:8px 0 16px}
-.five30-admin-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 16px}
-.five30-admin-stat{border:1px solid #6e5933;border-radius:12px;background:#1d1a1b;padding:15px;display:flex;flex-direction:column;gap:5px}
-.five30-admin-stat strong{font-size:27px;color:#e1c18a;font-variant-numeric:tabular-nums}
-.five30-admin-stat span{font-size:13px;color:#d7d0c4}
+.five30-admin-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:9px 0 12px}
+.five30-admin-stat{border:1px solid #6e5933;border-radius:9px;background:#1d1a1b;padding:8px 3px;display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0;gap:3px}
+.five30-admin-stat strong{font-size:20px;color:#e1c18a;font-variant-numeric:tabular-nums}
+.five30-admin-stat span{font-size:10px;color:#d7d0c4;overflow-wrap:anywhere}
 .five30-admin-filter{display:block;width:100%;max-width:100%;padding:12px;margin-bottom:12px;background:#242027;color:#f7f1e6;border:1px solid #6e5933;border-radius:9px}
 .five30-review-item{border:1px solid #4d4030;background:#1d1a1b;border-radius:10px;padding:13px;margin:12px 0;overflow-wrap:anywhere}
 .five30-review-item p{color:#d7d0c4;font-size:13px;line-height:1.5}
@@ -98,9 +98,9 @@ body.five30-staff-workspace .five30-admin-detail>.five30-admin-users{margin-top:
  .five30-support-content{padding:12px;min-height:0}
  .five30-support-content h4{margin:8px 0 10px}
  .five30-admin-stats{gap:8px;margin:10px 0 12px}
- .five30-admin-stat{padding:11px;min-width:0}
- .five30-admin-stat strong{font-size:23px}
- .five30-admin-stat span{font-size:12px}
+ .five30-admin-stat{padding:8px 2px;min-width:0}
+ .five30-admin-stat strong{font-size:20px}
+ .five30-admin-stat span{font-size:10px}
  .five30-support-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;overflow:visible;padding:4px 0 10px}
  .five30-admin-users .five30-support-filters button{min-width:0;white-space:normal;font-size:12px;padding:10px 5px}
  .five30-admin-users button{max-width:100%;white-space:normal;overflow-wrap:anywhere}
