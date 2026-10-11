@@ -181,3 +181,11 @@ body .five30-help-launcher{z-index:9997!important}
 .five30-help-category-options{position:absolute;bottom:calc(100% + 5px);left:0;right:0;max-height:230px;overflow-y:auto;z-index:3;background:#272123;border:1px solid #b39465;border-radius:10px;box-shadow:0 12px 30px #000b}
 .five30-help-category-options[hidden]{display:none!important}
 .five30-help-category-options button{display:block!important;width:100%;text-align:left!important;background:transparent!important;color:#f5e8d6!important;border:0!important;border-bottom:1px solid #55443b!important;border-radius:0!important;padding:11px 12px!important;margin:0!important;font-size:13px!important}
+
+/* Account security stays compact until explicitly expanded */
+.five30-mfa-panel{padding:14px 16px!important;margin:12px 0!important}
+.five30-mfa-panel h3{font-size:20px!important;margin:0 0 10px!important}
+.five30-mfa-panel .five30-mfa-expand{background:transparent!important;color:#dfc08c!important;border:1px solid #695336!important;border-radius:10px!important;padding:10px 13px!important;font-size:13px!important}
+.five30-mfa-panel [hidden]{display:none!important}
+.five30-mfa-panel img{max-width:min(210px,80vw)!important;object-fit:contain}
+.five30-mfa-panel code{font-size:12px;line-height:1.6;overflow-wrap:anywhere}
