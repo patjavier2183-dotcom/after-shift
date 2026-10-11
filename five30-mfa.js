@@ -12,7 +12,8 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const secret=document.createElement("code");secret.style.cssText="display:block;overflow-wrap:anywhere";
  const input=document.createElement("input");input.inputMode="numeric";input.autocomplete="one-time-code";input.placeholder="Código de 6 dígitos";input.maxLength=6;
  const confirm=document.createElement("button");confirm.type="button";confirm.textContent="Confirmar código";
- setup.append(qr,secret,input,confirm);panel.append(title,status,start,setup);section.append(panel);
+ const reset=document.createElement("button");reset.type="button";reset.textContent="Reiniciar vinculación del autenticador";reset.hidden=true;
+ setup.append(qr,secret,input,confirm);panel.append(title,status,start,setup,reset);section.append(panel);
  let factorId=null;
  async function refresh(){
   const {data,error}=await supabaseClient.auth.mfa.listFactors();
@@ -23,6 +24,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
   factorId=pending?.id||null;
   status.textContent=verified?"Autenticador configurado. Al iniciar sesión, verifica el segundo factor.":pending?"Hay una configuración pendiente. Usa el código que ya aparece en Google Authenticator para confirmarla.":"Activa una aplicación autenticadora para proteger tu cuenta.";
   start.hidden=verified||!!pending;setup.hidden=verified||!pending;
+  reset.hidden=verified||!pending;
   qr.hidden=!!pending;secret.hidden=!!pending;
   if(pending){qr.removeAttribute("src");secret.textContent="";}
  }
@@ -34,6 +36,26 @@ document.addEventListener("DOMContentLoaded",async()=>{
   if(error){status.textContent="No se pudo iniciar la configuración: "+error.message+". Si ya configuraste el autenticador, no elimines su entrada.";return;}
   factorId=data.id;qr.src=data.totp.qr_code;secret.textContent="Clave manual: "+data.totp.secret;
   setup.hidden=false;status.textContent="Escanea el QR con una aplicación autenticadora e ingresa el código generado.";
+ };
+ reset.onclick=async()=>{
+  if(!factorId){status.textContent="No se encontró una vinculación pendiente. Actualiza la página.";return;}
+  if(!window.confirm("Se eliminará solamente la vinculación de autenticador que aún NO está activada en esta cuenta. Luego debes reemplazar la entrada anterior en Google Authenticator por una nueva. ¿Continuar?"))return;
+  reset.disabled=true;confirm.disabled=true;
+  status.textContent="Reiniciando la vinculación pendiente…";
+  try{
+   const {error}=await supabaseClient.auth.mfa.unenroll({factorId});
+   if(error)throw error;
+   factorId=null;input.value="";qr.removeAttribute("src");secret.textContent="";
+   const {data,error:enrollError}=await supabaseClient.auth.mfa.enroll({factorType:"totp",friendlyName:"5:30 Authenticator"});
+   if(enrollError)throw enrollError;
+   factorId=data.id;qr.hidden=false;secret.hidden=false;
+   qr.src=data.totp.qr_code;
+   secret.textContent="Clave manual nueva: "+data.totp.secret;
+   setup.hidden=false;reset.hidden=true;start.hidden=true;
+   status.textContent="Vinculación nueva creada. Elimina la entrada ANTIGUA de 5:30 en Google Authenticator, agrega una nueva con este QR o clave manual y confirma el código nuevo.";
+  }catch(error){
+   status.textContent="No se pudo reiniciar: "+(error?.message||"Error desconocido")+". Actualiza la página para revisar el estado.";
+  }finally{reset.disabled=false;confirm.disabled=false;}
  };
  confirm.onclick=async()=>{
   const code=input.value.trim();
