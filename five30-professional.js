@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const detailView=document.createElement("div");detailView.className="five30-admin-detail";detailView.hidden=true;
  function goHome(){
   detailView.hidden=true;navigation.hidden=false;title.hidden=false;access.hidden=false;
-  back.hidden=true;detailHeader.hidden=true;
+  back.hidden=true;brand.hidden=false;detailHeader.hidden=true;
   usersArea.hidden=true;requestsArea.hidden=true;moduleArea.hidden=true;
   for(const button of moduleButtons.values())button.setAttribute("aria-expanded","false");
   window.scrollTo({top:0,behavior:"instant"});
@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
  back.onclick=goHome;
  function showModule(key){
   navigation.hidden=true;title.hidden=true;access.hidden=true;
-  back.hidden=false;detailHeader.hidden=false;detailView.hidden=false;
+  back.hidden=false;brand.hidden=true;detailHeader.hidden=false;detailView.hidden=false;
   const selected=modules.find(m=>m[0]===key);
   detailHeader.textContent=selected[1];
   window.scrollTo({top:0,behavior:"instant"});
@@ -319,7 +319,8 @@ document.addEventListener("DOMContentLoaded",async()=>{
  search.addEventListener("keydown",e=>{if(e.key==="Enter")loadUsers();});
  requestsArea.append(intro,stats,filter,refresh,list);
  detailView.append(usersArea,moduleArea,requestsArea);
- panel.append(toolbar,back,title,access,navigation,detailHeader,detailView);
+ toolbar.insertBefore(back,logout||null);
+ panel.append(toolbar,title,access,navigation,detailHeader,detailView);
  section.append(panel);
  supabaseClient.auth.onAuthStateChange((event,session)=>{
   if(event==="SIGNED_OUT"||!session)document.body.classList.remove("five30-staff-workspace");
