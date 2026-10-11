@@ -32,6 +32,29 @@ document.addEventListener("DOMContentLoaded",async()=>{
  panel.className="five30-professional";
  const title=document.createElement("h3");title.textContent=staff.staff_role==="superadmin"?"Administración privada 5:30":"Revisión privada 5:30";
  const intro=document.createElement("p");intro.className="five30-admin-intro";intro.textContent="Solicitudes profesionales · acceso protegido con verificación en dos pasos";
+ const permissions=Object.freeze({
+  superadmin:["users","creators","support","finance","security"],
+  admin:["users","creators","support"]
+ });
+ const modules=[
+  ["users","Usuarios y cuentas","Búsqueda, recuperación de acceso y gestión de cuentas"],
+  ["creators","Creadores y agencias","Revisión de solicitudes y perfiles profesionales"],
+  ["support","Atención al cliente","Consultas, reclamos y seguimiento de casos"],
+  ["finance","Finanzas","Cobros, comisiones, devoluciones y retiros"],
+  ["security","Seguridad y auditoría","Permisos, accesos y registro de operaciones"]
+ ];
+ const role=staff.staff_role==="superadmin"?"superadmin":"admin";
+ const access=document.createElement("p");access.className="five30-admin-intro";
+ access.textContent=role==="superadmin"?"Superadministrador · control propietario":"Administración operativa · sin acceso a finanzas ni permisos";
+ const navigation=document.createElement("div");navigation.className="five30-admin-modules";
+ for(const [key,name,description] of modules){
+  if(!permissions[role].includes(key))continue;
+  const item=document.createElement("div");item.className="five30-admin-module";
+  const heading=document.createElement("strong");heading.textContent=name;
+  const detail=document.createElement("small");detail.textContent=description;
+  const state=document.createElement("span");state.textContent=key==="creators"?"Solicitudes disponibles abajo":"Próximamente · requiere conexión segura";
+  item.append(heading,detail,state);navigation.append(item);
+ }
  const stats=document.createElement("div");stats.className="five30-admin-stats";stats.setAttribute("aria-label","Resumen de solicitudes");
  const filter=document.createElement("select");filter.className="five30-admin-filter";filter.setAttribute("aria-label","Filtrar solicitudes");
  for(const [value,label] of [["all","Todas las solicitudes"],["pending","Pendientes"],["under_review","En revisión"],["rejected","Rechazadas"]]){
@@ -40,7 +63,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
  let requests=[];
  const refresh=document.createElement("button");refresh.type="button";refresh.textContent="Actualizar panel";
  const list=document.createElement("div");list.setAttribute("aria-live","polite");
- panel.append(title,intro,stats,filter,refresh,list);
+ panel.append(title,access,navigation,intro,stats,filter,refresh,list);
  section.append(panel);
  function render(){
   stats.replaceChildren();
