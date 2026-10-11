@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
   requestsArea.hidden=key!=="creators";
   moduleArea.hidden=key==="users"||key==="creators";
   for(const [id,button] of moduleButtons)button.setAttribute("aria-expanded",String(id===key));
-  if(key==="users"){search.value="";loadUsers();}
+  if(key==="users"){userDetail.hidden=true;usersHeading.hidden=false;search.hidden=false;searchButton.hidden=false;usersResults.hidden=false;search.value="";loadUsers();}
   else if(key==="creators")load();
   else{
    moduleArea.replaceChildren();
@@ -113,7 +113,32 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const search=document.createElement("input");search.type="search";search.placeholder="Buscar por correo";search.setAttribute("aria-label","Buscar usuario por correo");search.maxLength=100;
  const searchButton=document.createElement("button");searchButton.type="button";searchButton.textContent="Buscar";
  const usersResults=document.createElement("div");usersResults.setAttribute("aria-live","polite");
- usersArea.append(usersHeading,search,searchButton,usersResults);
+ const userDetail=document.createElement("section");userDetail.className="five30-user-detail";userDetail.hidden=true;
+ const userBack=document.createElement("button");userBack.type="button";userBack.className="five30-admin-back";userBack.textContent="← Volver a usuarios";
+ userBack.onclick=()=>{userDetail.hidden=true;usersHeading.hidden=false;search.hidden=false;searchButton.hidden=false;usersResults.hidden=false;window.scrollTo({top:0,behavior:"instant"});};
+ usersArea.append(usersHeading,search,searchButton,usersResults,userDetail);
+ function openUser(u){
+  userDetail.replaceChildren(userBack);
+  const heading=document.createElement("h3");heading.textContent="Ficha de usuario";
+  const email=document.createElement("strong");email.textContent=u.email||"Sin correo";
+  const info=document.createElement("p");
+  const fmt=v=>v?new Date(v).toLocaleString("es-CL"):"Sin registro";
+  info.textContent="Perfil: "+u.profile_role+" · Registro: "+fmt(u.created_at)+" · Último acceso: "+fmt(u.last_sign_in_at)+(u.is_staff?" · Personal 5:30":"");
+  const id=document.createElement("p");id.className="five30-user-id";id.textContent="ID de cuenta: "+u.user_id;
+  const help=document.createElement("h4");help.textContent="Herramientas de ayuda";
+  const explain=document.createElement("p");explain.textContent="Puedes contactar al usuario para orientarlo. El restablecimiento de contraseñas, bloqueo de cuentas y cambios de permisos aún no están habilitados.";
+  const contact=document.createElement("button");contact.type="button";contact.textContent="Redactar correo de ayuda";
+  contact.disabled=!u.email;
+  contact.onclick=()=>{
+   const subject=encodeURIComponent("Ayuda con tu cuenta 5:30");
+   const body=encodeURIComponent("Hola,\n\nTe contactamos desde el equipo de soporte de 5:30 respecto de tu cuenta.\n\n");
+   window.location.href="mailto:"+encodeURIComponent(u.email)+"?subject="+subject+"&body="+body;
+  };
+  userDetail.append(heading,email,info,id,help,explain,contact);
+  usersHeading.hidden=true;search.hidden=true;searchButton.hidden=true;usersResults.hidden=true;userDetail.hidden=false;
+  window.scrollTo({top:0,behavior:"instant"});
+ }
+
  async function loadUsers(){
   usersResults.textContent="Consultando usuarios…";searchButton.disabled=true;
   const {data,error}=await supabaseClient.rpc("five30_admin_users",{p_search:search.value.trim(),p_limit:30});
@@ -128,7 +153,8 @@ document.addEventListener("DOMContentLoaded",async()=>{
    const created=u.created_at?new Date(u.created_at).toLocaleDateString("es-CL"):"Sin fecha";
    const last=u.last_sign_in_at?new Date(u.last_sign_in_at).toLocaleDateString("es-CL"):"Sin registro";
    details.textContent="Perfil: "+u.profile_role+" · Registro: "+created+" · Último acceso: "+last+(u.is_staff?" · Personal 5:30":"");
-   card.append(name,details);usersResults.append(card);
+   const select=document.createElement("button");select.type="button";select.className="five30-user-open";select.textContent="Ver ficha y ayuda →";select.onclick=()=>openUser(u);
+   card.append(name,details,select);usersResults.append(card);
   }
  }
  searchButton.onclick=loadUsers;
