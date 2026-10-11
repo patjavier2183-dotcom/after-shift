@@ -30,13 +30,13 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const categories={"No puedo iniciar sesión":"Acceso","Recuperación de contraseña":"Contraseña","Cuenta de creador o agencia":"Creadores y agencias","Suscripciones y pagos":"Suscripciones y pagos","Reportar un problema":"Reportar problema","Otra consulta":"Otro"};
  const panel=document.createElement("section");panel.className="five30-professional five30-self-help";panel.hidden=true;
  panel.setAttribute("role","dialog");panel.setAttribute("aria-label","Chat de ayuda 5:30");
- const launcher=document.createElement("button");launcher.type="button";launcher.className="five30-help-launcher";launcher.textContent="☏";launcher.setAttribute("aria-label","Abrir Soporte 5:30");launcher.title="Ayuda";launcher.setAttribute("aria-expanded","false");
+ const launcher=document.createElement("button");launcher.type="button";launcher.className="five30-help-launcher";launcher.textContent="";launcher.innerHTML='<svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-6.5A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8 11.5h8"/></svg><span>Ayuda</span>';launcher.setAttribute("aria-label","Abrir Soporte 5:30");launcher.title="Ayuda";launcher.setAttribute("aria-expanded","false");
  const header=document.createElement("div");header.className="five30-help-header";
- const title=document.createElement("strong");title.textContent="Soporte 5:30";
+ const title=document.createElement("strong");title.textContent="Soporte 5:30";const subtitle=document.createElement("small");subtitle.className="five30-help-subtitle";subtitle.textContent="Estamos aquí para ayudarte";const heading=document.createElement("div");heading.className="five30-help-heading";heading.append(title,subtitle);
  const tools=document.createElement("div");tools.className="five30-help-actions";
  const historyBtn=document.createElement("button");historyBtn.type="button";historyBtn.textContent="Mis chats";historyBtn.setAttribute("aria-label","Ver mis conversaciones");
  const close=document.createElement("button");close.type="button";close.className="five30-help-close";close.textContent="×";close.setAttribute("aria-label","Cerrar chat");
- tools.append(historyBtn,close);header.append(title,tools);
+ tools.append(historyBtn,close);header.append(heading,tools);
  const thread=document.createElement("div");thread.className="five30-help-thread";thread.setAttribute("aria-live","polite");
  const composer=document.createElement("div");composer.className="five30-help-composer";
  const category=document.createElement("select");category.setAttribute("aria-label","Motivo de consulta");
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
   const body=document.createElement("p");body.textContent=message;
   wrap.append(label,body);if(createdAt){const time=document.createElement("time");time.textContent=new Date(createdAt).toLocaleTimeString("es-CL",{hour:"2-digit",minute:"2-digit"});wrap.append(time);}thread.append(wrap);
  }
- function setActive(t){active=t;view="chat";category.hidden=!!t;title.textContent=t?"Soporte 5:30 · "+(statuses[t.status]||t.status):"Soporte 5:30";historyBtn.textContent="Mis chats";feedback.textContent="";renderThread();}
+ function setActive(t){active=t;view="chat";category.hidden=!!t;title.textContent="Soporte 5:30";subtitle.textContent=t?(statuses[t.status]||t.status)+" · Te responderemos por este chat":"Estamos aquí para ayudarte";historyBtn.textContent="Mis chats";feedback.textContent="";renderThread();}
  async function renderThread(){
   const seq=++loadSeq;thread.replaceChildren();
   if(!active){bubble("¡Hola! 👋 Somos Soporte 5:30. Cuéntanos en qué podemos ayudarte.",false);thread.scrollTop=thread.scrollHeight;return;}
