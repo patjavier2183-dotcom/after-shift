@@ -50,18 +50,35 @@ document.addEventListener("DOMContentLoaded",async()=>{
  access.textContent=role==="superadmin"?"Superadministrador · control propietario":"Administración operativa · sin acceso a finanzas ni permisos";
  const navigation=document.createElement("div");navigation.className="five30-admin-modules";
  const usersArea=document.createElement("section");usersArea.className="five30-admin-users";usersArea.hidden=true;
+ const moduleArea=document.createElement("section");moduleArea.className="five30-admin-users";moduleArea.hidden=true;
+ const requestsArea=document.createElement("section");requestsArea.className="five30-admin-users";requestsArea.hidden=true;
+ const moduleButtons=new Map();
+ function showModule(key){
+  usersArea.hidden=key!=="users";
+  requestsArea.hidden=key!=="creators";
+  moduleArea.hidden=key==="users"||key==="creators";
+  for(const [id,button] of moduleButtons)button.setAttribute("aria-expanded",String(id===key));
+  if(key==="users"){search.value="";loadUsers();}
+  else if(key==="creators")load();
+  else{
+   moduleArea.replaceChildren();
+   const selected=modules.find(m=>m[0]===key);
+   const heading=document.createElement("h3");heading.textContent=selected[1];
+   const message=document.createElement("p");
+   message.textContent=key==="finance"?"Los movimientos reales estarán disponibles cuando integremos el procesador de pagos y su conciliación.":key==="security"?"La verificación en dos pasos está activa. El historial y la gestión de permisos aún están en desarrollo.":"El sistema de consultas y reclamos está en desarrollo. No hay una bandeja de tickets conectada todavía.";
+   moduleArea.append(heading,message);
+  }
+ }
  for(const [key,name,description] of modules){
   if(!permissions[role].includes(key))continue;
-  const item=document.createElement("div");item.className="five30-admin-module";
+  const item=document.createElement("button");item.type="button";item.className="five30-admin-module five30-admin-module-button";
+  item.setAttribute("aria-expanded","false");
   const heading=document.createElement("strong");heading.textContent=name;
   const detail=document.createElement("small");detail.textContent=description;
-  const state=document.createElement("span");state.textContent=key==="creators"?"Solicitudes disponibles abajo":"Próximamente · requiere conexión segura";
-  if(key==="users"&&role==="superadmin"){
-   item.setAttribute("role","button");item.tabIndex=0;state.textContent="Abrir directorio de usuarios";
-   const open=()=>{usersArea.hidden=!usersArea.hidden;if(!usersArea.hidden)loadUsers();};
-   item.addEventListener("click",open);item.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open();}});
-  }
-  item.append(heading,detail,state);navigation.append(item);
+  const state=document.createElement("span");
+  state.textContent=key==="users"?"Ver usuarios registrados":key==="creators"?"Ver solicitudes": "Abrir sección";
+  item.append(heading,detail,state);item.onclick=()=>showModule(key);
+  moduleButtons.set(key,item);navigation.append(item);
  }
  const stats=document.createElement("div");stats.className="five30-admin-stats";stats.setAttribute("aria-label","Resumen de solicitudes");
  const filter=document.createElement("select");filter.className="five30-admin-filter";filter.setAttribute("aria-label","Filtrar solicitudes");
@@ -100,7 +117,8 @@ document.addEventListener("DOMContentLoaded",async()=>{
  }
  searchButton.onclick=loadUsers;
  search.addEventListener("keydown",e=>{if(e.key==="Enter")loadUsers();});
- panel.append(toolbar,title,access,navigation,usersArea,intro,stats,filter,refresh,list);
+ requestsArea.append(intro,stats,filter,refresh,list);
+ panel.append(toolbar,title,access,navigation,usersArea,moduleArea,requestsArea);
  section.append(panel);
  supabaseClient.auth.onAuthStateChange((event,session)=>{
   if(event==="SIGNED_OUT"||!session)document.body.classList.remove("five30-staff-workspace");
@@ -151,5 +169,6 @@ document.addEventListener("DOMContentLoaded",async()=>{
  }
  filter.onchange=render;
  refresh.onclick=load;
- await load();
+ // Modules open on demand; no public account list is loaded until requested.
+
 });
