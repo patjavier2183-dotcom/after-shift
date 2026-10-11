@@ -1,1 +1,11 @@
 .five30-professional{margin:12px 0 20px;max-width:600px}.five30-professional-details{border:1px solid #6e5933;border-radius:12px;background:#151419;color:#f7f1e6;overflow:hidden}.five30-professional-details summary{cursor:pointer;list-style:none;padding:15px 17px;font-weight:700;display:flex;justify-content:space-between}.five30-professional-details summary::-webkit-details-marker{display:none}.five30-professional-details[open] summary{border-bottom:1px solid #51432e}.five30-professional-items{padding:12px;display:grid;gap:10px}.five30-professional-items button{background:#29262d;color:#e1c18a;border:1px solid #4d4030;text-align:left;padding:13px;border-radius:9px;font-weight:700}.five30-professional-items small{display:block;color:#c8c0bd;font-weight:400;margin-top:4px}#professionalNotice{margin:0 12px 12px;padding:12px;border-radius:8px;background:#29262d;color:#eee3d4;font-size:13px}
+/* Private administration dashboard */
+.five30-admin-intro{color:#c6b8a0;font-size:14px;line-height:1.5;margin:8px 0 16px}
+.five30-admin-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 16px}
+.five30-admin-stat{border:1px solid #6e5933;border-radius:12px;background:#1d1a1b;padding:15px;display:flex;flex-direction:column;gap:5px}
+.five30-admin-stat strong{font-size:27px;color:#e1c18a;font-variant-numeric:tabular-nums}
+.five30-admin-stat span{font-size:13px;color:#d7d0c4}
+.five30-admin-filter{display:block;width:100%;max-width:100%;padding:12px;margin-bottom:12px;background:#242027;color:#f7f1e6;border:1px solid #6e5933;border-radius:9px}
+.five30-review-item{border:1px solid #4d4030;background:#1d1a1b;border-radius:10px;padding:13px;margin:12px 0;overflow-wrap:anywhere}
+.five30-review-item p{color:#d7d0c4;font-size:13px;line-height:1.5}
+.five30-review-item button,.five30-professional>button{padding:10px 13px;margin:4px 7px 4px 0;border-radius:8px;background:#e1c18a;color:#171310;border:0;font-weight:700}
