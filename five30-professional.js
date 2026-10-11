@@ -20,6 +20,25 @@ document.addEventListener("DOMContentLoaded",()=>{
  document.getElementById("professionalAgency")?.addEventListener("click",()=>apply("agency"));
 });
 
+/* Self-service help entry point: requests originate with the account owner. */
+document.addEventListener("DOMContentLoaded",async()=>{
+ const section=document.getElementById("accountSection");
+ if(!section||typeof currentUser!=="function")return;
+ const user=await currentUser();if(!user)return;
+ const {data:staff}=await supabaseClient.from("five30_staff").select("staff_role").eq("user_id",user.id).maybeSingle();
+ if(staff)return;
+ const panel=document.createElement("section");panel.className="five30-professional five30-self-help";
+ const title=document.createElement("h3");title.textContent="Centro de ayuda";
+ const info=document.createElement("p");info.textContent="¿Necesitas ayuda con tu cuenta, acceso, publicaciones o suscripciones? Puedes contactar al equipo de soporte.";
+ const select=document.createElement("select");select.setAttribute("aria-label","Motivo de ayuda");
+ for(const name of ["No puedo iniciar sesión","Recuperación de contraseña","Cuenta de creador o agencia","Suscripciones y pagos","Reportar un problema","Otra consulta"]){const o=document.createElement("option");o.textContent=name;select.append(o);}
+ const details=document.createElement("textarea");details.rows=3;details.placeholder="Describe tu problema. Nunca compartas contraseñas ni códigos de verificación.";
+ const send=document.createElement("button");send.type="button";send.textContent="Contactar soporte";
+ const notice=document.createElement("p");notice.textContent="Por ahora se abrirá tu aplicación de correo. El seguimiento de solicitudes dentro de 5:30 está en desarrollo.";
+ send.onclick=()=>{if(!details.value.trim()){notice.textContent="Describe primero el problema para poder ayudarte.";return;}const subject=encodeURIComponent("Ayuda 5:30 · "+select.value);const body=encodeURIComponent("Cuenta: "+(user.email||"")+"\\nMotivo: "+select.value+"\\n\\n"+details.value.trim());window.location.href="mailto:five30chile@gmail.com?subject="+subject+"&body="+body;};
+ panel.append(title,info,select,details,send,notice);section.append(panel);
+});
+
 /* Private review workspace. Supabase RLS and RPC enforce staff rights independently of this UI. */
 document.addEventListener("DOMContentLoaded",async()=>{
  const section=document.getElementById("accountSection");
@@ -128,27 +147,8 @@ document.addEventListener("DOMContentLoaded",async()=>{
   const sections=[
    ["Resumen",()=>{const p=document.createElement("p");p.textContent="Registro: "+fmt(u.created_at);const id=document.createElement("p");id.className="five30-user-id";id.textContent="ID de cuenta: "+u.user_id;const status=document.createElement("p");status.textContent="Estado de bloqueo y verificación: pendiente de integración con el servicio de autenticación.";content.append(p,id,status);}],
    ["Acceso y seguridad",()=>{const h=document.createElement("h4");h.textContent="Recuperación de acceso";const p=document.createElement("p");p.textContent="Por seguridad, nunca solicites contraseñas ni códigos del autenticador. El envío de enlaces de recuperación desde el panel todavía no está habilitado.";const note=document.createElement("p");note.textContent="Las funciones de suspender, desbloquear o cambiar permisos requieren un servicio seguro con autorización y auditoría.";content.append(h,p,note);}],
-   ["Atención y soporte",()=>{
-    const label=document.createElement("label");label.textContent="Motivo de la consulta";
-    const type=document.createElement("select");
-    for(const [value,name] of [["access","Problema para iniciar sesión"],["password","Recuperar contraseña"],["creator","Consulta sobre cuenta de creador"],["billing","Consulta de pagos"],["other","Consulta general"]]){const opt=document.createElement("option");opt.value=value;opt.textContent=name;type.append(opt);}
-    const notesLabel=document.createElement("label");notesLabel.textContent="Detalle de la consulta";
-    const notes=document.createElement("textarea");notes.rows=4;notes.placeholder="Describe el problema o los pasos que debe seguir el usuario";
-    const message=document.createElement("p");message.className="five30-support-note";message.textContent="Esta es una herramienta para preparar respuestas. Los casos aún no se guardan en la plataforma.";
-    const contact=document.createElement("button");contact.type="button";contact.textContent="Preparar respuesta por correo";contact.disabled=!u.email;
-    contact.onclick=()=>{
-     const templates={
-      access:"Hola,\\n\\nPara ayudarte a ingresar a tu cuenta 5:30, cuéntanos qué mensaje aparece al intentar acceder. Nunca nos envíes tu contraseña ni códigos de verificación.",
-      password:"Hola,\\n\\nPara recuperar tu contraseña, utiliza la opción de recuperación de acceso disponible en el inicio de sesión de 5:30. No compartas contraseñas ni códigos con nadie.",
-      creator:"Hola,\\n\\nRecibimos tu consulta sobre tu cuenta de creador en 5:30. Indícanos qué paso necesitas completar.",
-      billing:"Hola,\\n\\nRecibimos tu consulta sobre pagos. Los pagos reales de 5:30 aún no están habilitados. No realices transferencias ni compartas datos bancarios por correo.",
-      other:"Hola,\\n\\nGracias por contactar al equipo de soporte de 5:30. Cuéntanos en qué podemos ayudarte."
-     };
-     const body=templates[type.value].replace(/\\n/g,"\n")+(notes.value.trim()?"\n\nDetalle: "+notes.value.trim():"")+"\n\nEquipo de soporte 5:30";
-     window.location.href="mailto:"+encodeURIComponent(u.email)+"?subject="+encodeURIComponent("Soporte 5:30 · "+type.options[type.selectedIndex].text)+"&body="+encodeURIComponent(body);
-    };
-    content.append(label,type,notesLabel,notes,message,contact);
-   }]
+   ["Casos del usuario",()=>{const p=document.createElement("p");p.textContent="Aquí se mostrarán las solicitudes que este usuario envíe desde su propio Centro de ayuda, con estado, respuestas e historial. Todavía no hay un sistema de tickets conectado.";const h=document.createElement("h4");h.textContent="Gestión administrativa";const q=document.createElement("p");q.textContent="Cuando exista un caso, el personal autorizado podrá responder, asignarlo y cerrarlo. No se crean solicitudes en nombre del usuario desde esta ficha.";content.append(p,h,q);}]
+
   ];
   function activate(index){content.replaceChildren();for(let i=0;i<tabs.children.length;i++)tabs.children[i].setAttribute("aria-pressed",String(i===index));sections[index][1]();}
   for(const [i,section] of sections.entries()){const btn=document.createElement("button");btn.type="button";btn.textContent=section[0];btn.onclick=()=>activate(i);tabs.append(btn);}
