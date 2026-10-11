@@ -120,3 +120,20 @@ body.five30-staff-workspace .five30-admin-detail>.five30-admin-users{margin-top:
 .five30-help-body .five30-support-history{border-top:1px solid #4d4030;padding-top:12px}
 .five30-help-body .five30-support-history button{display:block;width:100%;text-align:left}
 @media(max-width:600px){.five30-self-help{bottom:calc(70px + env(safe-area-inset-bottom,0px));height:min(570px,calc(100dvh - 125px))}.five30-help-launcher{right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px))}}
+
+/* Single-view conversation messenger */
+.five30-help-actions{display:flex;gap:7px;align-items:center}
+.five30-help-actions button{font-size:12px;padding:8px!important;margin:0!important;background:transparent!important;color:#e1c18a!important;border:1px solid #65513a!important;border-radius:9px}
+.five30-help-thread{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:15px 12px;display:flex;flex-direction:column;gap:11px}
+.five30-help-bubble{max-width:86%;border-radius:14px;padding:9px 12px;overflow-wrap:anywhere;background:#30292a;align-self:flex-start;border:1px solid #4f4239}
+.five30-help-bubble.mine{align-self:flex-end;background:#d8b985;color:#211810;border-color:#d8b985}
+.five30-help-bubble small{font-size:11px;opacity:.76}
+.five30-help-bubble p{margin:4px 0 0;font-size:14px;line-height:1.45;white-space:pre-wrap}
+.five30-help-composer{flex-shrink:0;border-top:1px solid #665036;padding:10px 12px;background:#211c1e}
+.five30-help-composer select,.five30-help-composer textarea{display:block;box-sizing:border-box;width:100%;margin:0 0 8px;padding:10px 12px;background:#30292a;color:#f7f1e6;border:1px solid #6e5933;border-radius:10px;font:inherit}
+.five30-help-composer textarea{min-height:52px;max-height:110px;resize:vertical}
+.five30-help-composer button{padding:10px 18px;border:0;border-radius:10px;background:#e1c18a;color:#211810;font-weight:800}
+.five30-help-composer button:disabled{opacity:.6}
+.five30-help-feedback{font-size:12px;line-height:1.3;margin:5px 0 0;color:#d4c5aa}
+.five30-help-chat-choice{display:block;width:100%;text-align:left;padding:12px;margin:4px 0;border:1px solid #6e5933;border-radius:10px;background:#30292a;color:#f7f1e6}
+.five30-help-composer [hidden]{display:none!important}
