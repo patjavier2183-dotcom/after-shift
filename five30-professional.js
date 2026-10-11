@@ -30,29 +30,45 @@ document.addEventListener("DOMContentLoaded",async()=>{
  if(staffError||!staff)return;
  const panel=document.createElement("section");
  panel.className="five30-professional";
- const title=document.createElement("h3");title.textContent="Revisión privada 5:30";
- const refresh=document.createElement("button");refresh.type="button";refresh.textContent="Actualizar solicitudes";
+ const title=document.createElement("h3");title.textContent=staff.staff_role==="superadmin"?"Administración privada 5:30":"Revisión privada 5:30";
+ const intro=document.createElement("p");intro.className="five30-admin-intro";intro.textContent="Solicitudes profesionales · acceso protegido con verificación en dos pasos";
+ const stats=document.createElement("div");stats.className="five30-admin-stats";stats.setAttribute("aria-label","Resumen de solicitudes");
+ const filter=document.createElement("select");filter.className="five30-admin-filter";filter.setAttribute("aria-label","Filtrar solicitudes");
+ for(const [value,label] of [["all","Todas las solicitudes"],["pending","Pendientes"],["under_review","En revisión"],["rejected","Rechazadas"]]){
+  const option=document.createElement("option");option.value=value;option.textContent=label;filter.append(option);
+ }
+ let requests=[];
+ const refresh=document.createElement("button");refresh.type="button";refresh.textContent="Actualizar panel";
  const list=document.createElement("div");list.setAttribute("aria-live","polite");
- panel.append(title,refresh,list);
+ panel.append(title,intro,stats,filter,refresh,list);
  section.append(panel);
- async function load(){
+ function render(){
+  stats.replaceChildren();
+  const groups=[["Total",requests.length],["Pendientes",requests.filter(x=>x.status==="pending").length],["En revisión",requests.filter(x=>x.status==="under_review").length],["Rechazadas",requests.filter(x=>x.status==="rejected").length]];
+  for(const [label,value] of groups){
+   const tile=document.createElement("div");tile.className="five30-admin-stat";
+   const number=document.createElement("strong");number.textContent=String(value);
+   const name=document.createElement("span");name.textContent=label;
+   tile.append(number,name);stats.append(tile);
+  }
   list.replaceChildren();
-  const {data, error}=await supabaseClient.from("five30_professional_requests").select("id,request_type,public_name,contact_email,status,created_at").order("created_at",{ascending:false}).limit(50);
-  if(error){list.textContent="No se pudieron cargar las solicitudes.";return;}
-  if(!data?.length){list.textContent="No hay solicitudes todavía.";return;}
-  for(const item of data){
+  const shown=filter.value==="all"?requests:requests.filter(x=>x.status===filter.value);
+  if(!shown.length){list.textContent=requests.length?"No hay solicitudes con este filtro.":"No hay solicitudes todavía.";return;}
+  for(const item of shown){
    const card=document.createElement("div");card.className="five30-review-item";
-   const heading=document.createElement("strong");heading.textContent=item.public_name+" · "+item.request_type;
-   const info=document.createElement("p");info.textContent=item.contact_email+" · "+item.status;
+   const heading=document.createElement("strong");heading.textContent=item.public_name+" · "+(item.request_type==="agency"?"Agencia / estudio":"Creador");
+   const info=document.createElement("p");info.textContent=item.contact_email+" · "+item.status+" · "+new Date(item.created_at).toLocaleDateString("es-CL");
    card.append(heading,info);
    if(["pending","under_review"].includes(item.status)){
-    for(const [label,status] of [["En revisión","under_review"],["Rechazar","rejected"]]){
+    for(const [label,nextStatus] of [["En revisión","under_review"],["Rechazar","rejected"]]){
+     if(item.status===nextStatus)continue;
      const button=document.createElement("button");button.type="button";button.textContent=label;
      button.onclick=async()=>{
       const note=prompt("Motivo de la revisión (mínimo 5 caracteres):");
-      if(!note)return;
+      if(note===null)return;
+      if(note.trim().length<5){alert("El motivo debe tener al menos 5 caracteres.");return;}
       button.disabled=true;
-      const {error:reviewError}=await supabaseClient.rpc("five30_review_request",{p_request_id:item.id,p_next_status:status,p_note:note});
+      const {error:reviewError}=await supabaseClient.rpc("five30_review_request",{p_request_id:item.id,p_next_status:nextStatus,p_note:note.trim()});
       if(reviewError){alert("No se pudo registrar la revisión.");button.disabled=false;return;}
       await load();
      };
@@ -62,6 +78,15 @@ document.addEventListener("DOMContentLoaded",async()=>{
    list.append(card);
   }
  }
+ async function load(){
+  refresh.disabled=true;list.textContent="Actualizando solicitudes…";
+  const {data,error}=await supabaseClient.from("five30_professional_requests").select("id,request_type,public_name,contact_email,status,created_at").order("created_at",{ascending:false}).limit(50);
+  refresh.disabled=false;
+  if(error){stats.replaceChildren();list.textContent="No se pudieron cargar las solicitudes.";return;}
+  requests=data||[];
+  render();
+ }
+ filter.onchange=render;
  refresh.onclick=load;
  await load();
 });
