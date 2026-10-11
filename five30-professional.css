@@ -170,3 +170,14 @@ body .five30-help-launcher[hidden]{display:none!important}
 .five30-help-heading strong{font-size:15px!important}
 .five30-help-subtitle{font-size:11px;color:#c7b99f;line-height:1.3}
 @media(max-width:600px){.five30-self-help .five30-help-header{align-items:center}.five30-help-actions{flex-shrink:0}}
+
+/* In-panel category picker avoids Android native-select navigation bleeding to background */
+.five30-help-backdrop{position:fixed;inset:0;z-index:9998;background:#0008}
+.five30-help-backdrop[hidden]{display:none!important}
+body .five30-help-launcher{z-index:9997!important}
+.five30-self-help{z-index:9999!important}
+.five30-help-category{position:relative;margin-bottom:7px}
+.five30-help-category-button{display:block!important;width:100%;text-align:left!important;padding:10px 12px!important;background:#30292a!important;color:#f7f1e6!important;border:1px solid #6e5933!important;border-radius:10px!important;font-size:13px!important;margin:0!important}
+.five30-help-category-options{position:absolute;bottom:calc(100% + 5px);left:0;right:0;max-height:230px;overflow-y:auto;z-index:3;background:#272123;border:1px solid #b39465;border-radius:10px;box-shadow:0 12px 30px #000b}
+.five30-help-category-options[hidden]{display:none!important}
+.five30-help-category-options button{display:block!important;width:100%;text-align:left!important;background:transparent!important;color:#f5e8d6!important;border:0!important;border-bottom:1px solid #55443b!important;border-radius:0!important;padding:11px 12px!important;margin:0!important;font-size:13px!important}
