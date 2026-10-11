@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
   if(!panel.hidden&&view==="chat"&&!active)setActive(data?.[0]||null);
  }
  send.onclick=async()=>{
-  const message=input.value.trim();if(!message)return;
+  const typed=input.value.trim();const message=typed||(active?"":category.value);if(!message)return;
   send.disabled=true;feedback.textContent="Enviando…";
   let ticket=active;
   if(!ticket){
