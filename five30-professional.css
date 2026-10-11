@@ -72,3 +72,14 @@ body.five30-staff-workspace .five30-admin-detail>.five30-admin-users{margin-top:
 .five30-support-content select,.five30-support-content textarea{width:100%;box-sizing:border-box;background:#282326;color:#fff;border:1px solid #67543a;border-radius:8px;padding:12px;font:inherit}
 .five30-support-content button{margin-top:16px;background:#dfc18d;color:#201a18;padding:12px;border:0;border-radius:8px;font-weight:700}
 .five30-support-note{font-size:13px;color:#c0b2a2}
+
+/* Support queue: compact mobile-first controls */
+.five30-support-filters{display:flex;gap:8px;overflow-x:auto;padding:5px 0 12px}
+.five30-admin-users .five30-support-filters button{white-space:nowrap;flex-shrink:0;background:#292326;color:#dfc18d;border:1px solid #695537;padding:9px 12px}
+.five30-admin-users .five30-support-filters button[aria-pressed="true"]{background:#dfc18d;color:#201a18}
+.five30-admin-users textarea,.five30-admin-users select{box-sizing:border-box;display:block;width:100%;margin:12px 0;padding:12px;background:#292326;color:#f8f2e8;border:1px solid #695537;border-radius:9px;font:inherit}
+.five30-support-thread{max-height:420px;overflow-y:auto;padding:12px;border:1px solid #51412e;border-radius:10px;background:#100e10;margin:12px 0}
+.five30-support-thread p{padding:10px 12px;margin:8px 0;background:#262124;border-radius:9px;white-space:pre-wrap;overflow-wrap:anywhere}
+.five30-support-history{margin-top:16px}
+.five30-self-help select,.five30-self-help textarea{box-sizing:border-box;display:block;width:100%;padding:12px;margin:12px 0;background:#292326;color:#f8f2e8;border:1px solid #695537;border-radius:9px;font:inherit}
+.five30-self-help button{padding:10px 14px;margin:5px 5px 5px 0;border:1px solid #b89b68;border-radius:9px;background:#dfc18d;color:#201a18;font-weight:700}
