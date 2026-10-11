@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
   send.disabled=true;feedback.textContent="Enviando…";
   let ticket=active;
   if(!ticket){
-   const {data,error}=await supabaseClient.from("five30_support_tickets").insert({user_id:user.id,category:categories[selectedCategory],subject:category.value}).select("id,subject,status").single();
+   const {data,error}=await supabaseClient.from("five30_support_tickets").insert({user_id:user.id,category:categories[selectedCategory],subject:selectedCategory}).select("id,subject,status").single();
    if(error){feedback.textContent="No se pudo iniciar el chat. Intenta nuevamente.";send.disabled=false;return;}
    ticket=data;
   }
