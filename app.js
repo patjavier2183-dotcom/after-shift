@@ -11,6 +11,27 @@ const AFTER_SHIFT_NEW_SUBSCRIPTIONS_PAUSED=true;
 const creators=[{name:"Valentina",handle:"@valentina",sub:"US$9.99",tag:"DEMO",bio:"Contenido exclusivo y comunidad."},{name:"Sofía",handle:"@sofia",sub:"US$12.00",tag:"DEMO",bio:"Contenido premium para suscriptores."},{name:"Isabella",handle:"@isabella",sub:"US$8.99",tag:"DEMO",bio:"Nuevas publicaciones cada semana."},{name:"Camila",handle:"@camila",sub:"US$14.99",tag:"DEMO",bio:"Perfil ilustrativo de 5:30."}];
 const grid=document.getElementById("creatorGrid");
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+async function five30CompleteMfaIfRequired(){
+ const {data:levels,error:levelError}=await supabaseClient.auth.mfa.getAuthenticatorAssuranceLevel();
+ if(levelError)throw new Error("No se pudo comprobar la verificación de seguridad.");
+ if(levels?.nextLevel!=="aal2"||levels.currentLevel==="aal2")return true;
+ const {data:factors,error:factorsError}=await supabaseClient.auth.mfa.listFactors();
+ if(factorsError)throw new Error("No se pudieron consultar los factores de seguridad.");
+ const factor=(factors?.totp||[]).find(f=>f.status==="verified");
+ if(!factor)throw new Error("No se encontró un autenticador activo.");
+ for(let attempt=0;attempt<3;attempt++){
+  const code=prompt("5:30 · Ingresa el código de 6 dígitos de tu aplicación autenticadora:");
+  if(code===null){await supabaseClient.auth.signOut();return false;}
+  if(!/^[0-9]{6}$/.test(code.trim())){alert("El código debe tener seis números.");continue;}
+  const {data:challenge,error:challengeError}=await supabaseClient.auth.mfa.challenge({factorId:factor.id});
+  if(challengeError){alert("No se pudo solicitar la verificación.");continue;}
+  const {error}=await supabaseClient.auth.mfa.verify({factorId:factor.id,challengeId:challenge.id,code:code.trim()});
+  if(!error)return true;
+  alert("Código incorrecto o vencido.");
+ }
+ await supabaseClient.auth.signOut();
+ return false;
+}
 async function currentUser(){const{data}=await supabaseClient.auth.getUser();return data.user;}
 async function getMyProfile(){const user=await currentUser();if(!user)return null;const{data}=await supabaseClient.from("profiles").select("id,username,display_name,role,bio,subscription_price").eq("id",user.id).maybeSingle();return data||null;}
 async function loadAccount(userOverride){
@@ -586,7 +607,7 @@ document.getElementById("signupBtn").onclick=async()=>{
   const {data,error}=await supabaseClient.auth.signUp({email:email.trim(),password,options:{data:{username:clean,display_name:username.trim()}}});
   if(error){alert("No se pudo crear la cuenta: "+error.message);return;}
   if(data.session&&data.user){
-    await finishLogin(data.user);
+    if(await five30CompleteMfaIfRequired())await finishLogin(data.user);
   }else{
     alert("Cuenta creada correctamente. Revisa tu correo para confirmar la cuenta y después pulsa «Ingresar».");
   }
@@ -608,7 +629,7 @@ document.getElementById("loginBtn").onclick=async()=>{
     }
     return;
   }
-  await finishLogin(data.user);
+  if(await five30CompleteMfaIfRequired())await finishLogin(data.user);
 };
 
 function handleVerificationReturn(){
@@ -780,7 +801,7 @@ loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
         if(error){msg.textContent="No se pudo crear la cuenta: "+error.message;return;}
         if(data.session&&data.user){
           closeModal();
-          await finishLogin(data.user);
+          if(await five30CompleteMfaIfRequired())await finishLogin(data.user);
         }else{
           msg.textContent="Cuenta creada. Revisa tu correo para confirmar la cuenta y luego ingresa.";
         }
@@ -793,7 +814,7 @@ loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
           return;
         }
         closeModal();
-        await finishLogin(data.user);
+        if(await five30CompleteMfaIfRequired())await finishLogin(data.user);
       }else if(mode==="request-reset"){
         const target=email.value.trim();
         if(!target){msg.textContent="Escribe el correo de tu cuenta.";return;}
@@ -821,7 +842,7 @@ loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
         url.hash="";
         window.history.replaceState({},document.title,url.pathname+url.search);
         closeModal();
-        await finishLogin(data.user);
+        if(await five30CompleteMfaIfRequired())await finishLogin(data.user);
       }
     }catch(err){
       console.error("Error de autenticación:",err);
