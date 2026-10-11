@@ -665,6 +665,12 @@ supabaseClient.auth.onAuthStateChange((event,session)=>{
 });
 render();
 loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
+(async()=>{
+ try{
+  const existing=await currentUser();
+  if(existing)await five30CompleteMfaIfRequired();
+ }catch(error){console.error("No se pudo verificar el segundo factor:",error);}
+})();
 
 // 5:30: reusable sign-up, login and email-based password recovery.
 (function(){
