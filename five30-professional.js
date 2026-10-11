@@ -28,6 +28,8 @@ document.addEventListener("DOMContentLoaded",async()=>{
  if(!user)return;
  const {data:staff,error:staffError}=await supabaseClient.from("five30_staff").select("staff_role").eq("user_id",user.id).maybeSingle();
  if(staffError||!staff)return;
+ // Staff have a dedicated workspace, not the subscriber storefront.
+ document.body.classList.add("five30-staff-workspace");
  const panel=document.createElement("section");
  panel.className="five30-professional";
  const title=document.createElement("h3");title.textContent=staff.staff_role==="superadmin"?"Administración privada 5:30":"Revisión privada 5:30";
@@ -63,8 +65,16 @@ document.addEventListener("DOMContentLoaded",async()=>{
  let requests=[];
  const refresh=document.createElement("button");refresh.type="button";refresh.textContent="Actualizar panel";
  const list=document.createElement("div");list.setAttribute("aria-live","polite");
- panel.append(title,access,navigation,intro,stats,filter,refresh,list);
+ const toolbar=document.createElement("div");toolbar.className="five30-admin-toolbar";
+ const brand=document.createElement("strong");brand.textContent="5:30 · YOUR WAY.";
+ toolbar.append(brand);
+ const logout=document.getElementById("logoutBtn");
+ if(logout){logout.classList.add("five30-admin-logout");toolbar.append(logout);}
+ panel.append(toolbar,title,access,navigation,intro,stats,filter,refresh,list);
  section.append(panel);
+ supabaseClient.auth.onAuthStateChange((event,session)=>{
+  if(event==="SIGNED_OUT"||!session)document.body.classList.remove("five30-staff-workspace");
+ });
  function render(){
   stats.replaceChildren();
   const groups=[["Total",requests.length],["Pendientes",requests.filter(x=>x.status==="pending").length],["En revisión",requests.filter(x=>x.status==="under_review").length],["Rechazadas",requests.filter(x=>x.status==="rejected").length]];
