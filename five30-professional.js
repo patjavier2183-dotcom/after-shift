@@ -147,17 +147,44 @@ document.addEventListener("DOMContentLoaded",async()=>{
   const heading=document.createElement("h3");heading.textContent="Bandeja de atención al cliente";
   const refresh=document.createElement("button");refresh.type="button";refresh.textContent="Actualizar consultas";
   const results=document.createElement("div");results.setAttribute("aria-live","polite");
-  target.append(heading,refresh,results);
+  const summary=document.createElement("div");summary.className="five30-admin-stats";
+  const filters=document.createElement("div");filters.className="five30-support-filters";
+  let activeFilter="all",tickets=[];
+  const names={open:"Pendientes",in_progress:"En atención",resolved:"Resueltos"};
+  for(const [value,label] of [["all","Todos"],["open","Pendientes"],["in_progress","En atención"],["resolved","Resueltos"]]){
+   const button=document.createElement("button");button.type="button";button.textContent=label;button.dataset.filter=value;
+   button.onclick=()=>{activeFilter=value;drawTickets();};filters.append(button);
+  }
+  target.append(heading,summary,filters,refresh,results);
+  function drawTickets(){
+   results.replaceChildren();summary.replaceChildren();
+   for(const [label,count] of [["Total",tickets.length],["Pendientes",tickets.filter(t=>t.status==="open").length],["En atención",tickets.filter(t=>t.status==="in_progress").length],["Resueltos",tickets.filter(t=>t.status==="resolved").length]]){
+    const card=document.createElement("div");card.className="five30-admin-stat";
+    const number=document.createElement("strong");number.textContent=String(count);
+    const name=document.createElement("span");name.textContent=label;card.append(number,name);summary.append(card);
+   }
+   for(const b of filters.children)b.setAttribute("aria-pressed",String(b.dataset.filter===activeFilter));
+   const visible=activeFilter==="all"?tickets:tickets.filter(t=>t.status===activeFilter);
+   if(!visible.length){results.textContent=tickets.length?"No hay casos con este filtro.":"Todavía no hay consultas.";return;}
+   for(const t of visible){
+    const card=document.createElement("article");card.className="five30-review-item";
+    const title=document.createElement("strong");title.textContent=t.subject;
+    const meta=document.createElement("p");meta.textContent=(names[t.status]||t.status)+" · "+new Date(t.created_at).toLocaleString("es-CL");
+    const button=document.createElement("button");button.type="button";button.textContent="Abrir conversación →";button.onclick=()=>showTicket(t);
+    card.append(title,meta,button);results.append(card);
+   }
+  }
   async function showTicket(t){
    results.replaceChildren();
    const back=document.createElement("button");back.type="button";back.textContent="← Volver a consultas";back.onclick=loadTickets;
    const h=document.createElement("h4");h.textContent=t.subject+" · "+t.status;
-   const messages=document.createElement("div");
+   const messages=document.createElement("div");messages.className="five30-support-thread";
    const reply=document.createElement("textarea");reply.rows=3;reply.maxLength=4000;reply.placeholder="Respuesta de Soporte 5:30";
    const send=document.createElement("button");send.type="button";send.textContent="Responder";
    const status=document.createElement("select");for(const [v,l] of [["open","Abierto"],["in_progress","En atención"],["resolved","Resuelto"]]){const o=document.createElement("option");o.value=v;o.textContent=l;status.append(o);}status.value=t.status;
    const update=document.createElement("button");update.type="button";update.textContent="Guardar estado";
    const feedback=document.createElement("p");feedback.setAttribute("role","status");
+   const reload=document.createElement("button");reload.type="button";reload.textContent="Actualizar conversación";reload.onclick=loadMessages;
    async function loadMessages(){
     const {data,error}=await supabaseClient.from("five30_support_messages").select("sender_id,body,created_at").eq("ticket_id",t.id).order("created_at",{ascending:true}).limit(150);
     messages.replaceChildren();
@@ -166,15 +193,13 @@ document.addEventListener("DOMContentLoaded",async()=>{
    }
    send.onclick=async()=>{if(!reply.value.trim())return;send.disabled=true;const {error}=await supabaseClient.from("five30_support_messages").insert({ticket_id:t.id,sender_id:user.id,body:reply.value.trim()});send.disabled=false;if(error){feedback.textContent="No se pudo enviar.";return;}reply.value="";feedback.textContent="Respuesta registrada.";await loadMessages();};
    update.onclick=async()=>{update.disabled=true;const {error}=await supabaseClient.rpc("five30_support_set_status",{p_ticket_id:t.id,p_status:status.value});update.disabled=false;feedback.textContent=error?"No se pudo actualizar.":"Estado actualizado.";};
-   results.append(back,h,messages,reply,send,status,update,feedback);await loadMessages();
+   results.append(back,h,reload,messages,reply,send,status,update,feedback);await loadMessages();
   }
   async function loadTickets(){
    results.textContent="Cargando consultas…";
    const {data,error}=await supabaseClient.from("five30_support_tickets").select("id,user_id,category,subject,status,created_at").order("created_at",{ascending:false}).limit(100);
-   results.replaceChildren();
    if(error){results.textContent="No se pudieron consultar los casos. Verifica tu acceso de seguridad.";return;}
-   if(!data?.length){results.textContent="Todavía no hay consultas.";return;}
-   for(const t of data){const b=document.createElement("button");b.type="button";b.className="five30-user-open";b.textContent=t.subject+" · "+t.status+" · "+new Date(t.created_at).toLocaleDateString("es-CL");b.onclick=()=>showTicket(t);results.append(b);}
+   tickets=data||[];drawTickets();
   }
   refresh.onclick=loadTickets;await loadTickets();
  }
