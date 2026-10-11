@@ -33,10 +33,47 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const select=document.createElement("select");select.setAttribute("aria-label","Motivo de ayuda");
  for(const name of ["No puedo iniciar sesión","Recuperación de contraseña","Cuenta de creador o agencia","Suscripciones y pagos","Reportar un problema","Otra consulta"]){const o=document.createElement("option");o.textContent=name;select.append(o);}
  const details=document.createElement("textarea");details.rows=3;details.placeholder="Describe tu problema. Nunca compartas contraseñas ni códigos de verificación.";
- const send=document.createElement("button");send.type="button";send.textContent="Enviar solicitud (próximamente)";send.disabled=true;
- const notice=document.createElement("p");notice.textContent="El formulario de ayuda ya está diseñado. El envío y seguimiento se habilitarán cuando conectemos la bandeja de tickets segura.";
+ const send=document.createElement("button");send.type="button";send.textContent="Enviar consulta";
+ const notice=document.createElement("p");notice.setAttribute("role","status");notice.textContent="Tus mensajes quedan dentro de 5:30. Nunca compartas contraseñas ni códigos.";
+ const history=document.createElement("div");history.className="five30-support-history";
+ const categories={"No puedo iniciar sesión":"Acceso","Recuperación de contraseña":"Contraseña","Cuenta de creador o agencia":"Creadores y agencias","Suscripciones y pagos":"Suscripciones y pagos","Reportar un problema":"Reportar problema","Otra consulta":"Otro"};
+ async function openConversation(ticket){
+  history.replaceChildren();
+  const back=document.createElement("button");back.type="button";back.textContent="← Volver a mis consultas";back.onclick=loadHistory;history.append(back);
+  const heading=document.createElement("h4");heading.textContent=ticket.subject+" · "+ticket.status;history.append(heading);
+  const messages=document.createElement("div");history.append(messages);
+  const reply=document.createElement("textarea");reply.rows=2;reply.placeholder="Escribe tu mensaje";reply.maxLength=4000;
+  const submit=document.createElement("button");submit.type="button";submit.textContent="Enviar mensaje";
+  async function refresh(){
+   const {data,error}=await supabaseClient.from("five30_support_messages").select("sender_id,body,created_at").eq("ticket_id",ticket.id).order("created_at",{ascending:true}).limit(150);
+   messages.replaceChildren();
+   if(error){messages.textContent="No se pudieron cargar los mensajes.";return;}
+   for(const m of data||[]){const p=document.createElement("p");p.textContent=(m.sender_id===user.id?"Tú":"Soporte 5:30")+": "+m.body;messages.append(p);}
+  }
+  submit.onclick=async()=>{const body=reply.value.trim();if(!body)return;submit.disabled=true;const {error}=await supabaseClient.from("five30_support_messages").insert({ticket_id:ticket.id,sender_id:user.id,body});submit.disabled=false;if(error){notice.textContent="No se pudo enviar el mensaje.";return;}reply.value="";await refresh();};
+  history.append(reply,submit);await refresh();
+ }
+ async function loadHistory(){
+  history.textContent="Cargando consultas…";
+  const {data,error}=await supabaseClient.from("five30_support_tickets").select("id,subject,status,created_at").eq("user_id",user.id).order("created_at",{ascending:false}).limit(30);
+  history.replaceChildren();
+  const heading=document.createElement("h4");heading.textContent="Mis consultas";history.append(heading);
+  if(error){history.append("No se pudieron cargar las consultas.");return;}
+  if(!data?.length){history.append("Todavía no tienes consultas.");return;}
+  for(const t of data){const btn=document.createElement("button");btn.type="button";btn.className="five30-user-open";btn.textContent=t.subject+" · "+t.status;btn.onclick=()=>openConversation(t);history.append(btn);}
+ }
+ send.onclick=async()=>{
+  const body=details.value.trim();if(body.length<5){notice.textContent="Describe el problema con al menos 5 caracteres.";return;}
+  send.disabled=true;notice.textContent="Enviando consulta…";
+  const {data:t,error:e}=await supabaseClient.from("five30_support_tickets").insert({user_id:user.id,category:categories[select.value],subject:select.value}).select("id").single();
+  if(e){send.disabled=false;notice.textContent="No se pudo registrar la consulta. Intenta nuevamente.";return;}
+  const {error:me}=await supabaseClient.from("five30_support_messages").insert({ticket_id:t.id,sender_id:user.id,body});
+  send.disabled=false;
+  if(me){notice.textContent="La consulta se creó, pero el mensaje no se envió. Abre Mis consultas para completarla.";await loadHistory();return;}
+  details.value="";notice.textContent="Consulta recibida. Podrás revisar aquí la respuesta.";await loadHistory();
+ };
 
- panel.append(title,info,select,details,send,notice);section.append(panel);
+ panel.append(title,info,select,details,send,notice,history);section.append(panel);loadHistory();
 });
 
 /* Private review workspace. Supabase RLS and RPC enforce staff rights independently of this UI. */
@@ -102,8 +139,46 @@ document.addEventListener("DOMContentLoaded",async()=>{
    const message=document.createElement("p");
    message.textContent=key==="finance"?"Los movimientos reales estarán disponibles cuando integremos el procesador de pagos y su conciliación.":key==="security"?"La verificación en dos pasos está activa. El historial y la gestión de permisos aún están en desarrollo.":"El sistema de consultas y reclamos está en desarrollo. No hay una bandeja de tickets conectada todavía.";
    moduleArea.append(heading,message);
+   if(key==="support")renderSupportInbox(moduleArea);
   }
  }
+ async function renderSupportInbox(target){
+  target.replaceChildren();
+  const heading=document.createElement("h3");heading.textContent="Bandeja de atención al cliente";
+  const refresh=document.createElement("button");refresh.type="button";refresh.textContent="Actualizar consultas";
+  const results=document.createElement("div");results.setAttribute("aria-live","polite");
+  target.append(heading,refresh,results);
+  async function showTicket(t){
+   results.replaceChildren();
+   const back=document.createElement("button");back.type="button";back.textContent="← Volver a consultas";back.onclick=loadTickets;
+   const h=document.createElement("h4");h.textContent=t.subject+" · "+t.status;
+   const messages=document.createElement("div");
+   const reply=document.createElement("textarea");reply.rows=3;reply.maxLength=4000;reply.placeholder="Respuesta de Soporte 5:30";
+   const send=document.createElement("button");send.type="button";send.textContent="Responder";
+   const status=document.createElement("select");for(const [v,l] of [["open","Abierto"],["in_progress","En atención"],["resolved","Resuelto"]]){const o=document.createElement("option");o.value=v;o.textContent=l;status.append(o);}status.value=t.status;
+   const update=document.createElement("button");update.type="button";update.textContent="Guardar estado";
+   const feedback=document.createElement("p");feedback.setAttribute("role","status");
+   async function loadMessages(){
+    const {data,error}=await supabaseClient.from("five30_support_messages").select("sender_id,body,created_at").eq("ticket_id",t.id).order("created_at",{ascending:true}).limit(150);
+    messages.replaceChildren();
+    if(error){messages.textContent="Error al cargar conversación.";return;}
+    for(const m of data||[]){const p=document.createElement("p");p.textContent=(m.sender_id===t.user_id?"Usuario":"Soporte 5:30")+": "+m.body;messages.append(p);}
+   }
+   send.onclick=async()=>{if(!reply.value.trim())return;send.disabled=true;const {error}=await supabaseClient.from("five30_support_messages").insert({ticket_id:t.id,sender_id:user.id,body:reply.value.trim()});send.disabled=false;if(error){feedback.textContent="No se pudo enviar.";return;}reply.value="";feedback.textContent="Respuesta registrada.";await loadMessages();};
+   update.onclick=async()=>{update.disabled=true;const {error}=await supabaseClient.rpc("five30_support_set_status",{p_ticket_id:t.id,p_status:status.value});update.disabled=false;feedback.textContent=error?"No se pudo actualizar.":"Estado actualizado.";};
+   results.append(back,h,messages,reply,send,status,update,feedback);await loadMessages();
+  }
+  async function loadTickets(){
+   results.textContent="Cargando consultas…";
+   const {data,error}=await supabaseClient.from("five30_support_tickets").select("id,user_id,category,subject,status,created_at").order("created_at",{ascending:false}).limit(100);
+   results.replaceChildren();
+   if(error){results.textContent="No se pudieron consultar los casos. Verifica tu acceso de seguridad.";return;}
+   if(!data?.length){results.textContent="Todavía no hay consultas.";return;}
+   for(const t of data){const b=document.createElement("button");b.type="button";b.className="five30-user-open";b.textContent=t.subject+" · "+t.status+" · "+new Date(t.created_at).toLocaleDateString("es-CL");b.onclick=()=>showTicket(t);results.append(b);}
+  }
+  refresh.onclick=loadTickets;await loadTickets();
+ }
+
  for(const [key,name,description] of modules){
   if(!permissions[role].includes(key))continue;
   const item=document.createElement("button");item.type="button";item.className="five30-admin-module five30-admin-module-button";
