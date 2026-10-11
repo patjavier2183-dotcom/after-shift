@@ -37,16 +37,27 @@ document.addEventListener("DOMContentLoaded",async()=>{
  };
  confirm.onclick=async()=>{
   const code=input.value.trim();
-  if(!factorId||!/^[0-9]{6}$/.test(code)){status.textContent="Ingresa un código de 6 dígitos.";return;}
+  if(!factorId||!/^[0-9]{6}$/.test(code)){status.textContent="Ingresa los seis números del autenticador.";return;}
   confirm.disabled=true;
-  status.textContent="Comprobando el código…";
-  const {data:challenge,error:challengeError}=await supabaseClient.auth.mfa.challenge({factorId});
-  if(challengeError){status.textContent="No se pudo generar la verificación: "+challengeError.message;confirm.disabled=false;return;}
-  const {error}=await supabaseClient.auth.mfa.verify({factorId,challengeId:challenge.id,code});
-  confirm.disabled=false;
-  if(error){status.textContent="No se pudo confirmar el código: "+error.message;return;}
-  input.value="";secret.textContent="";qr.removeAttribute("src");factorId=null;
-  await refresh();status.textContent="Verificación en dos pasos activada. Vuelve a ingresar para comprobarla.";
+  status.textContent="Verificando con Supabase, espera…";
+  try{
+   const {data:challenge,error:challengeError}=await supabaseClient.auth.mfa.challenge({factorId});
+   if(challengeError)throw challengeError;
+   if(!challenge?.id)throw new Error("No se recibió el identificador de verificación.");
+   const {error}=await supabaseClient.auth.mfa.verify({factorId,challengeId:challenge.id,code});
+   if(error)throw error;
+   const {data:levels,error:levelError}=await supabaseClient.auth.mfa.getAuthenticatorAssuranceLevel();
+   if(levelError)throw levelError;
+   if(levels?.currentLevel!=="aal2"){
+    status.textContent="El código fue aceptado, pero aún no se confirmó el nivel de seguridad. Actualiza y revisa el estado.";
+    return;
+   }
+   input.value="";secret.textContent="";qr.removeAttribute("src");factorId=null;
+   setup.hidden=true;start.hidden=true;
+   status.textContent="Verificación en dos pasos ACTIVADA correctamente. Tu sesión ya está protegida.";
+  }catch(error){
+   status.textContent="No se pudo confirmar: "+(error?.message||"Error desconocido")+". La configuración sigue pendiente.";
+  }finally{confirm.disabled=false;}
  };
  await refresh();
 });
