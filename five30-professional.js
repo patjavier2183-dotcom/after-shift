@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const categories={"No puedo iniciar sesión":"Acceso","Recuperación de contraseña":"Contraseña","Cuenta de creador o agencia":"Creadores y agencias","Suscripciones y pagos":"Suscripciones y pagos","Reportar un problema":"Reportar problema","Otra consulta":"Otro"};
  const panel=document.createElement("section");panel.className="five30-professional five30-self-help";panel.hidden=true;
  panel.setAttribute("role","dialog");panel.setAttribute("aria-label","Chat de ayuda 5:30");
- const launcher=document.createElement("button");launcher.type="button";launcher.className="five30-help-launcher";launcher.textContent="✦ Ayuda";launcher.setAttribute("aria-expanded","false");
+ const launcher=document.createElement("button");launcher.type="button";launcher.className="five30-help-launcher";launcher.textContent="☏";launcher.setAttribute("aria-label","Abrir Soporte 5:30");launcher.title="Ayuda";launcher.setAttribute("aria-expanded","false");
  const header=document.createElement("div");header.className="five30-help-header";
  const title=document.createElement("strong");title.textContent="Soporte 5:30";
  const tools=document.createElement("div");tools.className="five30-help-actions";
@@ -41,17 +41,17 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const composer=document.createElement("div");composer.className="five30-help-composer";
  const category=document.createElement("select");category.setAttribute("aria-label","Motivo de consulta");
  for(const name of Object.keys(categories)){const o=document.createElement("option");o.textContent=name;category.append(o);}
- const input=document.createElement("textarea");input.rows=2;input.maxLength=4000;input.placeholder="Escribe tu mensaje…";
- const send=document.createElement("button");send.type="button";send.textContent="Enviar ➤";
+ const input=document.createElement("textarea");input.rows=1;input.maxLength=4000;input.placeholder="Escribe tu mensaje…";
+ const send=document.createElement("button");send.type="button";send.textContent="➤";send.setAttribute("aria-label","Enviar mensaje");
  const feedback=document.createElement("p");feedback.className="five30-help-feedback";feedback.setAttribute("role","status");
  composer.append(category,input,send,feedback);panel.append(header,thread,composer);
  let active=null,view="chat",loadSeq=0;
  const statuses={open:"Pendiente",in_progress:"En atención",resolved:"Resuelto"};
- function bubble(message,mine){
+ function bubble(message,mine,createdAt){
   const wrap=document.createElement("div");wrap.className="five30-help-bubble "+(mine?"mine":"agent");
   const label=document.createElement("small");label.textContent=mine?"Tú":"Soporte 5:30";
   const body=document.createElement("p");body.textContent=message;
-  wrap.append(label,body);thread.append(wrap);
+  wrap.append(label,body);if(createdAt){const time=document.createElement("time");time.textContent=new Date(createdAt).toLocaleTimeString("es-CL",{hour:"2-digit",minute:"2-digit"});wrap.append(time);}thread.append(wrap);
  }
  function setActive(t){active=t;view="chat";category.hidden=!!t;title.textContent=t?"Soporte 5:30 · "+(statuses[t.status]||t.status):"Soporte 5:30";historyBtn.textContent="Mis chats";feedback.textContent="";renderThread();}
  async function renderThread(){
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
   if(seq!==loadSeq||view!=="chat")return;
   thread.replaceChildren();
   if(error){bubble("No pudimos cargar los mensajes. Intenta abrir nuevamente el chat.",false);return;}
-  for(const m of data||[])bubble(m.body,m.sender_id===user.id);
+  for(const m of data||[])bubble(m.body,m.sender_id===user.id,m.created_at);
   thread.scrollTop=thread.scrollHeight;
  }
  async function showHistory(){
@@ -93,9 +93,9 @@ document.addEventListener("DOMContentLoaded",async()=>{
   const {error}=await supabaseClient.from("five30_support_messages").insert({ticket_id:ticket.id,sender_id:user.id,body:message});
   send.disabled=false;
   if(error){feedback.textContent="No se pudo enviar. Intenta nuevamente.";if(!active)setActive(ticket);return;}
-  input.value="";setActive(ticket);feedback.textContent="Mensaje enviado.";await renderThread();
+  input.value="";setActive(ticket);feedback.textContent="";
  };
- function toggle(open){panel.hidden=!open;launcher.setAttribute("aria-expanded",String(open));if(open){if(view==="history"){historyBtn.onclick=showHistory;input.hidden=false;send.hidden=false;view="chat";}renderThread();startLatest();}else launcher.focus();}
+ function toggle(open){panel.hidden=!open;launcher.hidden=open;launcher.setAttribute("aria-expanded",String(open));if(open){if(view==="history"){historyBtn.onclick=showHistory;input.hidden=false;send.hidden=false;view="chat";}renderThread();startLatest();}else launcher.focus();}
  launcher.onclick=()=>toggle(panel.hidden);close.onclick=()=>toggle(false);
  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!panel.hidden)toggle(false);});
  document.body.append(launcher,panel);
