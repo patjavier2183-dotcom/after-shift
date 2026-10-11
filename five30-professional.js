@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
   async function showTicket(t){
    results.replaceChildren();
    const back=document.createElement("button");back.type="button";back.textContent="← Volver a consultas";back.onclick=loadTickets;
-   const h=document.createElement("h4");h.textContent=t.subject+" · "+t.status;
+   const h=document.createElement("h4");h.textContent=t.subject+" · "+(names[t.status]||t.status);
    const messages=document.createElement("div");messages.className="five30-support-thread";
    const reply=document.createElement("textarea");reply.rows=3;reply.maxLength=4000;reply.placeholder="Respuesta de Soporte 5:30";
    const send=document.createElement("button");send.type="button";send.textContent="Responder";
