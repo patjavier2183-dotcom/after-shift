@@ -23,9 +23,10 @@ document.addEventListener("DOMContentLoaded",async()=>{
  }
  start.onclick=async()=>{
   start.disabled=true;
+  status.textContent="Solicitando configuración segura…";
   const {data,error}=await supabaseClient.auth.mfa.enroll({factorType:"totp",friendlyName:"5:30 Authenticator"});
   start.disabled=false;
-  if(error){status.textContent="No se pudo iniciar la configuración. Inténtalo de nuevo.";return;}
+  if(error){status.textContent="No se pudo iniciar la configuración: "+error.message+". Si ya configuraste el autenticador, no elimines su entrada.";return;}
   factorId=data.id;qr.src=data.totp.qr_code;secret.textContent="Clave manual: "+data.totp.secret;
   setup.hidden=false;status.textContent="Escanea el QR con una aplicación autenticadora e ingresa el código generado.";
  };
@@ -33,11 +34,12 @@ document.addEventListener("DOMContentLoaded",async()=>{
   const code=input.value.trim();
   if(!factorId||!/^[0-9]{6}$/.test(code)){status.textContent="Ingresa un código de 6 dígitos.";return;}
   confirm.disabled=true;
+  status.textContent="Comprobando el código…";
   const {data:challenge,error:challengeError}=await supabaseClient.auth.mfa.challenge({factorId});
-  if(challengeError){status.textContent="No se pudo generar la verificación.";confirm.disabled=false;return;}
+  if(challengeError){status.textContent="No se pudo generar la verificación: "+challengeError.message;confirm.disabled=false;return;}
   const {error}=await supabaseClient.auth.mfa.verify({factorId,challengeId:challenge.id,code});
   confirm.disabled=false;
-  if(error){status.textContent="Código incorrecto o vencido. Revisa tu aplicación.";return;}
+  if(error){status.textContent="No se pudo confirmar el código: "+error.message;return;}
   input.value="";secret.textContent="";qr.removeAttribute("src");factorId=null;
   await refresh();status.textContent="Verificación en dos pasos activada. Vuelve a ingresar para comprobarla.";
  };
