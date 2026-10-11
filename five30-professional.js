@@ -53,7 +53,23 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const moduleArea=document.createElement("section");moduleArea.className="five30-admin-users";moduleArea.hidden=true;
  const requestsArea=document.createElement("section");requestsArea.className="five30-admin-users";requestsArea.hidden=true;
  const moduleButtons=new Map();
+ const back=document.createElement("button");back.type="button";back.className="five30-admin-back";back.textContent="← Volver al panel";back.hidden=true;
+ const detailHeader=document.createElement("h3");detailHeader.className="five30-admin-detail-title";detailHeader.hidden=true;
+ const detailView=document.createElement("div");detailView.className="five30-admin-detail";detailView.hidden=true;
+ function goHome(){
+  detailView.hidden=true;navigation.hidden=false;title.hidden=false;access.hidden=false;
+  back.hidden=true;detailHeader.hidden=true;
+  usersArea.hidden=true;requestsArea.hidden=true;moduleArea.hidden=true;
+  for(const button of moduleButtons.values())button.setAttribute("aria-expanded","false");
+  window.scrollTo({top:0,behavior:"instant"});
+ }
+ back.onclick=goHome;
  function showModule(key){
+  navigation.hidden=true;title.hidden=true;access.hidden=true;
+  back.hidden=false;detailHeader.hidden=false;detailView.hidden=false;
+  const selected=modules.find(m=>m[0]===key);
+  detailHeader.textContent=selected[1];
+  window.scrollTo({top:0,behavior:"instant"});
   usersArea.hidden=key!=="users";
   requestsArea.hidden=key!=="creators";
   moduleArea.hidden=key==="users"||key==="creators";
@@ -118,7 +134,8 @@ document.addEventListener("DOMContentLoaded",async()=>{
  searchButton.onclick=loadUsers;
  search.addEventListener("keydown",e=>{if(e.key==="Enter")loadUsers();});
  requestsArea.append(intro,stats,filter,refresh,list);
- panel.append(toolbar,title,access,navigation,usersArea,moduleArea,requestsArea);
+ detailView.append(usersArea,moduleArea,requestsArea);
+ panel.append(toolbar,back,title,access,navigation,detailHeader,detailView);
  section.append(panel);
  supabaseClient.auth.onAuthStateChange((event,session)=>{
   if(event==="SIGNED_OUT"||!session)document.body.classList.remove("five30-staff-workspace");
