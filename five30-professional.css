@@ -202,3 +202,13 @@ body .five30-help-launcher{z-index:9997!important}
  .five30-admin-users .five30-support-filters{grid-template-columns:repeat(4,minmax(0,1fr))}
  .five30-admin-users .five30-support-filters button{font-size:10px;padding:8px 1px}
 }
+
+/* Superadmin workspace: put work first and account security below it. */
+body.five30-staff-workspace #accountSection{display:flex!important;flex-direction:column;gap:0}
+body.five30-staff-workspace #accountSection>.five30-professional:not(.five30-mfa-panel){order:0}
+body.five30-staff-workspace #accountSection>.five30-mfa-panel{order:2;margin-top:18px!important}
+body.five30-staff-workspace .five30-admin-toolbar{gap:8px;padding:4px 0 10px;margin-bottom:10px}
+body.five30-staff-workspace .five30-admin-toolbar .five30-admin-back{display:inline-flex;margin:0;padding:9px 10px;font-size:13px;line-height:1.2}
+body.five30-staff-workspace .five30-admin-toolbar .five30-admin-back[hidden]{display:none!important}
+body.five30-staff-workspace .five30-admin-toolbar strong{font-size:14px}
+body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
