@@ -142,9 +142,9 @@ document.addEventListener("DOMContentLoaded",async()=>{
    if(key==="support")renderSupportInbox(moduleArea);
   }
  }
- async function renderSupportInbox(target){
+ async function renderSupportInbox(target,userFilter=null){
   target.replaceChildren();
-  const heading=document.createElement("h3");heading.textContent="Bandeja de atención al cliente";
+  const heading=document.createElement("h3");heading.textContent=userFilter?"Consultas de esta cuenta":"Bandeja de atención al cliente";
   const refresh=document.createElement("button");refresh.type="button";refresh.textContent="Actualizar consultas";
   const results=document.createElement("div");results.setAttribute("aria-live","polite");
   const summary=document.createElement("div");summary.className="five30-admin-stats";
@@ -197,7 +197,8 @@ document.addEventListener("DOMContentLoaded",async()=>{
   }
   async function loadTickets(){
    results.textContent="Cargando consultas…";
-   const {data,error}=await supabaseClient.from("five30_support_tickets").select("id,user_id,category,subject,status,created_at").order("created_at",{ascending:false}).limit(100);
+   let query=supabaseClient.from("five30_support_tickets").select("id,user_id,category,subject,status,created_at").order("created_at",{ascending:false}).limit(100);if(userFilter)query=query.eq("user_id",userFilter);
+   const {data,error}=await query;
    if(error){results.textContent="No se pudieron consultar los casos. Verifica tu acceso de seguridad.";return;}
    tickets=data||[];drawTickets();
   }
@@ -247,7 +248,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
   const sections=[
    ["Resumen",()=>{const p=document.createElement("p");p.textContent="Registro: "+fmt(u.created_at);const id=document.createElement("p");id.className="five30-user-id";id.textContent="ID de cuenta: "+u.user_id;const status=document.createElement("p");status.textContent="Estado de bloqueo y verificación: pendiente de integración con el servicio de autenticación.";content.append(p,id,status);}],
    ["Acceso y seguridad",()=>{const h=document.createElement("h4");h.textContent="Recuperación de acceso";const p=document.createElement("p");p.textContent="Por seguridad, nunca solicites contraseñas ni códigos del autenticador. El envío de enlaces de recuperación desde el panel todavía no está habilitado.";const note=document.createElement("p");note.textContent="Las funciones de suspender, desbloquear o cambiar permisos requieren un servicio seguro con autorización y auditoría.";content.append(h,p,note);}],
-   ["Casos del usuario",()=>{const p=document.createElement("p");p.textContent="Aquí se mostrarán las solicitudes que este usuario envíe desde su propio Centro de ayuda, con estado, respuestas e historial. Todavía no hay un sistema de tickets conectado.";const h=document.createElement("h4");h.textContent="Gestión administrativa";const q=document.createElement("p");q.textContent="Cuando exista un caso, el personal autorizado podrá responder, asignarlo y cerrarlo. No se crean solicitudes en nombre del usuario desde esta ficha.";content.append(p,h,q);}]
+   ["Casos del usuario",()=>{const p=document.createElement("p");p.textContent="Consultas iniciadas por esta cuenta. Puedes abrir cada caso, responder y actualizar su estado sin salir de la ficha.";content.append(p);const area=document.createElement("div");area.className="five30-user-cases";content.append(area);renderSupportInbox(area,u.user_id);}]
 
   ];
   function activate(index){content.replaceChildren();for(let i=0;i<tabs.children.length;i++)tabs.children[i].setAttribute("aria-pressed",String(i===index));sections[index][1]();}
