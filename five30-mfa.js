@@ -17,9 +17,14 @@ document.addEventListener("DOMContentLoaded",async()=>{
  async function refresh(){
   const {data,error}=await supabaseClient.auth.mfa.listFactors();
   if(error){status.textContent="No se pudo comprobar la seguridad de la cuenta.";return;}
-  const verified=(data?.totp||[]).some(f=>f.status==="verified");
-  status.textContent=verified?"Autenticador configurado. Al iniciar sesión, verifica el segundo factor.":"Activa una aplicación autenticadora para proteger tu cuenta.";
-  start.hidden=verified;setup.hidden=true;
+  const factors=data?.all||data?.totp||[];
+  const verified=factors.some(f=>f.factor_type==="totp"&&f.status==="verified");
+  const pending=factors.find(f=>f.factor_type==="totp"&&f.status==="unverified");
+  factorId=pending?.id||null;
+  status.textContent=verified?"Autenticador configurado. Al iniciar sesión, verifica el segundo factor.":pending?"Hay una configuración pendiente. Usa el código que ya aparece en Google Authenticator para confirmarla.":"Activa una aplicación autenticadora para proteger tu cuenta.";
+  start.hidden=verified||!!pending;setup.hidden=verified||!pending;
+  qr.hidden=!!pending;secret.hidden=!!pending;
+  if(pending){qr.removeAttribute("src");secret.textContent="";}
  }
  start.onclick=async()=>{
   start.disabled=true;
