@@ -9,3 +9,9 @@
 .five30-review-item{border:1px solid #4d4030;background:#1d1a1b;border-radius:10px;padding:13px;margin:12px 0;overflow-wrap:anywhere}
 .five30-review-item p{color:#d7d0c4;font-size:13px;line-height:1.5}
 .five30-review-item button,.five30-professional>button{padding:10px 13px;margin:4px 7px 4px 0;border-radius:8px;background:#e1c18a;color:#171310;border:0;font-weight:700}
+
+.five30-admin-modules{display:grid;gap:9px;margin:14px 0 20px}
+.five30-admin-module{padding:14px;border:1px solid #554630;border-radius:11px;background:#211d1e;display:flex;flex-direction:column;gap:5px}
+.five30-admin-module strong{color:#e1c18a;font-size:15px}
+.five30-admin-module small{color:#ddd2c1;font-size:13px;line-height:1.4}
+.five30-admin-module span{color:#a99d8a;font-size:11px}
