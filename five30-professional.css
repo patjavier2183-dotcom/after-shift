@@ -387,3 +387,15 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-international-summary-card{display:flex;flex-direction:column;justify-content:center;gap:8px;min-width:0;padding:12px 10px;background:#211e1b;border:1px solid #484038;border-radius:10px}
 .five30-international-summary-card span{font-size:11px;color:#bcb2a6;line-height:1.3}
 .five30-international-summary-card strong{font-size:13px;color:#f1e6d6;overflow-wrap:break-word;line-height:1.3}
+
+/* Consolidated international finance: readable mobile-first dashboard */
+.five30-international-detail{display:block!important;min-width:0!important;max-width:100%!important;overflow:hidden!important}
+.five30-international-metrics{display:flex!important;flex-direction:column!important;gap:12px!important;width:100%!important;min-width:0!important}
+.five30-international-summary{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;width:100%!important;min-width:0!important;box-sizing:border-box!important;margin:0!important}
+.five30-international-summary>strong{grid-column:1/-1!important;display:block!important;font-size:15px!important;line-height:1.4!important;color:#e9d3b5!important}
+.five30-international-summary-card{box-sizing:border-box!important;min-width:0!important;width:100%!important;min-height:86px!important;padding:13px 11px!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:8px!important;background:#211f1c!important;border:1px solid #494038!important;border-radius:10px!important}
+.five30-international-summary-card span{display:block!important;font-size:12px!important;line-height:1.3!important;color:#bcb3a9!important;overflow-wrap:break-word!important}
+.five30-international-summary-card strong{display:block!important;max-width:100%!important;font-size:clamp(12px,3.4vw,18px)!important;line-height:1.3!important;overflow-wrap:break-word!important;word-break:normal!important;white-space:normal!important;color:#f2e9df!important}
+.five30-international-summary>p{grid-column:1/-1!important;font-size:12px!important;line-height:1.55!important;color:#b6aca0!important;margin:3px 0 0!important}
+.five30-international-detail>p:last-child{display:block!important;width:100%!important;box-sizing:border-box!important;line-height:1.5!important;color:#bcb3a9!important}
+.five30-international-currency{width:100%!important;min-width:0!important;box-sizing:border-box!important}
