@@ -220,3 +220,13 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-support-roles span{font-size:23px;color:#b99252;line-height:1}
 .five30-support-roles strong{font-size:12px;text-align:center;color:#f5f0e8}
 @media(max-width:480px){.five30-support-roles{gap:6px}.five30-support-roles>div{padding:10px 2px}.five30-support-roles strong{font-size:11px}}
+
+/* Interactive support center navigation */
+.five30-support-roles>.five30-support-role-button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;padding:12px 4px;background:#0b0a09;color:#f5f0e8;border:1px solid rgba(180,136,66,.35);border-radius:13px;cursor:pointer}
+.five30-support-roles>.five30-support-role-button[aria-pressed="true"]{border-color:#c29750;background:#21170b}
+.five30-support-roles>.five30-support-role-button strong{font-size:12px;color:inherit}
+.five30-support-team-detail{border:1px solid rgba(180,136,66,.35);border-radius:13px;padding:16px;margin:0 0 12px}
+.five30-support-team-detail[hidden]{display:none!important}
+.five30-support-team-detail h4{margin:0 0 10px}
+.five30-support-team-detail p{line-height:1.5;color:#bcb4a8}
+@media(max-width:480px){.five30-support-roles>.five30-support-role-button{padding:10px 2px}.five30-support-roles>.five30-support-role-button strong{font-size:11px}}
