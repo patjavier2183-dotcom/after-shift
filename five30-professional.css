@@ -340,3 +340,25 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-international-currency{padding:12px;border:1px solid #47423a;border-radius:10px;background:#1d1d1d}
 .five30-international-currency strong{font-size:13px;color:#e7cda5}
 .five30-international-currency p{margin:6px 0;font-size:12px}
+
+/* International finance: compact premium navigation, no gold-filled cards */
+.five30-international-panel{background:#101011!important;border:1px solid #3e3730!important;padding:14px!important;border-radius:14px!important;color:#eae5df!important}
+.five30-international-panel>h4{font-size:19px!important;color:#f0e7dc!important;letter-spacing:-.3px}
+.five30-international-panel>p{color:#a9a29a!important}
+.five30-international-markets{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+.five30-international-markets>.five30-international-market{display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;min-width:0!important;min-height:68px!important;width:100%!important;padding:11px 12px!important;gap:5px!important;background:#1a1919!important;border:1px solid #47413b!important;border-radius:10px!important;box-shadow:none!important;color:#eee8df!important;opacity:1!important;filter:none!important;transform:none!important}
+.five30-international-markets>.five30-international-market strong{font-size:13px!important;line-height:1.3!important;font-weight:700!important;color:#f0eae1!important;opacity:1!important}
+.five30-international-markets>.five30-international-market span{font-size:11px!important;line-height:1.4!important;color:#b4aba1!important;opacity:1!important}
+.five30-international-markets>.five30-international-market[aria-pressed="true"]{background:#27211b!important;border-color:#c59b60!important;box-shadow:inset 3px 0 0 #c59b60!important}
+.five30-international-markets>.five30-international-market[aria-pressed="true"] strong{color:#f1d4a6!important}
+.five30-international-detail{background:#161617!important;border:1px solid #3f3932!important;padding:14px!important;margin:15px 0!important}
+.five30-international-detail h4{color:#f1e7d9!important;font-size:18px!important}
+.five30-international-detail>p{color:#b6afa7!important}
+.five30-international-metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+.five30-international-currency{grid-column:1/-1;background:#1d1c1c!important;border-color:#48413a!important}
+.five30-international-currency p{color:#e3ddd4!important}
+.five30-international-detail .five30-finance-table-scroll{margin-top:10px!important;max-width:100%!important}
+.five30-international-panel>.five30-finance-real-form{border:1px solid #403b34!important;border-radius:12px!important;background:#181718!important;padding:13px!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.five30-international-panel>.five30-finance-real-form label{min-width:0!important;color:#cfc4b7!important}
+.five30-international-panel>.five30-finance-real-form button{grid-column:1/-1!important;min-height:44px!important;background:#242d28!important;color:#bde0c9!important;border:1px solid #4d8264!important}
+@media(max-width:350px){.five30-international-markets{grid-template-columns:1fr!important}}
