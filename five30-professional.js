@@ -196,14 +196,14 @@ document.addEventListener("DOMContentLoaded",()=>{
  const list=document.createElement("div");list.className="five30-international-markets";
  const detail=document.createElement("div");detail.className="five30-international-detail";
  const detailTitle=document.createElement("h4");const detailNote=document.createElement("p");
- const metrics=document.createElement("div");metrics.className="five30-international-metrics";
+ const metrics=document.createElement("div");metrics.className="five30-international-metrics";const emptyNotice=document.createElement("p");emptyNotice.className="five30-international-empty";
  const history=document.createElement("div");history.className="five30-finance-table-scroll";
  const simulator=document.createElement("form");simulator.className="five30-finance-real-form";
  const countryLabel=document.createElement("label");countryLabel.textContent="Mercado de prueba";const country=document.createElement("select");countryLabel.append(country);
  const amountLabel=document.createElement("label");amountLabel.textContent="Monto de prueba";const amount=document.createElement("input");amount.type="number";amount.min="0.01";amount.step="0.01";amount.value="10";amount.required=true;amountLabel.append(amount);
  const run=document.createElement("button");run.type="submit";run.textContent="Simular país seleccionado";const allRun=document.createElement("button");allRun.type="button";allRun.textContent="Simular los 7 países";
  const output=document.createElement("p");output.setAttribute("role","status");
- simulator.append(countryLabel,amountLabel,run,allRun);detail.append(detailTitle,detailNote,metrics,history);
+ simulator.append(countryLabel,amountLabel,run,allRun);detail.append(detailTitle,detailNote,metrics,history,emptyNotice);
  section.append(title,note,status,list,detail,simulator,output);target.append(section);
  let markets=[],selected="ALL",simulations=[],realExpenses=[];
  const format=(minor,cur)=>new Intl.NumberFormat("es-CL",{style:"currency",currency:cur,maximumFractionDigits:2}).format(minor/100);
@@ -226,7 +226,7 @@ document.addEventListener("DOMContentLoaded",()=>{
  const info=document.createElement("p");info.textContent="Operaciones simuladas: "+rows.length+". Los importes de otras monedas se convertirán a USD cuando exista una tasa verificada. Los egresos sin país asignado se informan aparte; no se calcula utilidad sin datos completos.";summary.append(info);metrics.append(summary);
  if(realExpenses.length){const totalsByStatus={paid:0,pending:0,projected:0};realExpenses.forEach(x=>{if(Object.hasOwn(totalsByStatus,x.status))totalsByStatus[x.status]+=Number(x.amount_clp)||0;});const expenses=document.createElement("div");expenses.className="five30-international-currency";const head=document.createElement("strong");head.textContent="Egresos reales de 5:30 · sin país asignado";expenses.append(head);[["Pagados",totalsByStatus.paid],["Pendientes",totalsByStatus.pending],["Proyectados",totalsByStatus.projected]].forEach(([label,value])=>{const p=document.createElement("p");p.textContent=label+": "+new Intl.NumberFormat("es-CL",{style:"currency",currency:"CLP",maximumFractionDigits:0}).format(value);expenses.append(p);});metrics.append(expenses);}
  }
- if(!rows.length){const empty=document.createElement("p");empty.textContent="Sin ingresos simulados todavía. Los importes aparecerán aquí al registrar pruebas.";detail.append(empty);}
+ emptyNotice.textContent=rows.length?"":"Sin ingresos simulados todavía. Los importes aparecerán aquí al registrar pruebas.";emptyNotice.hidden=Boolean(rows.length);
  byCurrency.forEach((v,cur)=>{const block=document.createElement("div");block.className="five30-international-currency";const head=document.createElement("strong");head.textContent=cur+" · "+v.count+" operaciones simuladas";block.append(head);[["Ingresos simulados",v.gross],["Saldo creadores (80%)",v.creator],["Comisión 5:30 (20%)",v.platform],["Tarifas de prueba",v.fee]].forEach(([label,value])=>{const line=document.createElement("p");line.textContent=label+": "+format(value,cur);block.append(line);});metrics.append(block);});
  const table=document.createElement("table");table.className="five30-finance-table";const thead=document.createElement("thead");const headerRow=document.createElement("tr");["Fecha","País","Moneda","Ingreso","Creador 80%","5:30 20%"].forEach(v=>{const th=document.createElement("th");th.textContent=v;headerRow.append(th);});thead.append(headerRow);table.append(thead);const tbody=document.createElement("tbody");rows.forEach(x=>{const tr=document.createElement("tr");[new Date(x.created_at).toLocaleDateString("es-CL"),markets.find(m=>m.country_code===x.country_code)?.country_name||x.country_code,x.currency,format(x.gross_minor,x.currency),format(x.creator_minor,x.currency),format(x.platform_minor,x.currency)].forEach(v=>{const td=document.createElement("td");td.textContent=v;tr.append(td);});tbody.append(tr);});table.append(tbody);if(rows.length)history.append(table);
  }
