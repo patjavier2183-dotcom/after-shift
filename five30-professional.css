@@ -330,3 +330,13 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-international-market{display:flex;flex-direction:column;gap:7px;border:1px solid #48443c;border-radius:10px;padding:12px;background:#1d1d1d}
 .five30-international-market strong{color:#e8d6b6;font-size:13px}
 .five30-international-market span{color:#bcb6ad;font-size:12px;line-height:1.5}
+
+.five30-international-markets>.five30-international-market{font:inherit;text-align:left;cursor:pointer;width:100%;color:inherit;transition:border-color .15s ease,background .15s ease}
+.five30-international-markets>.five30-international-market[aria-pressed="true"]{border-color:#d0aa6b;background:#29231a}
+.five30-international-markets>.five30-international-market:focus-visible{outline:2px solid #e4c18b;outline-offset:2px}
+.five30-international-detail{border:1px solid #5a4a35;border-radius:12px;margin:16px 0;padding:13px;min-width:0;overflow:hidden}
+.five30-international-detail h4{font-size:16px;color:#e5d1af;margin:0 0 8px}
+.five30-international-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:9px;margin:12px 0}
+.five30-international-currency{padding:12px;border:1px solid #47423a;border-radius:10px;background:#1d1d1d}
+.five30-international-currency strong{font-size:13px;color:#e7cda5}
+.five30-international-currency p{margin:6px 0;font-size:12px}
