@@ -212,3 +212,11 @@ body.five30-staff-workspace .five30-admin-toolbar .five30-admin-back{display:inl
 body.five30-staff-workspace .five30-admin-toolbar .five30-admin-back[hidden]{display:none!important}
 body.five30-staff-workspace .five30-admin-toolbar strong{font-size:14px}
 body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
+
+/* Multioperator support center overview */
+.five30-support-intro{font-size:13px;text-align:center;opacity:.78;margin:2px 0 12px}
+.five30-support-roles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 17px}
+.five30-support-roles>div{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:12px 4px;background:#0b0a09;border:1px solid rgba(180,136,66,.35);border-radius:13px;min-width:0}
+.five30-support-roles span{font-size:23px;color:#b99252;line-height:1}
+.five30-support-roles strong{font-size:12px;text-align:center;color:#f5f0e8}
+@media(max-width:480px){.five30-support-roles{gap:6px}.five30-support-roles>div{padding:10px 2px}.five30-support-roles strong{font-size:11px}}
