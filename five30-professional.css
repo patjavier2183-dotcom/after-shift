@@ -379,3 +379,11 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-international-panel .five30-finance-real-form{background:#171615;border:1px solid #40382f;border-radius:11px;padding:12px;gap:10px}
 .five30-international-panel .five30-finance-real-form button{background:#25211b!important;border:1px solid #b39468!important;color:#f1d5aa!important;font-size:13px!important;min-height:43px!important}
 @media(max-width:350px){.five30-international-markets>button.five30-international-market{padding:8px!important}.five30-international-markets>button.five30-international-market strong{font-size:11px!important}}
+
+.five30-international-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}
+.five30-international-summary>strong,.five30-international-summary>p{grid-column:1/-1}
+.five30-international-summary>strong{color:#e7d1b4;font-size:14px}
+.five30-international-summary>p{color:#aaa198;font-size:12px;line-height:1.5}
+.five30-international-summary-card{display:flex;flex-direction:column;justify-content:center;gap:8px;min-width:0;padding:12px 10px;background:#211e1b;border:1px solid #484038;border-radius:10px}
+.five30-international-summary-card span{font-size:11px;color:#bcb2a6;line-height:1.3}
+.five30-international-summary-card strong{font-size:13px;color:#f1e6d6;overflow-wrap:break-word;line-height:1.3}
