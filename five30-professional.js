@@ -116,13 +116,19 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const backdrop=document.createElement("div");backdrop.className="five30-help-backdrop";backdrop.hidden=true;backdrop.onclick=()=>toggle(false);document.body.append(launcher,backdrop,panel);
 });
 /* Private review workspace. Supabase RLS and RPC enforce staff rights independently of this UI. */
-document.addEventListener("DOMContentLoaded",async()=>{
+document.addEventListener("DOMContentLoaded",()=>{
+ let initializing=false,initializedFor=null;
+ async function initializeStaffWorkspace(){
+ if(initializing)return;
  const section=document.getElementById("accountSection");
- if(!section||typeof currentUser!=="function")return;
+ if(!section||typeof currentUser!=="function"||typeof supabaseClient==="undefined")return;
+ initializing=true;
+ try{
  const user=await currentUser();
- if(!user)return;
+ if(!user||initializedFor===user.id)return;
  const {data:staff,error:staffError}=await supabaseClient.from("five30_staff").select("staff_role").eq("user_id",user.id).maybeSingle();
  if(staffError||!staff)return;
+ initializedFor=user.id;
  // Staff have a dedicated workspace, not the subscriber storefront.
  document.body.classList.add("five30-staff-workspace");
  const panel=document.createElement("section");
@@ -510,5 +516,8 @@ async function renderSupportInbox(target,userFilter=null){
  filter.onchange=render;
  refresh.onclick=load;
  // Modules open on demand; no public account list is loaded until requested.
-
+ }finally{initializing=false;}
+ }
+ initializeStaffWorkspace();
+ supabaseClient.auth.onAuthStateChange((event)=>{if(event==="SIGNED_IN"||event==="INITIAL_SESSION")setTimeout(initializeStaffWorkspace,0);if(event==="SIGNED_OUT"){initializedFor=null;document.body.classList.remove("five30-staff-workspace");}});
 });
