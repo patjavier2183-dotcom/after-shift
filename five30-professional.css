@@ -399,3 +399,10 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-international-summary>p{grid-column:1/-1!important;font-size:12px!important;line-height:1.55!important;color:#b6aca0!important;margin:3px 0 0!important}
 .five30-international-detail>p:last-child{display:block!important;width:100%!important;box-sizing:border-box!important;line-height:1.5!important;color:#bcb3a9!important}
 .five30-international-currency{width:100%!important;min-width:0!important;box-sizing:border-box!important}
+
+.five30-international-summary>button.five30-international-summary-card{appearance:none!important;text-align:left!important;cursor:pointer!important;font:inherit!important;color:inherit!important}
+.five30-international-summary>button.five30-international-summary-card[aria-expanded="true"]{border-color:#c5a273!important;background:#29231c!important}
+.five30-international-summary>button.five30-international-summary-card:focus-visible{outline:2px solid #d7b78c!important;outline-offset:2px}
+.five30-international-drilldown{grid-column:1/-1!important;min-width:0!important;padding:12px!important;background:#181716!important;border:1px solid #66523c!important;border-radius:10px!important}
+.five30-international-drilldown>strong{color:#e9d0aa!important;font-size:14px!important}
+.five30-international-drilldown .five30-finance-table-scroll{margin-top:10px!important}
