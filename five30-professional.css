@@ -314,3 +314,11 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-expense-summary>.five30-expense-chip:hover{background:#252525}
 .five30-expense-summary>.five30-expense-chip:focus-visible{outline:2px solid #e2bc75;outline-offset:3px}
 .five30-expense-summary>.five30-expense-chip::after{content:"Ver detalle →";font-size:11px;opacity:.8;margin-top:3px}
+
+.five30-finance-real-expenses{margin:22px 0;padding:16px;border:1px solid #474039;border-radius:14px;background:#131313;min-width:0}
+.five30-finance-real-expenses h4{margin:0 0 7px;color:#e5d1af}
+.five30-finance-real-expenses p{font-size:13px;line-height:1.5}
+.five30-finance-real-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:16px 0}
+.five30-finance-real-form label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:#ddd0bf}
+.five30-finance-real-form input,.five30-finance-real-form select{box-sizing:border-box;width:100%;min-width:0;padding:10px;border-radius:8px;border:1px solid #6a6054;background:#201f1e;color:#fff;font:inherit}
+.five30-finance-real-form button{padding:11px;border-radius:9px;background:#283b31;border:1px solid #4a9971;color:#c6f2d8;font-weight:700}
