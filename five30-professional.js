@@ -200,11 +200,25 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const commission=Math.round(gross*.2);
  const balances=payouts.reduce((sum,x)=>sum+x.amount*.8-x.paid,0);
  const withdrawalTotal=withdrawals.reduce((sum,x)=>sum+x.amount,0);
+ const expenseItems=[
+  ["2026-10-02","Infraestructura","Cloudflare","Hosting y distribución",18000,"Pagado","GASTO-DEMO-001"],
+  ["2026-10-03","Infraestructura","Supabase","Base de datos y autenticación",25000,"Pagado","GASTO-DEMO-002"],
+  ["2026-10-04","Almacenamiento","Proveedor de almacenamiento","Fotografías y videos",42000,"Pagado","GASTO-DEMO-003"],
+  ["2026-10-05","Servicios","Correo corporativo","Correos y notificaciones",12000,"Pagado","GASTO-DEMO-004"],
+  ["2026-10-06","Marketing","Campaña digital","Captación de creadores",65000,"Pagado","GASTO-DEMO-005"],
+  ["2026-10-07","Operación","Soporte técnico","Mantenimiento y asistencia",85000,"Pendiente","GASTO-DEMO-006"],
+  ["2026-10-08","Pagos","Procesador de pagos","Comisiones de procesamiento (estimación ficticia)",32000,"Pendiente","GASTO-DEMO-007"],
+  ["2026-10-09","Administración","Servicios contables","Contabilidad y gestión",35000,"Pagado","GASTO-DEMO-008"]
+ ];
+ const expenses=expenseItems.reduce((sum,item)=>sum+item[4],0);
+ const result=commission-expenses;
  const views=[
   {label:"Ingresos verificados",columns:["Fecha","Referencia","Suscriptor","Creador","Concepto","Monto","Estado"],rows:sales.map(x=>[x.date,x.ref,x.subscriber,x.creator,x.concept,currency(x.amount),x.status]),total:gross,description:"Ingresos brutos simulados de 30 movimientos. No representan pagos reales."},
   {label:"Comisión 5:30",columns:["Fecha","Referencia","Creador","Venta bruta","Comisión 5:30 (20%)"],rows:sales.map(x=>[x.date,x.ref,x.creator,currency(x.amount),currency(x.amount*.2)]),total:commission,description:"Una sola comisión del 20% por venta. Es ingreso bruto de la plataforma, no utilidad neta; no se suman comisiones duplicadas."},
   {label:"Saldo de creadores",columns:["Creador","Ventas brutas","Participación 80%","Pagos realizados","Retiros solicitados","Saldo por pagar"],rows:payouts.map(x=>[x.creator,currency(x.amount),currency(x.amount*.8),currency(x.paid),currency(x.withdrawal),currency(x.amount*.8-x.paid)]),total:balances,description:"Saldo total por pagar a creadores. Incluye los retiros solicitados que todavía no se han pagado."},
-  {label:"Retiros pendientes",columns:["Fecha","Creador","Monto solicitado","Método","Estado","Referencia"],rows:withdrawals.map(x=>[x.date,x.creator,currency(x.amount),x.method,x.status,x.ref]),total:withdrawalTotal,description:"Retiros solicitados simulados; ya están incluidos en el saldo de creadores."}
+  {label:"Retiros pendientes",columns:["Fecha","Creador","Monto solicitado","Método","Estado","Referencia"],rows:withdrawals.map(x=>[x.date,x.creator,currency(x.amount),x.method,x.status,x.ref]),total:withdrawalTotal,description:"Retiros solicitados simulados; ya están incluidos en el saldo de creadores."},
+  {label:"Egresos operacionales",columns:["Fecha","Categoría","Proveedor","Descripción","Monto","Estado","Referencia"],rows:expenseItems.map(x=>[x[0],x[1],x[2],x[3],currency(x[4]),x[5],x[6]]),total:expenses,description:"Costos ficticios de operación, incluyendo gastos pagados y pendientes. No incluyen el 80% que pertenece a creadores."},
+  {label:"Resultado operacional",columns:["Concepto","Monto"],rows:[["Comisiones 5:30",currency(commission)],["Egresos operacionales",currency(-expenses)],["Resultado estimado",currency(result)]],total:result,description:"Comisiones menos gastos operacionales de la simulación. Resultado orientativo antes de impuestos y otros ajustes; no es utilidad contable definitiva."}
  ];
  let demo=false,active=-1;
  const labels=views.map(view=>{const card=document.createElement("button");card.type="button";card.className="five30-admin-stat five30-finance-stat";card.setAttribute("aria-pressed","false");const value=document.createElement("strong");value.textContent="—";const name=document.createElement("span");name.textContent=view.label;card.append(value,name);stats.append(card);return {card,value};});
@@ -221,7 +235,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const exportButton=document.createElement("button");exportButton.type="button";exportButton.textContent="Exportar CSV (simulación)";
  function visibleRows(){if(!demo||active<0)return [];return views[active].rows.filter(row=>{const d=row[0];const dateMatch=!/^2026-/.test(d)||((!from.value||d>=from.value)&&(!to.value||d<=to.value));return dateMatch&&row.join(" ").toLowerCase().includes(search.value.trim().toLowerCase());});}
  function drawTable(){if(active<0)return;const view=views[active];detailHeading.textContent=view.label;detailDescription.textContent=demo?view.description:"No hay movimientos reales verificados. Se requiere integración y conciliación con el procesador de pagos.";table.replaceChildren();const thead=document.createElement("thead"),tr=document.createElement("tr");view.columns.forEach(column=>{const th=document.createElement("th");th.textContent=column;tr.append(th);});thead.append(tr);table.append(thead);const tbody=document.createElement("tbody");const rows=visibleRows();rows.forEach(row=>{const tr=document.createElement("tr");row.forEach(value=>{const td=document.createElement("td");td.textContent=value;tr.append(td);});tbody.append(tr);});table.append(tbody);
- const moneyColumns=active===0?[5]:active===1?[3,4]:active===2?[1,2,3,4,5]:[2];
+ const moneyColumns=active===0?[5]:active===1?[3,4]:active===2?[1,2,3,4,5]:active===3?[2]:active===4?[4]:[1];
  const totals=view.columns.map((_,i)=>i===0?"TOTAL":moneyColumns.includes(i)?currency(rows.reduce((sum,row)=>sum+Number(String(row[i]).replace(/[^0-9-]/g,"")),0)):"");
  if(demo&&rows.length){const foot=document.createElement("tfoot"),tr=document.createElement("tr");totals.forEach(value=>{const td=document.createElement("td");td.textContent=value;tr.append(td);});foot.append(tr);table.append(foot);}
  empty.textContent=rows.length?"":"Sin movimientos para mostrar con los filtros seleccionados.";
@@ -229,7 +243,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
  exportButton.disabled=!demo||!rows.length;}
  from.onchange=drawTable;to.onchange=drawTable;search.oninput=drawTable;
  labels.forEach((item,i)=>{item.card.onclick=()=>{active=i;detail.hidden=false;labels.forEach((x,j)=>x.card.setAttribute("aria-pressed",String(i===j)));drawTable();detail.scrollIntoView({behavior:"smooth",block:"start"});};});
- exportButton.onclick=()=>{if(!demo||active<0)return;const current=visibleRows();const cols=views[active].columns;const moneyCols=active===0?[5]:active===1?[3,4,5,6]:active===2?[1,2,3,4,5]:[2];const footer=cols.map((_,i)=>i===0?"TOTAL":moneyCols.includes(i)?currency(current.reduce((sum,row)=>sum+Number(String(row[i]).replace(/[^0-9-]/g,"")),0)):"");const lines=[cols,...current,footer].map(row=>row.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(";"));const blob=new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download="five30-simulacion-"+(active+1)+".csv";link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+ exportButton.onclick=()=>{if(!demo||active<0)return;const current=visibleRows();const cols=views[active].columns;const moneyCols=active===0?[5]:active===1?[3,4,5,6]:active===2?[1,2,3,4,5]:active===3?[2]:active===4?[4]:[1];const footer=cols.map((_,i)=>i===0?"TOTAL":moneyCols.includes(i)?currency(current.reduce((sum,row)=>sum+Number(String(row[i]).replace(/[^0-9-]/g,"")),0)):"");const lines=[cols,...current,footer].map(row=>row.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(";"));const blob=new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download="five30-simulacion-"+(active+1)+".csv";link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
  function renderMode(){notice.textContent=demo?"MODO DEMOSTRACIÓN · 10 creadores ficticios · 30 ingresos simulados. Ninguna cifra corresponde a pagos reales.":"Sin procesador de pagos aprobado ni conciliación conectada. No hay ingresos reales verificados para mostrar.";demoButton.textContent=demo?"Desactivar y borrar simulación":"Activar simulación con 10 creadores";labels.forEach((item,i)=>{item.value.textContent=demo?currency(views[i].total):"—";});if(active>=0)drawTable();}
  demoButton.onclick=()=>{demo=!demo;from.value="";to.value="";search.value="";renderMode();};
  controls.append(demoButton);
