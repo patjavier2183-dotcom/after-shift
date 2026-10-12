@@ -183,7 +183,8 @@ document.addEventListener("DOMContentLoaded",async()=>{
  }
  async function renderSupportInbox(target,userFilter=null){
   target.replaceChildren();
-  const heading=document.createElement("h3");heading.textContent=userFilter?"Consultas de esta cuenta":"Bandeja de atención al cliente";
+  const heading=document.createElement("h3");heading.textContent=userFilter?"Consultas de esta cuenta":"Centro de atención";
+  if(!userFilter){const intro=document.createElement("p");intro.className="five30-support-intro";intro.textContent="Superadministrador 5:30 · Supervisión de casos y equipo";const roles=document.createElement("div");roles.className="five30-support-roles";for(const [symbol,label] of [["♙","Supervisor"],["♧","Operadores"],["▤","Casos"]]){const cell=document.createElement("div");const ico=document.createElement("span");ico.textContent=symbol;const name=document.createElement("strong");name.textContent=label;cell.append(ico,name);roles.append(cell);}target.append(intro,roles);}
   const refresh=document.createElement("button");refresh.type="button";refresh.textContent="Actualizar consultas";
   const results=document.createElement("div");results.setAttribute("aria-live","polite");
   const summary=document.createElement("div");summary.className="five30-admin-stats";
@@ -197,7 +198,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
   target.append(heading,summary,filters,refresh,results);
   function drawTickets(){
    results.replaceChildren();summary.replaceChildren();
-   for(const [label,count] of [["Total",tickets.length],["Pendientes",tickets.filter(t=>t.status==="open").length],["En atención",tickets.filter(t=>t.status==="in_progress").length],["Resueltos",tickets.filter(t=>t.status==="resolved").length]]){
+   for(const [label,count] of [["Total",tickets.length],["Pendientes",tickets.filter(t=>t.status==="open").length],["Operadores",new Set(tickets.map(t=>t.assigned_to).filter(Boolean)).size],["Sin asignar",tickets.filter(t=>!t.assigned_to).length]]){
     const card=document.createElement("div");card.className="five30-admin-stat";
     const number=document.createElement("strong");number.textContent=String(count);
     const name=document.createElement("span");name.textContent=label;card.append(number,name);summary.append(card);
@@ -208,7 +209,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
    for(const t of visible){
     const card=document.createElement("article");card.className="five30-review-item";
     const title=document.createElement("strong");title.textContent=t.subject;
-    const meta=document.createElement("p");meta.textContent=(names[t.status]||t.status)+" · "+(t.assigned_to?"Asignado":"Sin asignar")+" · "+new Date(t.created_at).toLocaleString("es-CL");
+    const meta=document.createElement("p");meta.textContent=(names[t.status]||t.status)+" · "+(t.assigned_to?"Asignado a operador":"Sin asignar")+" · "+new Date(t.created_at).toLocaleString("es-CL");
     const button=document.createElement("button");button.type="button";button.textContent="Abrir conversación →";button.onclick=()=>showTicket(t);
     card.append(title,meta,button);results.append(card);
    }
