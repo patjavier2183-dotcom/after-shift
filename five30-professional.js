@@ -188,11 +188,41 @@ document.addEventListener("DOMContentLoaded",async()=>{
   const intro=document.createElement("p");intro.className="five30-support-intro";intro.textContent="Superadministrador 5:30 · Resumen financiero";
   const notice=document.createElement("p");notice.className="five30-finance-notice";notice.textContent="Sin procesador de pagos aprobado ni conciliación conectada. No hay ingresos reales verificados para mostrar.";
   const stats=document.createElement("div");stats.className="five30-admin-stats";
-  for(const [label,value] of [["Ingresos verificados","—"],["Comisión 5:30","—"],["Saldo de creadores","—"],["Retiros pendientes","—"]]){
-   const cell=document.createElement("div");cell.className="five30-admin-stat";
-   const amount=document.createElement("strong");amount.textContent=value;
-   const name=document.createElement("span");name.textContent=label;
-   cell.append(amount,name);stats.append(cell);
+  const detail=document.createElement("section");detail.className="five30-finance-detail";detail.hidden=true;
+  const financialViews=[
+   {label:"Ingresos verificados",columns:["Fecha","Referencia","Suscriptor","Creador","Concepto","Monto","Estado"],description:"Pagos confirmados y conciliados. El total corresponde a ingresos brutos antes de comisiones, costos y devoluciones."},
+   {label:"Comisión 5:30",columns:["Fecha","Referencia","Creador","Venta bruta","Comisión plataforma","Ajustes","Comisión neta"],description:"Comisiones generadas por operaciones confirmadas. No equivalen necesariamente a utilidad neta: faltan costos, impuestos y ajustes."},
+   {label:"Saldo de creadores",columns:["Creador","Ventas netas","Participación creador","Pagos realizados","Saldo retenido","Saldo disponible"],description:"Importes que pertenecen a creadores y aún no se han liquidado. Los retiros pendientes forman parte de este saldo."},
+   {label:"Retiros pendientes",columns:["Fecha solicitud","Creador","Monto solicitado","Método","Estado","Referencia"],description:"Solicitudes de retiro aún no pagadas. No son ingresos adicionales de la plataforma."}
+  ];
+  const detailHeading=document.createElement("h4");
+  const detailDescription=document.createElement("p");
+  const tableScroll=document.createElement("div");tableScroll.className="five30-finance-table-scroll";
+  const table=document.createElement("table");table.className="five30-finance-table";
+  const close=document.createElement("button");close.type="button";close.textContent="← Volver al resumen";
+  close.onclick=()=>{detail.hidden=true;for(const card of stats.children)card.setAttribute("aria-pressed","false");};
+  const empty=document.createElement("p");empty.className="five30-finance-empty";empty.textContent="Sin movimientos verificados. La tabla se completará cuando exista una integración de pagos y conciliación aprobada.";
+  const filters=document.createElement("div");filters.className="five30-finance-filters";
+  const from=document.createElement("input");from.type="date";from.setAttribute("aria-label","Fecha desde");
+  const to=document.createElement("input");to.type="date";to.setAttribute("aria-label","Fecha hasta");
+  const search=document.createElement("input");search.type="search";search.placeholder="Buscar en movimientos";search.setAttribute("aria-label","Buscar en movimientos");
+  filters.append(from,to,search);
+  const exportButton=document.createElement("button");exportButton.type="button";exportButton.textContent="Exportar CSV";
+  exportButton.onclick=()=>{const header=[...table.querySelectorAll("th")].map(th=>'"'+th.textContent.replaceAll('"','""')+'"').join(",");const blob=new Blob(["\\uFEFF"+header+"\\r\\n"],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download="five30-finanzas-sin-movimientos.csv";link.click();URL.revokeObjectURL(url);};
+  detail.append(close,detailHeading,detailDescription,filters,tableScroll,empty,exportButton);
+  for(const view of financialViews){
+   const cell=document.createElement("button");cell.type="button";cell.className="five30-admin-stat five30-finance-stat";cell.setAttribute("aria-pressed","false");
+   const amount=document.createElement("strong");amount.textContent="—";
+   const name=document.createElement("span");name.textContent=view.label;
+   cell.append(amount,name);
+   cell.onclick=()=>{
+    for(const other of stats.children)other.setAttribute("aria-pressed",String(other===cell));
+    detail.hidden=false;detailHeading.textContent=view.label;detailDescription.textContent=view.description;
+    table.replaceChildren();const head=document.createElement("thead");const tr=document.createElement("tr");
+    for(const column of view.columns){const th=document.createElement("th");th.textContent=column;tr.append(th);}head.append(tr);table.append(head);
+    tableScroll.replaceChildren(table);detail.scrollIntoView({behavior:"smooth",block:"start"});
+   };
+   stats.append(cell);
   }
   const sections=document.createElement("div");sections.className="five30-finance-sections";
   for(const [title,description] of [
@@ -208,7 +238,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
    const state=document.createElement("small");state.textContent="Pendiente de integración de movimientos reales";
    item.append(h,p,state);sections.append(item);
   }
-  target.append(heading,intro,notice,stats,sections);
+  target.append(heading,intro,notice,stats,detail,sections);
  }
  async function renderSupportInbox(target,userFilter=null){
   target.replaceChildren();
