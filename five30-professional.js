@@ -191,6 +191,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const demoButton=document.createElement("button");demoButton.type="button";demoButton.textContent="Activar simulación con 10 creadores";
  const stats=document.createElement("div");stats.className="five30-admin-stats";
  const detail=document.createElement("section");detail.className="five30-finance-detail";detail.hidden=true;
+ const alert=document.createElement("p");alert.className="five30-finance-alert";alert.hidden=true;alert.setAttribute("role","status");
  const creators=["Paulina","Francisco","Cristian","Valentina","Camila","Martín","Antonia","Daniel","Catalina","Ignacio"];
  const sales=creators.flatMap((creator,i)=>Array.from({length:3},(_,j)=>({date:"2026-10-"+String(1+i+j).padStart(2,"0"),ref:"DEMO-"+String(i*3+j+1).padStart(4,"0"),subscriber:"Suscriptor demo "+String(i*3+j+1).padStart(2,"0"),creator,concept:j===2?"Compra individual":"Suscripción",amount:(i+3)*5000+(j+1)*2500,status:"Simulado"})));
  const payouts=creators.map((creator,i)=>({creator,amount:sales.filter(x=>x.creator===creator).reduce((sum,x)=>sum+x.amount,0),paid:i%3===0?20000:0,withdrawal:i%2===0?15000:0}));
@@ -244,11 +245,11 @@ document.addEventListener("DOMContentLoaded",async()=>{
  from.onchange=drawTable;to.onchange=drawTable;search.oninput=drawTable;
  labels.forEach((item,i)=>{item.card.onclick=()=>{active=i;detail.hidden=false;labels.forEach((x,j)=>x.card.setAttribute("aria-pressed",String(i===j)));drawTable();detail.scrollIntoView({behavior:"smooth",block:"start"});};});
  exportButton.onclick=()=>{if(!demo||active<0)return;const current=visibleRows();const cols=views[active].columns;const moneyCols=active===0?[5]:active===1?[3,4,5,6]:active===2?[1,2,3,4,5]:active===3?[2]:active===4?[4]:[1];const footer=cols.map((_,i)=>i===0?"TOTAL":moneyCols.includes(i)?currency(current.reduce((sum,row)=>sum+Number(String(row[i]).replace(/[^0-9-]/g,"")),0)):"");const lines=[cols,...current,footer].map(row=>row.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(";"));const blob=new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download="five30-simulacion-"+(active+1)+".csv";link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
- function renderMode(){notice.textContent=demo?"MODO DEMOSTRACIÓN · 10 creadores ficticios · 30 ingresos simulados. Ninguna cifra corresponde a pagos reales.":"Sin procesador de pagos aprobado ni conciliación conectada. No hay ingresos reales verificados para mostrar.";demoButton.textContent=demo?"Desactivar y borrar simulación":"Activar simulación con 10 creadores";labels.forEach((item,i)=>{item.value.textContent=demo?currency(views[i].total):"—";});if(active>=0)drawTable();}
+ function renderMode(){notice.textContent=demo?"MODO DEMOSTRACIÓN · 10 creadores ficticios · 30 ingresos simulados. Ninguna cifra corresponde a pagos reales.":"Sin procesador de pagos aprobado ni conciliación conectada. No hay ingresos reales verificados para mostrar.";demoButton.textContent=demo?"Desactivar y borrar simulación":"Activar simulación con 10 creadores";labels.forEach((item,i)=>{item.value.textContent=demo?currency(views[i].total):"—";item.card.dataset.financeStatus=!demo?"neutral":i===5?(result<0?"danger":"success"):i===3?"warning":i===4?"danger":i===2?"warning":"success";});alert.hidden=!demo;alert.className="five30-finance-alert "+(result<0?"five30-finance-alert-danger":"five30-finance-alert-success");alert.textContent=demo?(result<0?"● ALERTA ROJA · Pérdida operacional simulada de "+currency(Math.abs(result))+". Ventas brutas necesarias para cubrir gastos: "+currency(Math.ceil(expenses/.2))+".":"● RESULTADO POSITIVO · Excedente operacional simulado de "+currency(result)+"."):"";if(active>=0)drawTable();}
  demoButton.onclick=()=>{demo=!demo;from.value="";to.value="";search.value="";renderMode();};
  controls.append(demoButton);
  detail.append(close,detailHeading,detailDescription,totalLine,filters,scroll,empty,exportButton);
- target.append(heading,intro,notice,controls,stats,detail);
+ target.append(heading,intro,notice,controls,alert,stats,detail);
  renderMode();
 }
 async function renderSupportInbox(target,userFilter=null){
