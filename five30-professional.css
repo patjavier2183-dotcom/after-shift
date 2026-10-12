@@ -406,3 +406,6 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-international-drilldown{grid-column:1/-1!important;min-width:0!important;padding:12px!important;background:#181716!important;border:1px solid #66523c!important;border-radius:10px!important}
 .five30-international-drilldown>strong{color:#e9d0aa!important;font-size:14px!important}
 .five30-international-drilldown .five30-finance-table-scroll{margin-top:10px!important}
+
+.five30-international-panel .five30-finance-real-form button[type="button"]{grid-column:1/-1!important;background:#1d2725!important;color:#b7e2d2!important;border:1px solid #4e8175!important;min-height:44px!important}
+.five30-international-panel .five30-finance-real-form button:disabled{opacity:.55!important;cursor:wait!important}
