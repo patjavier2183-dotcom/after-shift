@@ -309,3 +309,8 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-finance-table tfoot.five30-result-negative td,.five30-finance-table tfoot.five30-result-negative td:last-child{color:#ff7777!important;background:#2a1115!important;border-top-color:#d85858!important}
 .five30-finance-table tfoot.five30-result-positive td,.five30-finance-table tfoot.five30-result-positive td:last-child{color:#8cdeb0!important;background:#10261b!important;border-top-color:#329e71!important}
 .five30-finance-stats>.five30-finance-stat[data-finance-status="danger"] strong{color:#ff8585!important}
+
+.five30-expense-summary>.five30-expense-chip{font:inherit;text-align:left;cursor:pointer;width:100%;transition:background .15s ease,transform .15s ease}
+.five30-expense-summary>.five30-expense-chip:hover{background:#252525}
+.five30-expense-summary>.five30-expense-chip:focus-visible{outline:2px solid #e2bc75;outline-offset:3px}
+.five30-expense-summary>.five30-expense-chip::after{content:"Ver detalle →";font-size:11px;opacity:.8;margin-top:3px}
