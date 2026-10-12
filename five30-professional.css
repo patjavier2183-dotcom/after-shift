@@ -230,3 +230,8 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-support-team-detail h4{margin:0 0 10px}
 .five30-support-team-detail p{line-height:1.5;color:#bcb4a8}
 @media(max-width:480px){.five30-support-roles>.five30-support-role-button{padding:10px 2px}.five30-support-roles>.five30-support-role-button strong{font-size:11px}}
+
+/* Case counters are the filters; no duplicate filter row. */
+.five30-admin-stats .five30-support-stat-button{cursor:pointer;font-family:inherit;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}
+.five30-admin-stats .five30-support-stat-button[aria-pressed="true"]{border-color:#c3974b;background:#291c0c}
+.five30-admin-stats .five30-support-stat-button:focus-visible{outline:2px solid #d6aa62;outline-offset:2px}
