@@ -208,7 +208,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
    for(const t of visible){
     const card=document.createElement("article");card.className="five30-review-item";
     const title=document.createElement("strong");title.textContent=t.subject;
-    const meta=document.createElement("p");meta.textContent=(names[t.status]||t.status)+" · "+new Date(t.created_at).toLocaleString("es-CL");
+    const meta=document.createElement("p");meta.textContent=(names[t.status]||t.status)+" · "+(t.assigned_to?"Asignado":"Sin asignar")+" · "+new Date(t.created_at).toLocaleString("es-CL");
     const button=document.createElement("button");button.type="button";button.textContent="Abrir conversación →";button.onclick=()=>showTicket(t);
     card.append(title,meta,button);results.append(card);
    }
@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
   }
   async function loadTickets(){
    results.textContent="Cargando consultas…";
-   let query=supabaseClient.from("five30_support_tickets").select("id,user_id,category,subject,status,created_at").order("created_at",{ascending:false}).limit(100);if(userFilter)query=query.eq("user_id",userFilter);
+   let query=supabaseClient.from("five30_support_tickets").select("id,user_id,category,subject,status,assigned_to,created_at").order("created_at",{ascending:false}).limit(100);if(userFilter)query=query.eq("user_id",userFilter);
    const {data,error}=await query;
    if(error){results.textContent="No se pudieron consultar los casos. Verifica tu acceso de seguridad.";return;}
    tickets=data||[];drawTickets();
