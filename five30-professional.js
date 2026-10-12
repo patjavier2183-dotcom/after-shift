@@ -189,7 +189,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const notice=document.createElement("p");notice.className="five30-finance-notice";
  const controls=document.createElement("div");controls.className="five30-finance-demo-controls";
  const demoButton=document.createElement("button");demoButton.type="button";demoButton.textContent="Activar simulación con 10 creadores";
- const stats=document.createElement("div");stats.className="five30-admin-stats";
+ const stats=document.createElement("div");stats.className="five30-admin-stats five30-finance-stats";
  const detail=document.createElement("section");detail.className="five30-finance-detail";detail.hidden=true;const expenseSummary=document.createElement("div");expenseSummary.className="five30-expense-summary";expenseSummary.hidden=true;
  const alert=document.createElement("p");alert.className="five30-finance-alert";alert.hidden=true;alert.setAttribute("role","status");
  const creators=["Paulina","Francisco","Cristian","Valentina","Camila","Martín","Antonia","Daniel","Catalina","Ignacio"];
@@ -233,14 +233,14 @@ document.addEventListener("DOMContentLoaded",async()=>{
  const from=document.createElement("input");from.type="date";from.setAttribute("aria-label","Fecha desde");
  const to=document.createElement("input");to.type="date";to.setAttribute("aria-label","Fecha hasta");
  const search=document.createElement("input");search.type="search";search.placeholder="Buscar en la tabla";search.setAttribute("aria-label","Buscar en la tabla");
- filters.append(from,to,search);
+ const fromLabel=document.createElement("label");fromLabel.textContent="Fecha desde";fromLabel.append(from);const toLabel=document.createElement("label");toLabel.textContent="Fecha hasta";toLabel.append(to);filters.append(fromLabel,toLabel,search);
  const scroll=document.createElement("div");scroll.className="five30-finance-table-scroll";
  const table=document.createElement("table");table.className="five30-finance-table";scroll.append(table);
  const empty=document.createElement("p");empty.className="five30-finance-empty";
  const exportButton=document.createElement("button");exportButton.type="button";exportButton.textContent="Exportar CSV (simulación)";
  function visibleRows(){if(!demo||active<0)return [];return views[active].rows.filter(row=>{const d=row[0];const dateMatch=!/^2026-/.test(d)||((!from.value||d>=from.value)&&(!to.value||d<=to.value));return dateMatch&&row.join(" ").toLowerCase().includes(search.value.trim().toLowerCase());});}
  function drawTable(){if(active<0)return;const view=views[active];detailHeading.textContent=view.label;detailDescription.textContent=demo?view.description:"No hay movimientos reales verificados. Se requiere integración y conciliación con el procesador de pagos.";table.replaceChildren();const thead=document.createElement("thead"),tr=document.createElement("tr");view.columns.forEach(column=>{const th=document.createElement("th");th.textContent=column;tr.append(th);});thead.append(tr);table.append(thead);const tbody=document.createElement("tbody");const rows=visibleRows();rows.forEach(row=>{const tr=document.createElement("tr");row.forEach(value=>{const td=document.createElement("td");td.textContent=value;tr.append(td);});tbody.append(tr);});table.append(tbody);
- const moneyColumns=active===0?[5]:active===1?[3,4]:active===2?[1,2,3,4,5]:active===3?[2]:active===4?[4]:[];
+ const moneyColumns=active===0?[5]:active===1?[3,4]:active===2?[1,2,3,4,5]:active===3?[2]:active===4?[4]:[1];
  const totals=view.columns.map((_,i)=>i===0?"TOTAL":moneyColumns.includes(i)?currency(rows.reduce((sum,row)=>sum+Number(String(row[i]).replace(/[^0-9-]/g,"")),0)):"");
  if(demo&&rows.length){const foot=document.createElement("tfoot"),tr=document.createElement("tr");totals.forEach(value=>{const td=document.createElement("td");td.textContent=value;tr.append(td);});foot.append(tr);table.append(foot);}
  empty.textContent=rows.length?"":"Sin movimientos para mostrar con los filtros seleccionados.";
