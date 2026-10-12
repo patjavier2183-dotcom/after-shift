@@ -258,3 +258,8 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-finance-table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:13px}
 .five30-finance-table th{padding:12px;text-align:left;color:#e2c38f;background:#231b15;border-right:1px solid #53422e}
 .five30-finance-empty{font-size:13px;color:#b5a899}
+
+.five30-finance-demo-controls{display:flex;gap:10px;margin:12px 0 16px;flex-wrap:wrap}
+.five30-finance-demo-controls button{border:1px solid #b08b54;border-radius:10px;padding:11px 15px;background:#211911;color:#e8c78f;font-weight:600}
+.five30-finance-table td{padding:10px 12px;border-top:1px solid rgba(170,130,80,.2);white-space:nowrap}
+.five30-finance-table tbody tr:nth-child(even){background:rgba(255,255,255,.04)}
