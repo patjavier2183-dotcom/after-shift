@@ -183,50 +183,55 @@ document.addEventListener("DOMContentLoaded",async()=>{
   }
  }
  function renderFinanceOverview(target){
-  target.replaceChildren();
-  const heading=document.createElement("h3");heading.textContent="Centro financiero";
-  const intro=document.createElement("p");intro.className="five30-support-intro";intro.textContent="Superadministrador 5:30 · Resumen financiero";
-  const notice=document.createElement("p");notice.className="five30-finance-notice";notice.textContent="Sin procesador de pagos aprobado ni conciliación conectada. No hay ingresos reales verificados para mostrar.";
-  const stats=document.createElement("div");stats.className="five30-admin-stats";
-  const detail=document.createElement("section");detail.className="five30-finance-detail";detail.hidden=true;
-  const financialViews=[
-   {label:"Ingresos verificados",columns:["Fecha","Referencia","Suscriptor","Creador","Concepto","Monto","Estado"],description:"Pagos confirmados y conciliados. El total corresponde a ingresos brutos antes de comisiones, costos y devoluciones."},
-   {label:"Comisión 5:30",columns:["Fecha","Referencia","Creador","Venta bruta","Comisión plataforma","Ajustes","Comisión neta"],description:"Comisiones generadas por operaciones confirmadas. No equivalen necesariamente a utilidad neta: faltan costos, impuestos y ajustes."},
-   {label:"Saldo de creadores",columns:["Creador","Ventas netas","Participación creador","Pagos realizados","Saldo retenido","Saldo disponible"],description:"Importes que pertenecen a creadores y aún no se han liquidado. Los retiros pendientes forman parte de este saldo."},
-   {label:"Retiros pendientes",columns:["Fecha solicitud","Creador","Monto solicitado","Método","Estado","Referencia"],description:"Solicitudes de retiro aún no pagadas. No son ingresos adicionales de la plataforma."}
-  ];
-  const detailHeading=document.createElement("h4");
-  const detailDescription=document.createElement("p");
-  const tableScroll=document.createElement("div");tableScroll.className="five30-finance-table-scroll";
-  const table=document.createElement("table");table.className="five30-finance-table";
-  const close=document.createElement("button");close.type="button";close.textContent="← Volver al resumen";
-  close.onclick=()=>{detail.hidden=true;for(const card of stats.children)card.setAttribute("aria-pressed","false");};
-  const empty=document.createElement("p");empty.className="five30-finance-empty";empty.textContent="Sin movimientos verificados. La tabla se completará cuando exista una integración de pagos y conciliación aprobada.";
-  const filters=document.createElement("div");filters.className="five30-finance-filters";
-  const from=document.createElement("input");from.type="date";from.setAttribute("aria-label","Fecha desde");
-  const to=document.createElement("input");to.type="date";to.setAttribute("aria-label","Fecha hasta");
-  const search=document.createElement("input");search.type="search";search.placeholder="Buscar en movimientos";search.setAttribute("aria-label","Buscar en movimientos");
-  filters.append(from,to,search);
-  const exportButton=document.createElement("button");exportButton.type="button";exportButton.textContent="Exportar CSV";
-  exportButton.onclick=()=>{const header=[...table.querySelectorAll("th")].map(th=>'"'+th.textContent.replaceAll('"','""')+'"').join(",");const blob=new Blob(["\\uFEFF"+header+"\\r\\n"],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download="five30-finanzas-sin-movimientos.csv";link.click();URL.revokeObjectURL(url);};
-  detail.append(close,detailHeading,detailDescription,filters,tableScroll,empty,exportButton);
-  for(const view of financialViews){
-   const cell=document.createElement("button");cell.type="button";cell.className="five30-admin-stat five30-finance-stat";cell.setAttribute("aria-pressed","false");
-   const amount=document.createElement("strong");amount.textContent="—";
-   const name=document.createElement("span");name.textContent=view.label;
-   cell.append(amount,name);
-   cell.onclick=()=>{
-    for(const other of stats.children)other.setAttribute("aria-pressed",String(other===cell));
-    detail.hidden=false;detailHeading.textContent=view.label;detailDescription.textContent=view.description;
-    table.replaceChildren();const head=document.createElement("thead");const tr=document.createElement("tr");
-    for(const column of view.columns){const th=document.createElement("th");th.textContent=column;tr.append(th);}head.append(tr);table.append(head);
-    tableScroll.replaceChildren(table);detail.scrollIntoView({behavior:"smooth",block:"start"});
-   };
-   stats.append(cell);
-  }
-  target.append(heading,intro,notice,stats,detail);
- }
- async function renderSupportInbox(target,userFilter=null){
+ target.replaceChildren();
+ const heading=document.createElement("h3");heading.textContent="Centro financiero";
+ const intro=document.createElement("p");intro.className="five30-support-intro";intro.textContent="Superadministrador 5:30 · Resumen financiero";
+ const notice=document.createElement("p");notice.className="five30-finance-notice";
+ const controls=document.createElement("div");controls.className="five30-finance-demo-controls";
+ const demoButton=document.createElement("button");demoButton.type="button";demoButton.textContent="Activar simulación con 10 creadores";
+ const stats=document.createElement("div");stats.className="five30-admin-stats";
+ const detail=document.createElement("section");detail.className="five30-finance-detail";detail.hidden=true;
+ const creators=["Paulina","Francisco","Cristian","Valentina","Camila","Martín","Antonia","Daniel","Catalina","Ignacio"];
+ const sales=creators.flatMap((creator,i)=>Array.from({length:3},(_,j)=>({date:"2026-10-"+String(1+i+j).padStart(2,"0"),ref:"DEMO-"+String(i*3+j+1).padStart(4,"0"),subscriber:"Suscriptor demo "+String(i*3+j+1).padStart(2,"0"),creator,concept:j===2?"Compra individual":"Suscripción",amount:(i+3)*5000+(j+1)*2500,status:"Simulado"})));
+ const payouts=creators.map((creator,i)=>({creator,amount:sales.filter(x=>x.creator===creator).reduce((sum,x)=>sum+x.amount,0),paid:i%3===0?20000:0,withdrawal:i%2===0?15000:0}));
+ const withdrawals=payouts.filter(x=>x.withdrawal>0).map((x,i)=>({date:"2026-10-"+String(i+10).padStart(2,"0"),creator:x.creator,amount:x.withdrawal,method:"Transferencia (demo)",status:"Pendiente (demo)",ref:"RETIRO-DEMO-"+String(i+1).padStart(3,"0")}));
+ const currency=n=>new Intl.NumberFormat("es-CL",{style:"currency",currency:"CLP",maximumFractionDigits:0}).format(n);
+ const gross=sales.reduce((sum,x)=>sum+x.amount,0);
+ const commission=Math.round(gross*.2);
+ const balances=payouts.reduce((sum,x)=>sum+x.amount*.8-x.paid,0);
+ const withdrawalTotal=withdrawals.reduce((sum,x)=>sum+x.amount,0);
+ const views=[
+  {label:"Ingresos verificados",columns:["Fecha","Referencia","Suscriptor","Creador","Concepto","Monto","Estado"],rows:sales.map(x=>[x.date,x.ref,x.subscriber,x.creator,x.concept,currency(x.amount),x.status]),total:gross,description:"Ingresos brutos simulados de 30 movimientos. No representan pagos reales."},
+  {label:"Comisión 5:30",columns:["Fecha","Referencia","Creador","Venta bruta","Comisión 20%","Ajustes","Comisión neta"],rows:sales.map(x=>[x.date,x.ref,x.creator,currency(x.amount),currency(x.amount*.2),currency(0),currency(x.amount*.2)]),total:commission,description:"Comisión simulada del 20%, antes de costos del procesador, impuestos y otros gastos."},
+  {label:"Saldo de creadores",columns:["Creador","Ventas brutas","Participación 80%","Pagos realizados","Retiros solicitados","Saldo por pagar"],rows:payouts.map(x=>[x.creator,currency(x.amount),currency(x.amount*.8),currency(x.paid),currency(x.withdrawal),currency(x.amount*.8-x.paid)]),total:balances,description:"Saldo total por pagar a creadores. Incluye los retiros solicitados que todavía no se han pagado."},
+  {label:"Retiros pendientes",columns:["Fecha","Creador","Monto solicitado","Método","Estado","Referencia"],rows:withdrawals.map(x=>[x.date,x.creator,currency(x.amount),x.method,x.status,x.ref]),total:withdrawalTotal,description:"Retiros solicitados simulados; ya están incluidos en el saldo de creadores."}
+ ];
+ let demo=false,active=-1;
+ const labels=views.map(view=>{const card=document.createElement("button");card.type="button";card.className="five30-admin-stat five30-finance-stat";card.setAttribute("aria-pressed","false");const value=document.createElement("strong");value.textContent="—";const name=document.createElement("span");name.textContent=view.label;card.append(value,name);stats.append(card);return {card,value};});
+ const close=document.createElement("button");close.type="button";close.textContent="← Volver al resumen";close.onclick=()=>{detail.hidden=true;active=-1;labels.forEach(x=>x.card.setAttribute("aria-pressed","false"));};
+ const detailHeading=document.createElement("h4"),detailDescription=document.createElement("p"),totalLine=document.createElement("p");
+ const filters=document.createElement("div");filters.className="five30-finance-filters";
+ const from=document.createElement("input");from.type="date";from.setAttribute("aria-label","Fecha desde");
+ const to=document.createElement("input");to.type="date";to.setAttribute("aria-label","Fecha hasta");
+ const search=document.createElement("input");search.type="search";search.placeholder="Buscar en la tabla";search.setAttribute("aria-label","Buscar en la tabla");
+ filters.append(from,to,search);
+ const scroll=document.createElement("div");scroll.className="five30-finance-table-scroll";
+ const table=document.createElement("table");table.className="five30-finance-table";scroll.append(table);
+ const empty=document.createElement("p");empty.className="five30-finance-empty";
+ const exportButton=document.createElement("button");exportButton.type="button";exportButton.textContent="Exportar CSV (simulación)";
+ function visibleRows(){if(!demo||active<0)return [];return views[active].rows.filter(row=>{const d=row[0];const dateMatch=!/^2026-/.test(d)||((!from.value||d>=from.value)&&(!to.value||d<=to.value));return dateMatch&&row.join(" ").toLowerCase().includes(search.value.trim().toLowerCase());});}
+ function drawTable(){if(active<0)return;const view=views[active];detailHeading.textContent=view.label;detailDescription.textContent=demo?view.description:"No hay movimientos reales verificados. Se requiere integración y conciliación con el procesador de pagos.";table.replaceChildren();const thead=document.createElement("thead"),tr=document.createElement("tr");view.columns.forEach(column=>{const th=document.createElement("th");th.textContent=column;tr.append(th);});thead.append(tr);table.append(thead);const tbody=document.createElement("tbody");const rows=visibleRows();rows.forEach(row=>{const tr=document.createElement("tr");row.forEach(value=>{const td=document.createElement("td");td.textContent=value;tr.append(td);});tbody.append(tr);});table.append(tbody);empty.textContent=rows.length?"":"Sin movimientos para mostrar con los filtros seleccionados.";totalLine.textContent=demo?"Total general simulado (sin filtros): "+currency(view.total):"Total real: no disponible";exportButton.disabled=!demo||!rows.length;}
+ from.onchange=drawTable;to.onchange=drawTable;search.oninput=drawTable;
+ labels.forEach((item,i)=>{item.card.onclick=()=>{active=i;detail.hidden=false;labels.forEach((x,j)=>x.card.setAttribute("aria-pressed",String(i===j)));drawTable();detail.scrollIntoView({behavior:"smooth",block:"start"});};});
+ exportButton.onclick=()=>{if(!demo||active<0)return;const lines=[views[active].columns,...visibleRows()].map(row=>row.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(";"));const blob=new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download="five30-simulacion-"+(active+1)+".csv";link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+ function renderMode(){notice.textContent=demo?"MODO DEMOSTRACIÓN · 10 creadores ficticios · 30 ingresos simulados. Ninguna cifra corresponde a pagos reales.":"Sin procesador de pagos aprobado ni conciliación conectada. No hay ingresos reales verificados para mostrar.";demoButton.textContent=demo?"Desactivar y borrar simulación":"Activar simulación con 10 creadores";labels.forEach((item,i)=>{item.value.textContent=demo?currency(views[i].total):"—";});if(active>=0)drawTable();}
+ demoButton.onclick=()=>{demo=!demo;from.value="";to.value="";search.value="";renderMode();};
+ controls.append(demoButton);
+ detail.append(close,detailHeading,detailDescription,totalLine,filters,scroll,empty,exportButton);
+ target.append(heading,intro,notice,controls,stats,detail);
+ renderMode();
+}
+async function renderSupportInbox(target,userFilter=null){
   target.replaceChildren();
   const heading=document.createElement("h3");heading.textContent=userFilter?"Consultas de esta cuenta":"Centro de atención";
   if(!userFilter){const intro=document.createElement("p");intro.className="five30-support-intro";intro.textContent="Superadministrador 5:30 · Supervisión de casos y equipo";const roles=document.createElement("div");roles.className="five30-support-roles";const detail=document.createElement("div");detail.className="five30-support-team-detail";detail.hidden=true;for(const [symbol,label] of [["♙","Supervisores"],["♧","Operadores"],["▤","Casos"]]){const cell=document.createElement("button");cell.type="button";cell.className="five30-support-role-button";const ico=document.createElement("span");ico.textContent=symbol;const name=document.createElement("strong");name.textContent=label;cell.append(ico,name);cell.onclick=async()=>{for(const other of roles.children)other.setAttribute("aria-pressed",String(other===cell));if(label==="Casos"){detail.hidden=true;heading.hidden=false;summary.hidden=false;refresh.hidden=false;results.hidden=false;activeFilter="all";drawTickets();return;}heading.hidden=true;summary.hidden=true;refresh.hidden=true;results.hidden=true;detail.hidden=false;detail.replaceChildren();const h=document.createElement("h4");h.textContent=label;const p=document.createElement("p");p.textContent="Consultando personal autorizado…";const back=document.createElement("button");back.type="button";back.textContent="← Volver a casos";back.onclick=()=>roles.lastElementChild.click();detail.append(h,p,back);const {data,error}=await supabaseClient.rpc("five30_support_staff_directory");if(detail.hidden)return;if(error){p.textContent="No se pudo consultar el personal. Comprueba la verificación de seguridad.";return;}const desired=label==="Supervisores"?"supervisor":"operator";const staff=(data||[]).filter(person=>person.staff_role===desired);p.textContent=staff.length?staff.length+" "+(staff.length===1?"persona registrada":"personas registradas"):"No hay "+label.toLowerCase()+" registrados todavía.";for(const person of staff){const item=document.createElement("div");item.className="five30-support-staff-item";const name=document.createElement("strong");name.textContent=person.email||"Cuenta sin correo";const count=document.createElement("span");const assigned=tickets.filter(ticket=>ticket.assigned_to===person.user_id);count.textContent=label==="Operadores"?assigned.length+" casos asignados · "+assigned.filter(ticket=>ticket.status!=="resolved").length+" activos":"Supervisor registrado";item.append(name,count);detail.insertBefore(item,back);}};roles.append(cell);}target.append(intro,roles,detail);}
