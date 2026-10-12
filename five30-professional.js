@@ -179,7 +179,36 @@ document.addEventListener("DOMContentLoaded",async()=>{
    message.textContent=key==="finance"?"Los movimientos reales estarán disponibles cuando integremos el procesador de pagos y su conciliación.":key==="security"?"La verificación en dos pasos está activa. El historial y la gestión de permisos aún están en desarrollo.":"El sistema de consultas y reclamos está en desarrollo. No hay una bandeja de tickets conectada todavía.";
    moduleArea.append(heading,message);
    if(key==="support")renderSupportInbox(moduleArea);
+   if(key==="finance")renderFinanceOverview(moduleArea);
   }
+ }
+ function renderFinanceOverview(target){
+  target.replaceChildren();
+  const heading=document.createElement("h3");heading.textContent="Centro financiero";
+  const intro=document.createElement("p");intro.className="five30-support-intro";intro.textContent="Superadministrador 5:30 · Resumen financiero";
+  const notice=document.createElement("p");notice.className="five30-finance-notice";notice.textContent="Sin procesador de pagos aprobado ni conciliación conectada. No hay ingresos reales verificados para mostrar.";
+  const stats=document.createElement("div");stats.className="five30-admin-stats";
+  for(const [label,value] of [["Ingresos verificados","—"],["Comisión 5:30","—"],["Saldo de creadores","—"],["Retiros pendientes","—"]]){
+   const cell=document.createElement("div");cell.className="five30-admin-stat";
+   const amount=document.createElement("strong");amount.textContent=value;
+   const name=document.createElement("span");name.textContent=label;
+   cell.append(amount,name);stats.append(cell);
+  }
+  const sections=document.createElement("div");sections.className="five30-finance-sections";
+  for(const [title,description] of [
+   ["Cobros y suscripciones","Registro de pagos confirmados, renovaciones y compras individuales."],
+   ["Comisiones","Separación prevista: 20% plataforma y 80% creador, sujeta a las condiciones comerciales y costos aprobados."],
+   ["Saldos y liquidaciones","Importes disponibles, pendientes y pagos a creadores; sin cifras hasta verificar movimientos."],
+   ["Retiros y devoluciones","Solicitudes, reembolsos, contracargos y trazabilidad."],
+   ["Informes y conciliación","Resumen por período y comparación de transacciones con el proveedor de pagos."]
+  ]){
+   const item=document.createElement("section");item.className="five30-finance-item";
+   const h=document.createElement("h4");h.textContent=title;
+   const p=document.createElement("p");p.textContent=description;
+   const state=document.createElement("small");state.textContent="Pendiente de integración de movimientos reales";
+   item.append(h,p,state);sections.append(item);
+  }
+  target.append(heading,intro,notice,stats,sections);
  }
  async function renderSupportInbox(target,userFilter=null){
   target.replaceChildren();
