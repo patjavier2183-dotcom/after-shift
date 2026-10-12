@@ -246,3 +246,15 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-finance-item h4{margin:0 0 8px;color:#cba263;font-size:17px}
 .five30-finance-item p{margin:0 0 8px;line-height:1.45}
 .five30-finance-item small{color:#a99a87}
+
+.five30-finance-stat{cursor:pointer;min-width:0;overflow-wrap:anywhere}
+.five30-finance-stat[aria-pressed="true"]{border-color:#c3974b;background:#291c0c}
+.five30-finance-detail{margin:16px 0;padding:15px;border:1px solid rgba(192,146,77,.4);border-radius:14px}
+.five30-finance-detail h4{font-size:19px;margin:14px 0 8px;color:#d3ab72}
+.five30-finance-detail p{line-height:1.5}
+.five30-finance-filters{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.five30-finance-filters input{min-width:0;max-width:100%;flex:1 1 120px;background:#171413;color:#f2ece4;border:1px solid #705b40;border-radius:8px;padding:9px}
+.five30-finance-table-scroll{overflow-x:auto;max-width:100%;border:1px solid #5a4937;border-radius:9px}
+.five30-finance-table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:13px}
+.five30-finance-table th{padding:12px;text-align:left;color:#e2c38f;background:#231b15;border-right:1px solid #53422e}
+.five30-finance-empty{font-size:13px;color:#b5a899}
