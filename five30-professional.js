@@ -184,26 +184,22 @@ document.addEventListener("DOMContentLoaded",async()=>{
  async function renderSupportInbox(target,userFilter=null){
   target.replaceChildren();
   const heading=document.createElement("h3");heading.textContent=userFilter?"Consultas de esta cuenta":"Centro de atención";
-  if(!userFilter){const intro=document.createElement("p");intro.className="five30-support-intro";intro.textContent="Superadministrador 5:30 · Supervisión de casos y equipo";const roles=document.createElement("div");roles.className="five30-support-roles";const detail=document.createElement("div");detail.className="five30-support-team-detail";detail.hidden=true;for(const [symbol,label] of [["♙","Supervisores"],["♧","Operadores"],["▤","Casos"]]){const cell=document.createElement("button");cell.type="button";cell.className="five30-support-role-button";const ico=document.createElement("span");ico.textContent=symbol;const name=document.createElement("strong");name.textContent=label;cell.append(ico,name);cell.onclick=()=>{for(const other of roles.children)other.setAttribute("aria-pressed",String(other===cell));if(label==="Casos"){detail.hidden=true;heading.hidden=false;summary.hidden=false;filters.hidden=false;refresh.hidden=false;results.hidden=false;activeFilter="all";drawTickets();return;}heading.hidden=true;summary.hidden=true;filters.hidden=true;refresh.hidden=true;results.hidden=true;detail.hidden=false;detail.replaceChildren();const h=document.createElement("h4");h.textContent=label;const p=document.createElement("p");p.textContent=label==="Supervisores"?"La lista de supervisores estará disponible cuando se habilite la gestión de personal y sus permisos seguros.":"La lista de operadores, sus casos y actividad estará disponible cuando se habilite la gestión de personal y sus permisos seguros.";const back=document.createElement("button");back.type="button";back.textContent="← Volver a casos";back.onclick=()=>roles.lastElementChild.click();detail.append(h,p,back);};roles.append(cell);}target.append(intro,roles,detail);}
+  if(!userFilter){const intro=document.createElement("p");intro.className="five30-support-intro";intro.textContent="Superadministrador 5:30 · Supervisión de casos y equipo";const roles=document.createElement("div");roles.className="five30-support-roles";const detail=document.createElement("div");detail.className="five30-support-team-detail";detail.hidden=true;for(const [symbol,label] of [["♙","Supervisores"],["♧","Operadores"],["▤","Casos"]]){const cell=document.createElement("button");cell.type="button";cell.className="five30-support-role-button";const ico=document.createElement("span");ico.textContent=symbol;const name=document.createElement("strong");name.textContent=label;cell.append(ico,name);cell.onclick=()=>{for(const other of roles.children)other.setAttribute("aria-pressed",String(other===cell));if(label==="Casos"){detail.hidden=true;heading.hidden=false;summary.hidden=false;refresh.hidden=false;results.hidden=false;activeFilter="all";drawTickets();return;}heading.hidden=true;summary.hidden=true;refresh.hidden=true;results.hidden=true;detail.hidden=false;detail.replaceChildren();const h=document.createElement("h4");h.textContent=label;const p=document.createElement("p");p.textContent=label==="Supervisores"?"La lista de supervisores estará disponible cuando se habilite la gestión de personal y sus permisos seguros.":"La lista de operadores, sus casos y actividad estará disponible cuando se habilite la gestión de personal y sus permisos seguros.";const back=document.createElement("button");back.type="button";back.textContent="← Volver a casos";back.onclick=()=>roles.lastElementChild.click();detail.append(h,p,back);};roles.append(cell);}target.append(intro,roles,detail);}
   const refresh=document.createElement("button");refresh.type="button";refresh.textContent="Actualizar consultas";
   const results=document.createElement("div");results.setAttribute("aria-live","polite");
   const summary=document.createElement("div");summary.className="five30-admin-stats";
-  const filters=document.createElement("div");filters.className="five30-support-filters";
   let activeFilter="all",tickets=[];
   const names={open:"Pendientes",in_progress:"En atención",resolved:"Resueltos"};
-  for(const [value,label] of [["all","Todos"],["open","Pendientes"],["in_progress","En atención"],["resolved","Resueltos"]]){
-   const button=document.createElement("button");button.type="button";button.textContent=label;button.dataset.filter=value;
-   button.onclick=()=>{activeFilter=value;drawTickets();};filters.append(button);
-  }
-  target.append(heading,summary,filters,refresh,results);
+  target.append(heading,summary,refresh,results);
   function drawTickets(){
    results.replaceChildren();summary.replaceChildren();
-   for(const [label,count] of [["Total",tickets.length],["Pendientes",tickets.filter(t=>t.status==="open").length],["Operadores",new Set(tickets.map(t=>t.assigned_to).filter(Boolean)).size],["Sin asignar",tickets.filter(t=>!t.assigned_to).length]]){
-    const card=document.createElement("div");card.className="five30-admin-stat";
+   const counts=[["all","Total",tickets.length],["open","Pendientes",tickets.filter(t=>t.status==="open").length],["in_progress","En atención",tickets.filter(t=>t.status==="in_progress").length],["resolved","Resueltos",tickets.filter(t=>t.status==="resolved").length]];
+   for(const [value,label,count] of counts){
+    const card=document.createElement("button");card.type="button";card.className="five30-admin-stat five30-support-stat-button";card.setAttribute("aria-pressed",String(activeFilter===value));card.setAttribute("aria-label",label+": "+count+" casos");
     const number=document.createElement("strong");number.textContent=String(count);
-    const name=document.createElement("span");name.textContent=label;card.append(number,name);summary.append(card);
+    const name=document.createElement("span");name.textContent=label;card.append(number,name);
+    card.onclick=()=>{activeFilter=value;drawTickets();};summary.append(card);
    }
-   for(const b of filters.children)b.setAttribute("aria-pressed",String(b.dataset.filter===activeFilter));
    const visible=activeFilter==="all"?tickets:tickets.filter(t=>t.status===activeFilter);
    if(!visible.length){results.textContent=tickets.length?"No hay casos con este filtro.":"Todavía no hay consultas.";return;}
    for(const t of visible){
