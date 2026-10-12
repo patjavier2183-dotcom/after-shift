@@ -273,3 +273,11 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-finance-alert{border:1px solid;border-radius:11px;padding:12px 14px;font-weight:650;line-height:1.5;margin:12px 0}
 .five30-finance-alert-danger{border-color:#b84b4b;background:rgba(160,40,40,.12);color:#f3aaaa}
 .five30-finance-alert-success{border-color:#34865d;background:rgba(40,130,75,.1);color:#a4e2bb}
+
+.five30-expense-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin:14px 0}
+.five30-expense-summary[hidden]{display:none}
+.five30-expense-chip{display:flex;flex-direction:column;gap:7px;border:1px solid;border-radius:12px;padding:13px 14px;background:#171717}
+.five30-expense-chip strong{font-size:20px}
+.five30-expense-paid{border-color:#399b72;color:#9ce1bd}
+.five30-expense-pending{border-color:#d45b59;color:#f3a6a5}
+.five30-expense-projected{border-color:#d7a741;color:#f2d18b}
