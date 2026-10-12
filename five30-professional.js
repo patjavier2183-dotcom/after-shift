@@ -224,21 +224,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
    };
    stats.append(cell);
   }
-  const sections=document.createElement("div");sections.className="five30-finance-sections";
-  for(const [title,description] of [
-   ["Cobros y suscripciones","Registro de pagos confirmados, renovaciones y compras individuales."],
-   ["Comisiones","Separación prevista: 20% plataforma y 80% creador, sujeta a las condiciones comerciales y costos aprobados."],
-   ["Saldos y liquidaciones","Importes disponibles, pendientes y pagos a creadores; sin cifras hasta verificar movimientos."],
-   ["Retiros y devoluciones","Solicitudes, reembolsos, contracargos y trazabilidad."],
-   ["Informes y conciliación","Resumen por período y comparación de transacciones con el proveedor de pagos."]
-  ]){
-   const item=document.createElement("section");item.className="five30-finance-item";
-   const h=document.createElement("h4");h.textContent=title;
-   const p=document.createElement("p");p.textContent=description;
-   const state=document.createElement("small");state.textContent="Pendiente de integración de movimientos reales";
-   item.append(h,p,state);sections.append(item);
-  }
-  target.append(heading,intro,notice,stats,detail,sections);
+  target.append(heading,intro,notice,stats,detail);
  }
  async function renderSupportInbox(target,userFilter=null){
   target.replaceChildren();
