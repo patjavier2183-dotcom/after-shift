@@ -235,3 +235,7 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-admin-stats .five30-support-stat-button{cursor:pointer;font-family:inherit;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}
 .five30-admin-stats .five30-support-stat-button[aria-pressed="true"]{border-color:#c3974b;background:#291c0c}
 .five30-admin-stats .five30-support-stat-button:focus-visible{outline:2px solid #d6aa62;outline-offset:2px}
+
+.five30-support-staff-item{display:flex;flex-direction:column;gap:5px;padding:12px 0;border-bottom:1px solid rgba(180,136,66,.25)}
+.five30-support-staff-item strong{font-size:14px;overflow-wrap:anywhere}
+.five30-support-staff-item span{font-size:12px;color:#bcb4a8}
