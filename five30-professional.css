@@ -322,3 +322,11 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-finance-real-form label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:#ddd0bf}
 .five30-finance-real-form input,.five30-finance-real-form select{box-sizing:border-box;width:100%;min-width:0;padding:10px;border-radius:8px;border:1px solid #6a6054;background:#201f1e;color:#fff;font:inherit}
 .five30-finance-real-form button{padding:11px;border-radius:9px;background:#283b31;border:1px solid #4a9971;color:#c6f2d8;font-weight:700}
+
+.five30-international-panel{margin:22px 0;padding:16px;border:1px solid #514b41;border-radius:14px;background:#141414;min-width:0}
+.five30-international-panel h4{margin:0 0 8px;color:#e5d1af}
+.five30-international-panel p{font-size:13px;line-height:1.5}
+.five30-international-markets{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:9px}
+.five30-international-market{display:flex;flex-direction:column;gap:7px;border:1px solid #48443c;border-radius:10px;padding:12px;background:#1d1d1d}
+.five30-international-market strong{color:#e8d6b6;font-size:13px}
+.five30-international-market span{color:#bcb6ad;font-size:12px;line-height:1.5}
