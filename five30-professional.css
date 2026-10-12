@@ -281,3 +281,17 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-expense-paid{border-color:#399b72;color:#9ce1bd}
 .five30-expense-pending{border-color:#d45b59;color:#f3a6a5}
 .five30-expense-projected{border-color:#d7a741;color:#f2d18b}
+
+/* Finance: compact readable mobile dashboard, restrained semantic color */
+.five30-finance-stats{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;width:100%!important}
+.five30-finance-stats>.five30-finance-stat{box-sizing:border-box!important;width:100%!important;min-width:0!important;max-width:none!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;text-align:left!important;gap:8px!important;padding:14px 12px!important;background:#171717!important;border-top:1px solid #46403a!important;border-right:1px solid #46403a!important;border-bottom:1px solid #46403a!important;border-radius:12px!important;overflow:hidden!important}
+.five30-finance-stats>.five30-finance-stat strong{font-size:clamp(17px,4.4vw,23px)!important;line-height:1.2!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:normal!important;color:#f3eee7!important;letter-spacing:-.4px!important}
+.five30-finance-stats>.five30-finance-stat span{font-size:12px!important;line-height:1.35!important;color:#c6bdb2!important;overflow-wrap:normal!important;word-break:normal!important}
+.five30-finance-stats>.five30-finance-stat[data-finance-status="danger"] strong{color:#ef9292!important}
+.five30-finance-stats>.five30-finance-stat[data-finance-status="success"] strong{color:#a2d9b9!important}
+.five30-finance-stats>.five30-finance-stat[data-finance-status="warning"] strong{color:#efd18b!important}
+.five30-finance-stats>.five30-finance-stat[aria-pressed="true"]{background:#29231b!important;outline:1px solid #a78a60}
+.five30-finance-filters label{display:flex;flex:1 1 125px;flex-direction:column;gap:6px;color:#e5d5be;font-size:13px;font-weight:600;min-width:0}
+.five30-finance-filters label input{width:100%;flex:initial}
+.five30-finance-filters>input[type="search"]{flex-basis:100%}
+@media(max-width:370px){.five30-finance-stats>.five30-finance-stat{padding:12px 9px!important}.five30-finance-stats>.five30-finance-stat strong{font-size:17px!important}}
