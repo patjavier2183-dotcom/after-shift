@@ -19,18 +19,27 @@ async function five30CompleteMfaIfRequired(){
  if(factorsError)throw new Error("No se pudieron consultar los factores de seguridad.");
  const factor=(factors?.totp||[]).find(f=>f.status==="verified");
  if(!factor)throw new Error("No se encontró un autenticador activo.");
- for(let attempt=0;attempt<3;attempt++){
-  const code=prompt("5:30 · Ingresa el código de 6 dígitos de tu aplicación autenticadora:");
-  if(code===null){await supabaseClient.auth.signOut();return false;}
-  if(!/^[0-9]{6}$/.test(code.trim())){alert("El código debe tener seis números.");continue;}
-  const {data:challenge,error:challengeError}=await supabaseClient.auth.mfa.challenge({factorId:factor.id});
-  if(challengeError){alert("No se pudo solicitar la verificación.");continue;}
-  const {error}=await supabaseClient.auth.mfa.verify({factorId:factor.id,challengeId:challenge.id,code:code.trim()});
-  if(!error)return true;
-  alert("Código incorrecto o vencido.");
- }
- await supabaseClient.auth.signOut();
- return false;
+ return new Promise(resolve=>{
+  const overlay=document.createElement("div");overlay.className="five30-mfa-login-overlay";
+  overlay.style.cssText="position:fixed;inset:0;z-index:2147483640;background:rgba(0,0,0,.94);display:flex;align-items:center;justify-content:center;padding:20px";
+  const form=document.createElement("form");form.style.cssText="width:min(100%,400px);padding:24px;border:1px solid #9c7d53;border-radius:16px;background:#191714;color:#f6eee3;display:grid;gap:15px";
+  const heading=document.createElement("h2");heading.textContent="Verificación de seguridad";
+  const explanation=document.createElement("p");explanation.textContent="Abre tu autenticador, copia los 6 dígitos y vuelve aquí. Esta pantalla permanecerá abierta.";
+  const input=document.createElement("input");input.type="text";input.inputMode="numeric";input.autocomplete="one-time-code";input.maxLength=6;input.pattern="[0-9]{6}";input.placeholder="Código de 6 dígitos";input.required=true;input.style.cssText="padding:15px;border:1px solid #9c7d53;border-radius:9px;background:#292522;color:white;font-size:20px;letter-spacing:4px;width:100%;box-sizing:border-box";
+  const message=document.createElement("p");message.setAttribute("role","status");
+  const submit=document.createElement("button");submit.type="submit";submit.textContent="Verificar y entrar";submit.style.cssText="padding:14px;border-radius:9px;background:#d5b587;color:#1c1711;font-weight:bold";
+  const cancel=document.createElement("button");cancel.type="button";cancel.textContent="Cancelar";cancel.style.cssText="padding:10px;background:transparent;color:#eee;border:1px solid #65513a;border-radius:8px";
+  form.append(heading,explanation,input,message,submit,cancel);overlay.append(form);document.body.append(overlay);
+  const close=value=>{overlay.remove();resolve(value);};
+  cancel.onclick=()=>close(false);
+  form.onsubmit=async event=>{event.preventDefault();const code=input.value.trim();if(!/^[0-9]{6}$/.test(code)){message.textContent="Escribe los seis dígitos.";return;}submit.disabled=true;message.textContent="Verificando…";
+   const {data:challenge,error:challengeError}=await supabaseClient.auth.mfa.challenge({factorId:factor.id});
+   if(challengeError){message.textContent="No se pudo iniciar la verificación. Intenta nuevamente.";submit.disabled=false;return;}
+   const {error}=await supabaseClient.auth.mfa.verify({factorId:factor.id,challengeId:challenge.id,code});
+   if(error){message.textContent="Código incorrecto o vencido. Solicita uno nuevo en tu autenticador.";input.value="";submit.disabled=false;return;}
+   close(true);
+  };
+ });
 }
 async function currentUser(){const{data}=await supabaseClient.auth.getUser();return data.user;}
 async function getMyProfile(){const user=await currentUser();if(!user)return null;const{data}=await supabaseClient.from("profiles").select("id,username,display_name,role,bio,subscription_price").eq("id",user.id).maybeSingle();return data||null;}
