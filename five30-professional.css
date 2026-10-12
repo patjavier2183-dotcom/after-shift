@@ -265,3 +265,11 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-finance-table tbody tr:nth-child(even){background:rgba(255,255,255,.04)}
 
 .five30-finance-table tfoot td{font-weight:800;color:#f0c987;background:#2a2014;border-top:2px solid #bd9659;padding:13px 12px;white-space:nowrap}
+
+.five30-finance-stat[data-finance-status="success"]{border-left:4px solid #329e71}
+.five30-finance-stat[data-finance-status="warning"]{border-left:4px solid #e1ad35}
+.five30-finance-stat[data-finance-status="danger"]{border-left:4px solid #d85858}
+.five30-finance-stat[data-finance-status="neutral"]{border-left:4px solid #766b5b}
+.five30-finance-alert{border:1px solid;border-radius:11px;padding:12px 14px;font-weight:650;line-height:1.5;margin:12px 0}
+.five30-finance-alert-danger{border-color:#b84b4b;background:rgba(160,40,40,.12);color:#f3aaaa}
+.five30-finance-alert-success{border-color:#34865d;background:rgba(40,130,75,.1);color:#a4e2bb}
