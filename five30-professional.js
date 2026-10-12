@@ -201,9 +201,9 @@ document.addEventListener("DOMContentLoaded",()=>{
  const simulator=document.createElement("form");simulator.className="five30-finance-real-form";
  const countryLabel=document.createElement("label");countryLabel.textContent="Mercado de prueba";const country=document.createElement("select");countryLabel.append(country);
  const amountLabel=document.createElement("label");amountLabel.textContent="Monto de prueba";const amount=document.createElement("input");amount.type="number";amount.min="0.01";amount.step="0.01";amount.value="10";amount.required=true;amountLabel.append(amount);
- const run=document.createElement("button");run.type="submit";run.textContent="Simular reparto 80/20";
+ const run=document.createElement("button");run.type="submit";run.textContent="Simular país seleccionado";const allRun=document.createElement("button");allRun.type="button";allRun.textContent="Simular los 7 países";
  const output=document.createElement("p");output.setAttribute("role","status");
- simulator.append(countryLabel,amountLabel,run);detail.append(detailTitle,detailNote,metrics,history);
+ simulator.append(countryLabel,amountLabel,run,allRun);detail.append(detailTitle,detailNote,metrics,history);
  section.append(title,note,status,list,detail,simulator,output);target.append(section);
  let markets=[],selected="ALL",simulations=[],realExpenses=[];
  const format=(minor,cur)=>new Intl.NumberFormat("es-CL",{style:"currency",currency:cur,maximumFractionDigits:2}).format(minor/100);
@@ -237,6 +237,7 @@ document.addEventListener("DOMContentLoaded",()=>{
  markets.forEach(m=>{const opt=document.createElement("option");opt.value=m.country_code;opt.textContent=m.country_name+" · "+m.checkout_currency;country.append(opt);addButton(m.country_code,({CL:"🇨🇱",MX:"🇲🇽",CO:"🇨🇴",PE:"🇵🇪",AR:"🇦🇷",US:"🇺🇸",ES:"🇪🇸"}[m.country_code]||"🌐")+" "+m.country_name,m.checkout_currency+" · En pruebas");});
  status.textContent=markets.length+" mercados configurados · cobros reales desactivados.";choose("ALL");await loadSimulations();}
  simulator.onsubmit=async event=>{event.preventDefault();const gross=Math.round(Number(amount.value)*100);if(!Number.isSafeInteger(gross)||gross<=0||!country.value){output.textContent="Ingresa un monto y mercado válidos.";return;}const creator=Math.round(gross*.8),platform=gross-creator;const m=markets.find(x=>x.country_code===country.value);run.disabled=true;const {error}=await supabaseClient.from("five30_payment_simulations").insert({country_code:country.value,currency:m.checkout_currency,gross_minor:gross,creator_minor:creator,platform_minor:platform,provider_fee_minor:0});run.disabled=false;if(error){output.textContent="No se pudo registrar la simulación.";return;}output.textContent="Simulación registrada. No se efectuó ningún cobro.";await loadSimulations();};
+ allRun.onclick=async()=>{const gross=Math.round(Number(amount.value)*100);if(!Number.isSafeInteger(gross)||gross<=0||!markets.length){output.textContent="Ingresa un monto válido.";return;}const creator=Math.round(gross*.8),platform=gross-creator;const records=markets.map(m=>({country_code:m.country_code,currency:m.checkout_currency,gross_minor:gross,creator_minor:creator,platform_minor:platform,provider_fee_minor:0}));allRun.disabled=true;run.disabled=true;const {error}=await supabaseClient.from("five30_payment_simulations").insert(records);allRun.disabled=false;run.disabled=false;if(error){output.textContent="No se pudieron registrar las simulaciones. No se realizó ningún cobro.";return;}output.textContent="Se registraron "+records.length+" operaciones de prueba, una por país. Sin cobros reales.";choose("ALL");await loadSimulations();};
  loadMarkets();
 }
 function renderFinanceOverview(target){
