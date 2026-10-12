@@ -295,3 +295,13 @@ body.five30-staff-workspace .five30-admin-detail-title{margin:4px 0 10px}
 .five30-finance-filters label input{width:100%;flex:initial}
 .five30-finance-filters>input[type="search"]{flex-basis:100%}
 @media(max-width:370px){.five30-finance-stats>.five30-finance-stat{padding:12px 9px!important}.five30-finance-stats>.five30-finance-stat strong{font-size:17px!important}}
+
+/* Finance mobile table alignment and result emphasis */
+.five30-finance-detail{min-width:0;max-width:100%;box-sizing:border-box;overflow:hidden}
+.five30-finance-table-scroll{display:block;width:100%;min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;direction:ltr;overscroll-behavior-x:contain}
+.five30-finance-table{margin:0;min-width:100%;width:max-content;max-width:none;direction:ltr;table-layout:auto}
+.five30-finance-table th:first-child,.five30-finance-table td:first-child{padding-left:16px!important;text-align:left!important;min-width:150px}
+.five30-finance-table td:last-child,.five30-finance-table th:last-child{text-align:right;padding-right:16px}
+.five30-finance-table tfoot td{color:#e4c08a}
+.five30-finance-table tfoot tr td:last-child{font-weight:800}
+.five30-finance-detail:has(.five30-finance-table tbody tr td:first-child) .five30-finance-table tfoot td{font-variant-numeric:tabular-nums}
