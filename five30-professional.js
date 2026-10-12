@@ -182,7 +182,24 @@ document.addEventListener("DOMContentLoaded",async()=>{
    if(key==="finance")renderFinanceOverview(moduleArea);
   }
  }
- function renderFinanceOverview(target){
+ function renderInternationalPayments(target){
+ const section=document.createElement("section");section.className="five30-international-panel";
+ const title=document.createElement("h4");title.textContent="Integración internacional · configuración";
+ const note=document.createElement("p");note.textContent="Modo de preparación. Ningún país puede procesar cobros o retiros reales desde este panel.";
+ const status=document.createElement("p");status.setAttribute("role","status");
+ const list=document.createElement("div");list.className="five30-international-markets";
+ const simulator=document.createElement("form");simulator.className="five30-finance-real-form";
+ const countryLabel=document.createElement("label");countryLabel.textContent="Mercado de prueba";const country=document.createElement("select");countryLabel.append(country);
+ const amountLabel=document.createElement("label");amountLabel.textContent="Monto de prueba (unidad monetaria)";const amount=document.createElement("input");amount.type="number";amount.min="1";amount.step="0.01";amount.value="10";amount.required=true;amountLabel.append(amount);
+ const run=document.createElement("button");run.type="submit";run.textContent="Simular reparto 80/20";
+ const output=document.createElement("p");output.setAttribute("role","status");
+ simulator.append(countryLabel,amountLabel,run);
+ section.append(title,note,status,list,simulator,output);target.append(section);
+ async function loadMarkets(){const {data,error}=await supabaseClient.from("five30_payment_markets").select("country_code,country_name,display_currency,checkout_currency,payment_provider,payout_provider,checkout_enabled,payout_enabled,test_mode").order("country_name");if(error){status.textContent="No se pudo consultar la configuración internacional.";return;}country.replaceChildren();list.replaceChildren();(data||[]).forEach(m=>{const opt=document.createElement("option");opt.value=m.country_code;opt.textContent=m.country_name+" · "+m.checkout_currency;country.append(opt);const row=document.createElement("div");row.className="five30-international-market";const name=document.createElement("strong");name.textContent=m.country_name+" ("+m.country_code+")";const details=document.createElement("span");details.textContent="Visualización "+m.display_currency+" · Cobro previsto "+m.checkout_currency+" · Proveedor: "+(m.payment_provider||"por aprobar")+" · Retiros: "+(m.payout_provider||"por aprobar")+" · Cobros reales desactivados";row.append(name,details);list.append(row);});status.textContent=(data||[]).length+" mercados configurados para pruebas; sin cobros habilitados.";}
+ simulator.onsubmit=async event=>{event.preventDefault();const gross=Math.round(Number(amount.value)*100);if(!Number.isSafeInteger(gross)||gross<=0){output.textContent="Ingresa un monto válido.";return;}const creator=Math.round(gross*.8),platform=gross-creator;const option=country.selectedOptions[0];const currency=option?.textContent.split(" · ").pop()||"USD";run.disabled=true;const {error}=await supabaseClient.from("five30_payment_simulations").insert({country_code:country.value,currency,gross_minor:gross,creator_minor:creator,platform_minor:platform,provider_fee_minor:0});run.disabled=false;if(error){output.textContent="No se pudo registrar la simulación.";return;}output.textContent="Simulación guardada · "+currency+" "+(gross/100).toFixed(2)+" · Creador 80%: "+(creator/100).toFixed(2)+" · 5:30 20%: "+(platform/100).toFixed(2)+" · Sin pagos reales.";};
+ loadMarkets();
+}
+function renderFinanceOverview(target){
  target.replaceChildren();
  const heading=document.createElement("h3");heading.textContent="Centro financiero";
  const intro=document.createElement("p");intro.className="five30-support-intro";intro.textContent="Superadministrador 5:30 · Resumen financiero";
@@ -278,6 +295,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
  realForm.onsubmit=async event=>{event.preventDefault();saveExpense.disabled=true;realFeedback.textContent="Guardando egreso…";const payload={expense_date:inputs.expense_date.value,due_date:inputs.due_date.value||null,category:inputs.category.value.trim(),vendor:inputs.vendor.value==="Otro proveedor"?customVendorInput.value.trim():inputs.vendor.value,description:inputs.description.value.trim(),amount_clp:Number(inputs.amount_clp.value),reference:inputs.reference.value.trim()||null,status:statusSelect.value};const {error}=await supabaseClient.from("five30_operating_expenses").insert(payload);saveExpense.disabled=false;if(error){realFeedback.textContent="No se pudo guardar el egreso. Comprueba tus permisos y los datos.";return;}realFeedback.textContent="Egreso registrado correctamente.";realForm.reset();customVendor.hidden=true;customVendorInput.required=false;inputs.expense_date.value=new Date().toISOString().slice(0,10);await loadRealExpenses();};
  realExpenses.append(realTitle,realNote,realForm,realFeedback,realTotals,realScroll);
  target.append(heading,intro,notice,controls,alert,stats,expenseSummary,detail,realExpenses);
+ renderInternationalPayments(target);
  loadRealExpenses();
  renderMode();
 }
