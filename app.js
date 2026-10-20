@@ -41,6 +41,38 @@ async function five30CompleteMfaIfRequired(){
   };
  });
 }
+// Editable profile settings. Only the signed-in user's profile may be changed.
+document.addEventListener("DOMContentLoaded",()=>{
+ const form=document.getElementById("accountProfileForm");
+ if(!form)return;
+ const name=document.getElementById("accountDisplayName"),handle=document.getElementById("accountUsername"),bio=document.getElementById("accountBio"),status=document.getElementById("accountProfileStatus"),save=document.getElementById("accountProfileSave");
+ async function populate(){
+  const p=await getMyProfile();
+  if(!p)return;
+  if(document.activeElement===name||document.activeElement===handle||document.activeElement===bio)return;
+  name.value=p.display_name||"";handle.value=p.username||"";bio.value=p.bio||"";
+ }
+ const settings=document.getElementById("accountDeletionSettings");
+ settings?.addEventListener("toggle",()=>{if(settings.querySelector("details")?.open)populate();},true);
+ settings?.querySelector("summary")?.addEventListener("click",()=>setTimeout(populate,0));
+ form.addEventListener("submit",async(e)=>{
+  e.preventDefault();status.textContent="";
+  const user=await currentUser();if(!user){status.textContent="Inicia sesión nuevamente.";return;}
+  const display=name.value.trim(),username=handle.value.trim().replace(/^@/,"").toLowerCase(),about=bio.value.trim();
+  if(!display||display.length>80||!/^[a-z0-9_.-]{3,24}$/.test(username)||about.length>500){status.textContent="Revisa el nombre y el usuario (3 a 24 caracteres, letras, números, punto, guion o guion bajo).";return;}
+  save.disabled=true;
+  try{
+   const {data:existing,error:checkError}=await supabaseClient.from("profiles").select("id").eq("username",username).neq("id",user.id).maybeSingle();
+   if(checkError)throw checkError;
+   if(existing){status.textContent="Ese nombre de usuario ya está ocupado.";return;}
+   const {error}=await supabaseClient.from("profiles").update({display_name:display,username,bio:about}).eq("id",user.id);
+   if(error)throw error;
+   status.textContent="Cambios guardados correctamente.";
+   await loadAccount(user);
+  }catch(err){status.textContent=err?.code==="23505"?"Ese nombre de usuario ya está ocupado.":("No se pudieron guardar los cambios: "+(err?.message||"Error desconocido"));}
+  finally{save.disabled=false;}
+ });
+});
 // Account deletion intake: never claim data is erased before backend review completes.
 document.addEventListener("DOMContentLoaded",()=>{
  const button=document.getElementById("accountDeletionRequestBtn");
