@@ -18,14 +18,14 @@ document.addEventListener("DOMContentLoaded",()=>{
  }
  document.getElementById("professionalCreator")?.addEventListener("click",()=>apply("creator"));
  document.getElementById("professionalAgency")?.addEventListener("click",()=>apply("agency"));
- // Private demo for applicants; does not grant creator role or write content.
+ // Private text drafts for test-enabled applicants; no creator role or public publishing.
  async function creatorPreview(){
   const user=await currentUser();if(!user)return;
   const {data,error}=await supabaseClient.from("five30_creator_test_access").select("enabled").eq("user_id",user.id).eq("enabled",true).maybeSingle();
   if(error||!data||!data.enabled)return;
   const host=document.getElementById("professionalNotice")?.parentElement;
   if(!host||document.getElementById("five30Preview"))return;
-  const btn=document.createElement("button");btn.id="five30Preview";btn.type="button";btn.className="action-btn";btn.textContent="Probar Creator Studio (demo)";host.append(btn);
+  const btn=document.createElement("button");btn.id="five30Preview";btn.type="button";btn.className="action-btn";btn.textContent="Abrir Creator Studio de pruebas";host.append(btn);
   btn.onclick=()=>{
    const overlay=document.createElement("div");overlay.className="profile-overlay";
    const panel=document.createElement("section");panel.className="creator-studio";
@@ -54,7 +54,9 @@ document.addEventListener("DOMContentLoaded",()=>{
     const title=prompt("Título de la publicación de prueba (máximo 120 caracteres):");
     if(title===null)return;
     const clean=title.trim();if(!clean||clean.length>120){result.textContent="Escribe un título de hasta 120 caracteres.";return;}
-    const body=prompt("Texto de prueba (máximo 5.000 caracteres):")||"";
+    const enteredBody=prompt("Texto de prueba (máximo 5.000 caracteres):");
+    if(enteredBody===null)return;
+    const body=enteredBody;
     if(body.length>5000){result.textContent="El texto es demasiado largo.";return;}
     add.disabled=true;
     const {error}=await supabaseClient.from("five30_creator_test_drafts").insert({user_id:user.id,title:clean,body});
