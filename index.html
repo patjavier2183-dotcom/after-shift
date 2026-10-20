@@ -125,6 +125,13 @@
       <details class="five30-professional-details">
         <summary>Configuración de cuenta <span aria-hidden="true">⌄</span></summary>
         <div class="five30-professional-items">
+          <form id="accountProfileForm" style="display:grid;gap:12px;padding:12px 0">
+            <label>Nombre visible<input id="accountDisplayName" maxlength="80" autocomplete="nickname" required style="display:block;width:100%;padding:12px;color:#191510;background:#fff;border-radius:8px"></label>
+            <label>Nombre de usuario (@)<input id="accountUsername" maxlength="24" minlength="3" pattern="[a-zA-Z0-9_.-]{3,24}" required style="display:block;width:100%;padding:12px;color:#191510;background:#fff;border-radius:8px"></label>
+            <label>Biografía<textarea id="accountBio" maxlength="500" rows="3" style="display:block;width:100%;padding:12px;color:#191510;background:#fff;border-radius:8px"></textarea></label>
+            <button class="action-btn" type="submit" id="accountProfileSave">Guardar cambios</button>
+            <p id="accountProfileStatus" role="status" aria-live="polite"></p>
+          </form>
           <button type="button" id="accountDeletionRequestBtn">Solicitar eliminación de mi cuenta <small>Se revisarán obligaciones pendientes antes de eliminar tus datos</small></button>
         </div>
         <p id="accountDeletionStatus" role="status" aria-live="polite"></p>
