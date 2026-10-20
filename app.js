@@ -41,6 +41,24 @@ async function five30CompleteMfaIfRequired(){
   };
  });
 }
+// Account deletion intake: never claim data is erased before backend review completes.
+document.addEventListener("DOMContentLoaded",()=>{
+ const button=document.getElementById("accountDeletionRequestBtn");
+ const status=document.getElementById("accountDeletionStatus");
+ if(!button||!status)return;
+ button.addEventListener("click",async()=>{
+  const user=await currentUser();if(!user){status.textContent="Inicia sesión para continuar.";return;}
+  const {data:existing}=await supabaseClient.from("five30_account_deletion_requests").select("status").eq("user_id",user.id).maybeSingle();
+  if(existing?.status==="pending"||existing?.status==="reviewing"){status.textContent="Tu solicitud de eliminación ya está registrada y pendiente de gestión.";return;}
+  const value=prompt("Esta acción inicia una solicitud de eliminación, NO borra la cuenta inmediatamente. Para confirmar escribe exactamente: ELIMINAR MI CUENTA");
+  if(value===null)return;
+  if(value!=="ELIMINAR MI CUENTA"){status.textContent="Confirmación incorrecta. No se envió ninguna solicitud.";return;}
+  button.disabled=true;status.textContent="Registrando solicitud…";
+  const {error}=await supabaseClient.rpc("five30_request_account_deletion",{p_confirmation:value});
+  button.disabled=false;
+  status.textContent=error?"No se pudo registrar la solicitud. Las cuentas administrativas requieren un procedimiento supervisado.":"Solicitud registrada. Tu cuenta sigue activa mientras revisamos las obligaciones y la eliminación segura de los datos.";
+ });
+});
 async function currentUser(){const{data}=await supabaseClient.auth.getUser();return data.user;}
 async function getMyProfile(){const user=await currentUser();if(!user)return null;const{data}=await supabaseClient.from("profiles").select("id,username,display_name,role,bio,subscription_price").eq("id",user.id).maybeSingle();return data||null;}
 async function loadAccount(userOverride){
