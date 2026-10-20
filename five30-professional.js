@@ -30,14 +30,41 @@ document.addEventListener("DOMContentLoaded",()=>{
    const overlay=document.createElement("div");overlay.className="profile-overlay";
    const panel=document.createElement("section");panel.className="creator-studio";
    const close=document.createElement("button");close.type="button";close.className="profile-close";close.textContent="×";close.setAttribute("aria-label","Cerrar");close.onclick=()=>overlay.remove();
-   const heading=document.createElement("h2");heading.textContent="Creator Studio · DEMO";
-   const info=document.createElement("p");info.textContent="Tu solicitud sigue en revisión. Esta demostración no publica, no guarda archivos ni habilita cobros.";
+   const heading=document.createElement("h2");heading.textContent="Creator Studio · PRUEBAS";
+   const info=document.createElement("p");info.textContent="Acceso de ensayo privado: puedes guardar textos de prueba. No se publican, no se comparten con suscriptores y no se habilitan cobros.";
    const actions=document.createElement("div");actions.className="studio-actions";
-   const result=document.createElement("p");result.setAttribute("role","status");result.textContent="Selecciona una función.";
-   for(const [label,detail] of [["Nueva publicación","Aquí podrás crear publicaciones con imágenes y videos cuando tu cuenta esté aprobada."],["Planes y promociones","Aquí configurarás tus planes cuando los pagos estén habilitados."],["Mis publicaciones","Aquí podrás administrar tus publicaciones."],["En vivo","Aquí estarán las transmisiones en vivo cuando estén habilitadas."]]){
-    const b=document.createElement("button");b.type="button";b.className="action-btn";b.textContent=label;b.onclick=()=>{result.textContent=detail;};actions.append(b);
-   }
-   panel.append(close,heading,info,actions,result);overlay.append(panel);document.body.append(overlay);
+   const result=document.createElement("div");result.setAttribute("role","status");result.textContent="Cargando borradores de prueba…";
+   const drafts=document.createElement("div");drafts.className="posts";
+   const add=document.createElement("button");add.type="button";add.className="action-btn action-primary";add.textContent="+ Nueva publicación de prueba";
+   const refresh=async()=>{
+    const {data,error}=await supabaseClient.from("five30_creator_test_drafts").select("id,title,body,created_at").eq("user_id",user.id).order("created_at",{ascending:false});
+    drafts.replaceChildren();
+    if(error){result.textContent="No se pudieron cargar los borradores: "+error.message;return;}
+    result.textContent=(data||[]).length+" borrador(es) privados. Solo esta cuenta puede verlos.";
+    for(const item of data||[]){
+     const card=document.createElement("article");card.className="post-card studio-post";
+     const title=document.createElement("h3");title.textContent=item.title;
+     const body=document.createElement("p");body.textContent=item.body||"Sin descripción";
+     const del=document.createElement("button");del.type="button";del.className="action-btn";del.textContent="Eliminar borrador";
+     del.onclick=async()=>{if(!confirm("¿Eliminar este borrador de prueba?"))return;const {error}=await supabaseClient.from("five30_creator_test_drafts").delete().eq("id",item.id).eq("user_id",user.id);if(error){result.textContent=error.message;return;}await refresh();};
+     card.append(title,body,del);drafts.append(card);
+    }
+   };
+   add.onclick=async()=>{
+    const title=prompt("Título de la publicación de prueba (máximo 120 caracteres):");
+    if(title===null)return;
+    const clean=title.trim();if(!clean||clean.length>120){result.textContent="Escribe un título de hasta 120 caracteres.";return;}
+    const body=prompt("Texto de prueba (máximo 5.000 caracteres):")||"";
+    if(body.length>5000){result.textContent="El texto es demasiado largo.";return;}
+    add.disabled=true;
+    const {error}=await supabaseClient.from("five30_creator_test_drafts").insert({user_id:user.id,title:clean,body});
+    add.disabled=false;
+    if(error){result.textContent="No se pudo guardar: "+error.message;return;}
+    await refresh();
+   };
+   actions.append(add);
+   refresh();
+   panel.append(close,heading,info,actions,result,drafts);overlay.append(panel);document.body.append(overlay);
    overlay.onclick=e=>{if(e.target===overlay)overlay.remove();};
   };
  }
