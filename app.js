@@ -201,7 +201,7 @@ function drawCreatorGrid(search=""){
     .filter(item=>!q||(item.creator.name+" "+item.creator.handle+" "+item.creator.bio).toLowerCase().includes(q));
   grid.innerHTML=filtered.length?filtered.map(({creator:c,index})=>{
     // A zero-dollar database value is a closed test price, not a real subscription offer.
-    const cardPrice=c.db?(Number(String(c.sub).replace("US$",""))>0?esc(c.sub)+"/mes · pagos pendientes":"Precio por definir"):esc(c.sub)+"/mes";
+    const cardPrice=c.privateTest?"Prueba privada · sin pagos":c.db?(Number(String(c.sub).replace("US$",""))>0?esc(c.sub)+"/mes · pagos pendientes":"Precio por definir"):esc(c.sub)+"/mes";
     const photo=c.portrait||"";
     const art=c.spriteIndex!==undefined?'<div class="creator-photo-sprite sprite-'+c.spriteIndex+'" role="img" aria-label="Imagen ilustrativa de '+esc(c.name)+'"></div>':photo?'<img class="creator-photo" src="'+esc(photo)+'" alt="Retrato de '+esc(c.name)+'" loading="lazy" referrerpolicy="no-referrer">':'<div class="creator-photo-fallback">'+esc(c.name.charAt(0))+'</div>';
     return '<article class="card"><div class="cover">'+art+'</div><div class="info"><div class="name">'+esc(c.name)+'</div><div class="handle">'+esc(c.handle)+'</div>'+(c.db?'':'<span class="creator-demo">Perfil de demostración</span>')+'<div class="card-footer"><span class="card-price">'+cardPrice+'</span><button class="profile-open" type="button" data-index="'+index+'">Ver perfil</button></div></div></article>';
@@ -233,9 +233,23 @@ async function render(){
     bio:p.bio||"Contenido exclusivo y comunidad.",db:true,
     portrait:p.avatar_url||"",cover:p.cover_url||""
   }));
+  // Private testing directory: only authenticated accounts explicitly allowed by the server RPC.
+  // Test creators remain unverified, with no real subscription offer.
+  let testCreators=[];
+  try {
+    const {data:sessionData}=await supabaseClient.auth.getUser();
+    if(sessionData?.user){
+      const {data:privateProfiles,error:privateError}=await supabaseClient.rpc("five30_private_test_creators");
+      if(!privateError)testCreators=(privateProfiles||[]).filter(p=>!dynamic.some(c=>c.id===p.id)).map(p=>({
+        id:p.id,name:p.display_name||p.username,handle:"@"+p.username,
+        sub:"US$0.00",tag:"PRUEBA PRIVADA",bio:p.bio||"Perfil de prueba autorizado.",
+        db:true,privateTest:true,portrait:"",cover:""
+      }));
+    }
+  }catch(e){console.warn("Directorio privado no disponible",e);}
   const demo=creators.filter(c=>!(dbCreators||[]).some(p=>p.username===c.handle.replace("@","")))
     .map((c,i)=>({...c,portrait:"",spriteIndex:i}));
-  visibleCreatorList=[...dynamic,...demo];
+  visibleCreatorList=[...dynamic,...testCreators,...demo];
   drawCreatorGrid(document.getElementById("creatorSearch")?.value||"");
 }
 // Demo cards are illustrative and never create subscriptions or claim verified identities.
