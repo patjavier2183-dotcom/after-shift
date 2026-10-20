@@ -577,14 +577,15 @@ async function renderSupportInbox(target,userFilter=null){
     supabaseClient.from("five30_creator_test_access").select("enabled").eq("request_id",item.id).maybeSingle().then(({data,error})=>{
      if(error){toggle.textContent="Acceso no disponible";return;}
      let enabled=!!data?.enabled;toggle.disabled=false;
-     const paint=()=>{toggle.textContent=enabled?"Revocar pruebas":"Habilitar pruebas";};paint();
+     const paint=()=>{toggle.textContent=enabled?"Deshabilitar creadora de pruebas":"Autorizar creadora para pruebas";};paint();
      toggle.onclick=async()=>{
-      if(!confirm(enabled?"¿Revocar el acceso de ensayo?":"¿Habilitar solo la vista privada de ensayo, sin publicaciones ni pagos reales?"))return;
+      if(!confirm(enabled?"¿Deshabilitar a esta creadora en el entorno de pruebas?":"¿Autorizar a esta persona como creadora de pruebas? No es verificación de identidad ni habilita pagos reales."))return;
       toggle.disabled=true;
       const {error:saveError}=await supabaseClient.rpc("five30_set_creator_test_access",{p_request_id:item.id,p_enabled:!enabled});
       toggle.disabled=false;
-      if(saveError){alert("No se pudo cambiar el acceso de pruebas.");return;}
+      if(saveError){alert("No se pudo cambiar la autorización. Solo el superadministrador con doble autenticación puede hacerlo.");return;}
       enabled=!enabled;paint();
+      const feedback=document.createElement("p");feedback.setAttribute("role","status");feedback.textContent=enabled?"Acceso de creadora para pruebas autorizado. La verificación definitiva sigue pendiente.":"Acceso de creadora para pruebas deshabilitado.";card.append(feedback);
      };
     });
    }
