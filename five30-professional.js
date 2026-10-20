@@ -18,6 +18,30 @@ document.addEventListener("DOMContentLoaded",()=>{
  }
  document.getElementById("professionalCreator")?.addEventListener("click",()=>apply("creator"));
  document.getElementById("professionalAgency")?.addEventListener("click",()=>apply("agency"));
+ // Private demo for applicants; does not grant creator role or write content.
+ async function creatorPreview(){
+  const user=await currentUser();if(!user)return;
+  const {data,error}=await supabaseClient.from("five30_professional_requests").select("status").eq("user_id",user.id).eq("request_type","creator").maybeSingle();
+  if(error||!data||!["pending","under_review"].includes(data.status))return;
+  const host=document.getElementById("professionalNotice")?.parentElement;
+  if(!host||document.getElementById("five30Preview"))return;
+  const btn=document.createElement("button");btn.id="five30Preview";btn.type="button";btn.className="action-btn";btn.textContent="Probar Creator Studio (demo)";host.append(btn);
+  btn.onclick=()=>{
+   const overlay=document.createElement("div");overlay.className="profile-overlay";
+   const panel=document.createElement("section");panel.className="creator-studio";
+   const close=document.createElement("button");close.type="button";close.className="profile-close";close.textContent="×";close.setAttribute("aria-label","Cerrar");close.onclick=()=>overlay.remove();
+   const heading=document.createElement("h2");heading.textContent="Creator Studio · DEMO";
+   const info=document.createElement("p");info.textContent="Tu solicitud sigue en revisión. Esta demostración no publica, no guarda archivos ni habilita cobros.";
+   const actions=document.createElement("div");actions.className="studio-actions";
+   const result=document.createElement("p");result.setAttribute("role","status");result.textContent="Selecciona una función.";
+   for(const [label,detail] of [["Nueva publicación","Aquí podrás crear publicaciones con imágenes y videos cuando tu cuenta esté aprobada."],["Planes y promociones","Aquí configurarás tus planes cuando los pagos estén habilitados."],["Mis publicaciones","Aquí podrás administrar tus publicaciones."],["En vivo","Aquí estarán las transmisiones en vivo cuando estén habilitadas."]]){
+    const b=document.createElement("button");b.type="button";b.className="action-btn";b.textContent=label;b.onclick=()=>{result.textContent=detail;};actions.append(b);
+   }
+   panel.append(close,heading,info,actions,result);overlay.append(panel);document.body.append(overlay);
+   overlay.onclick=e=>{if(e.target===overlay)overlay.remove();};
+  };
+ }
+ creatorPreview();
 });
 
 /* Floating conversation: a single continuous thread, no duplicated form. */
