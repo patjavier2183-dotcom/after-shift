@@ -21,8 +21,8 @@ document.addEventListener("DOMContentLoaded",()=>{
  // Private demo for applicants; does not grant creator role or write content.
  async function creatorPreview(){
   const user=await currentUser();if(!user)return;
-  const {data,error}=await supabaseClient.from("five30_professional_requests").select("status").eq("user_id",user.id).eq("request_type","creator").maybeSingle();
-  if(error||!data||!["pending","under_review"].includes(data.status))return;
+  const {data,error}=await supabaseClient.from("five30_creator_test_access").select("enabled").eq("user_id",user.id).eq("enabled",true).maybeSingle();
+  if(error||!data||!data.enabled)return;
   const host=document.getElementById("professionalNotice")?.parentElement;
   if(!host||document.getElementById("five30Preview"))return;
   const btn=document.createElement("button");btn.id="five30Preview";btn.type="button";btn.className="action-btn";btn.textContent="Probar Creator Studio (demo)";host.append(btn);
@@ -543,6 +543,22 @@ async function renderSupportInbox(target,userFilter=null){
    const heading=document.createElement("strong");heading.textContent=item.public_name+" · "+(item.request_type==="agency"?"Agencia / estudio":"Creador");
    const info=document.createElement("p");info.textContent=item.contact_email+" · "+item.status+" · "+new Date(item.created_at).toLocaleDateString("es-CL");
    card.append(heading,info);
+   if(item.request_type==="creator"&&["pending","under_review"].includes(item.status)){
+    const toggle=document.createElement("button");toggle.type="button";toggle.textContent="Cargando acceso de pruebas…";toggle.disabled=true;card.append(toggle);
+    supabaseClient.from("five30_creator_test_access").select("enabled").eq("request_id",item.id).maybeSingle().then(({data,error})=>{
+     if(error){toggle.textContent="Acceso no disponible";return;}
+     let enabled=!!data?.enabled;toggle.disabled=false;
+     const paint=()=>{toggle.textContent=enabled?"Revocar pruebas":"Habilitar pruebas";};paint();
+     toggle.onclick=async()=>{
+      if(!confirm(enabled?"¿Revocar el acceso de ensayo?":"¿Habilitar solo la vista privada de ensayo, sin publicaciones ni pagos reales?"))return;
+      toggle.disabled=true;
+      const {error:saveError}=await supabaseClient.rpc("five30_set_creator_test_access",{p_request_id:item.id,p_enabled:!enabled});
+      toggle.disabled=false;
+      if(saveError){alert("No se pudo cambiar el acceso de pruebas.");return;}
+      enabled=!enabled;paint();
+     };
+    });
+   }
    if(["pending","under_review"].includes(item.status)){
     for(const [label,nextStatus] of [["En revisión","under_review"],["Rechazar","rejected"]]){
      if(item.status===nextStatus)continue;
