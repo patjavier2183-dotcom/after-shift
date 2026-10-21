@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   save.disabled=true;
   try{
    const photoUpdates={};
-   const photoFields=[["accountAvatarFile","avatar_url"],["accountCoverFile","cover_url"],["accountMainFile","main_photo_url"]];
+   const photoFields=[["accountAvatarFile","avatar_url"],["accountCoverFile","cover_url"]];
    for(const [inputId,column] of photoFields){
      const input=document.getElementById(inputId);
      const file=input?.files?.[0];
@@ -244,7 +244,7 @@ async function render(){
     id:p.id,name:p.display_name||p.username,handle:"@"+p.username,
     sub:"US$"+Number(p.subscription_price||0).toFixed(2),tag:"CREATOR",
     bio:p.bio||"Contenido exclusivo y comunidad.",db:true,
-    portrait:p.main_photo_url||p.avatar_url||"",cover:p.cover_url||""
+    portrait:p.avatar_url||"",cover:p.cover_url||""
   }));
   // Private testing directory: only authenticated accounts explicitly allowed by the server RPC.
   // Test creators remain unverified, with no real subscription offer.
