@@ -62,10 +62,23 @@ document.addEventListener("DOMContentLoaded",()=>{
   if(!display||display.length>80||!/^[a-z0-9_.-]{3,24}$/.test(username)||about.length>500){status.textContent="Revisa el nombre y el usuario (3 a 24 caracteres, letras, números, punto, guion o guion bajo).";return;}
   save.disabled=true;
   try{
+   const photoUpdates={};
+   const photoFields=[["accountAvatarFile","avatar_url"],["accountCoverFile","cover_url"],["accountMainFile","main_photo_url"]];
+   for(const [inputId,column] of photoFields){
+     const input=document.getElementById(inputId);
+     const file=input?.files?.[0];
+     if(!file)continue;
+     if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>5*1024*1024)throw new Error("Las fotos deben ser JPG, PNG o WebP y no superar 5 MB.");
+     const ext={"image/jpeg":"jpg","image/png":"png","image/webp":"webp"}[file.type];
+     const path=user.id+"/"+column+"-"+crypto.randomUUID()+"."+ext;
+     const {error:uploadError}=await supabaseClient.storage.from("profile-media").upload(path,file,{contentType:file.type,upsert:false});
+     if(uploadError)throw uploadError;
+     photoUpdates[column]=supabaseClient.storage.from("profile-media").getPublicUrl(path).data.publicUrl;
+   }
    const {data:existing,error:checkError}=await supabaseClient.from("profiles").select("id").eq("username",username).neq("id",user.id).maybeSingle();
    if(checkError)throw checkError;
    if(existing){status.textContent="Ese nombre de usuario ya está ocupado.";return;}
-   const {error}=await supabaseClient.from("profiles").update({display_name:display,username,bio:about}).eq("id",user.id);
+   const {error}=await supabaseClient.from("profiles").update({display_name:display,username,bio:about,...photoUpdates}).eq("id",user.id);
    if(error)throw error;
    status.textContent="Cambios guardados correctamente.";
    await loadAccount(user);
@@ -215,7 +228,7 @@ async function render(){
   // First try optional portrait/cover columns; older live databases may lack them.
   // A failed optional-field query must never make the whole creator directory disappear.
   let {data:dbCreators,error}=await supabaseClient.from("profiles")
-    .select("id,display_name,username,bio,subscription_price,avatar_url,cover_url")
+    .select("id,display_name,username,bio,subscription_price,avatar_url,cover_url,main_photo_url")
     .eq("role","creator").order("display_name");
   if(error){
     console.warn("Directorio: intentando consulta compatible sin columnas opcionales:",error.message);
@@ -231,7 +244,7 @@ async function render(){
     id:p.id,name:p.display_name||p.username,handle:"@"+p.username,
     sub:"US$"+Number(p.subscription_price||0).toFixed(2),tag:"CREATOR",
     bio:p.bio||"Contenido exclusivo y comunidad.",db:true,
-    portrait:p.avatar_url||"",cover:p.cover_url||""
+    portrait:p.main_photo_url||p.avatar_url||"",cover:p.cover_url||""
   }));
   // Private testing directory: only authenticated accounts explicitly allowed by the server RPC.
   // Test creators remain unverified, with no real subscription offer.
