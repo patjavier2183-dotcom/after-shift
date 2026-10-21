@@ -129,10 +129,9 @@
             <label>Nombre visible<input id="accountDisplayName" maxlength="80" autocomplete="nickname" required style="display:block;width:100%;padding:12px;color:#191510;background:#fff;border-radius:8px"></label>
             <label>Nombre de usuario (@)<input id="accountUsername" maxlength="24" minlength="3" pattern="[a-zA-Z0-9_.-]{3,24}" required style="display:block;width:100%;padding:12px;color:#191510;background:#fff;border-radius:8px"></label>
             <label>Biografía<textarea id="accountBio" maxlength="500" rows="3" style="display:block;width:100%;padding:12px;color:#191510;background:#fff;border-radius:8px"></textarea></label>
-            <fieldset style="border:1px solid #9b8a68;border-radius:10px;padding:12px;display:grid;gap:10px"><legend>Fotografías del perfil (visibles públicamente)</legend>
-              <label>Foto de perfil<input id="accountAvatarFile" type="file" accept="image/jpeg,image/png,image/webp"></label>
-              <label>Foto de portada<input id="accountCoverFile" type="file" accept="image/jpeg,image/png,image/webp"></label>
-              <label>Foto principal del creador<input id="accountMainFile" type="file" accept="image/jpeg,image/png,image/webp"></label>
+            <fieldset style="border:1px solid #9b8a68;border-radius:10px;padding:12px;display:grid;gap:10px;min-width:0;max-width:100%;box-sizing:border-box;overflow:hidden"><legend>Fotografías del perfil (visibles públicamente)</legend>
+              <label>Foto de perfil<input id="accountAvatarFile" type="file" accept="image/jpeg,image/png,image/webp" style="display:block;width:100%;min-width:0;max-width:100%;box-sizing:border-box;font-size:13px"></label>
+              <label>Foto de portada<input id="accountCoverFile" type="file" accept="image/jpeg,image/png,image/webp" style="display:block;width:100%;min-width:0;max-width:100%;box-sizing:border-box;font-size:13px"></label>
               <small>JPG, PNG o WebP. Máximo 5 MB por imagen. Solo se subirán las imágenes seleccionadas al guardar.</small>
             </fieldset>
             <button class="action-btn" type="submit" id="accountProfileSave">Guardar cambios</button>
