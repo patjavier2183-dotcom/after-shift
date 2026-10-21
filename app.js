@@ -763,6 +763,12 @@ loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
   const close=document.getElementById("authClose");
   const sw=document.getElementById("authSwitch");
   const forgot=document.getElementById("authForgot");
+  const google=document.getElementById("authGoogle");
+  const social=document.getElementById("authSocialOptions");
+  const birthLabel=document.getElementById("authBirthLabel");
+  const birthdate=document.getElementById("authBirthdate");
+  const termsLabel=document.getElementById("authTermsLabel");
+  const terms=document.getElementById("authTerms");
   if(!modal||!form||!emailLabel||!passwordLabel||!forgot||!passwordToggle)return;
   let mode="signup";
   let recoveryAuthorized=false;
@@ -789,6 +795,11 @@ loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
       :requesting?"Ingresa el correo con el que registraste tu cuenta. Te enviaremos un enlace para recuperar el acceso."
       :"Escribe una contraseña nueva para recuperar tu cuenta.";
     userLabel.style.display=signingUp?"block":"none";
+    if(social)social.style.display=(signingUp||loggingIn)?"grid":"none";
+    if(birthLabel)birthLabel.style.display=signingUp?"block":"none";
+    if(termsLabel)termsLabel.style.display=signingUp?"flex":"none";
+    if(birthdate)birthdate.required=signingUp;
+    if(terms)terms.required=signingUp;
     emailLabel.style.display=recovering?"none":"block";
     passwordLabel.style.display=requesting?"none":"block";
     forgot.style.display=loggingIn?"block":"none";
@@ -829,6 +840,19 @@ loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
   close.onclick=closeModal;
   sw.onclick=()=>open(mode==="signup"?"login":mode==="login"?"signup":"login");
   forgot.onclick=()=>open("request-reset");
+  if(google)google.onclick=async()=>{
+    google.disabled=true;msg.textContent="Conectando con Google...";
+    try{
+      const {error}=await supabaseClient.auth.signInWithOAuth({
+        provider:"google",
+        options:{redirectTo:window.location.origin+"/?google_login=1"}
+      });
+      if(error)throw error;
+    }catch(error){
+      msg.textContent="No se pudo iniciar con Google. Debemos habilitar Google en la configuración de Five30. Puedes continuar con correo.";
+      console.error("Five30 Google OAuth:",error);
+    }finally{google.disabled=false;}
+  };
   modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});
   document.getElementById("signupBtn").onclick=()=>open("signup");
   document.getElementById("loginBtn").onclick=async()=>{
@@ -872,10 +896,18 @@ loadAccount().catch(error=>console.error("Error inicial de cuenta:",error));
           msg.textContent="El usuario debe tener 3 a 24 caracteres: letras, números, punto, guion o guion bajo.";
           return;
         }
+        const birth=birthdate?.value;
+        const today=new Date();
+        const dob=birth?new Date(birth+"T12:00:00"):null;
+        const cutoff=new Date(today.getFullYear()-18,today.getMonth(),today.getDate());
+        if(!dob||Number.isNaN(dob.getTime())||dob>cutoff||dob.getFullYear()<1900){
+          msg.textContent="Debes tener al menos 18 años para crear una cuenta.";return;
+        }
+        if(!terms?.checked){msg.textContent="Debes aceptar los términos y confirmar tu mayoría de edad.";return;}
         const{data,error}=await supabaseClient.auth.signUp({
           email:email.value.trim(),
           password:password.value,
-          options:{data:{username:clean,display_name:username.value.trim()},emailRedirectTo:window.location.origin+"/?verified=1"}
+          options:{data:{username:clean,display_name:username.value.trim(),birthdate:birth,adult_declared:true},emailRedirectTo:window.location.origin+"/?verified=1"}
         });
         if(error){msg.textContent="No se pudo crear la cuenta: "+error.message;return;}
         if(data.session&&data.user){
